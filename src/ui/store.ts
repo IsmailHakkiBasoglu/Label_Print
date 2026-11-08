@@ -145,6 +145,12 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
       const id = newId("s");
       commit((_, design) => design.elements.push({ kind: "symbol", id, x: 2, y: 2, width: 12, height: 12, symbolId, color: "#000000" }), { selectedElementId: id });
     },
+    /** From the library: replaces the selected cell's picture when there is one to replace, otherwise adds a new element. */
+    pickSymbol(symbolId: string) {
+      const target = activeDesign(state).elements.find((e) => e.kind === "symbol" && (!state.selectedElementId || e.id === state.selectedElementId)) ?? activeDesign(state).elements.find((e) => e.kind === "symbol");
+      if (state.scope.kind === "cell" && !state.active && target) this.setCellValue(state.scope.cell, target.id, symbolId);
+      else this.addSymbol(symbolId);
+    },
     updateElement(id: string, patch: Partial<DesignElement>) {
       commit(
         (_, design) => {

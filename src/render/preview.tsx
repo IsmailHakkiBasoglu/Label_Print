@@ -46,16 +46,32 @@ export function OpsView({ ops }: { ops: RenderOp[] }) {
   );
 }
 
-type Props = { page: LayoutPage; cells?: Rect[]; usedCells?: number[]; onCellClick?: (index: number) => void };
+type Props = {
+  page: LayoutPage;
+  cells?: Rect[];
+  usedCells?: number[];
+  onCellClick?: (index: number) => void;
+  selectedCell?: number;
+  cellMarks?: Record<number, "value" | "detached">;
+};
 
-export function SheetPreview({ page, cells = [], usedCells = [], onCellClick }: Props) {
+export function SheetPreview({ page, cells = [], usedCells = [], onCellClick, selectedCell, cellMarks = {} }: Props) {
   return (
     <svg className="sheet" viewBox={`0 0 ${page.sheet.width} ${page.sheet.height}`} role="img" aria-label="Yaprak önizlemesi">
       <rect x={0} y={0} width={page.sheet.width} height={page.sheet.height} fill="#ffffff" />
       <OpsView ops={page.ops} />
       {cells.map((c, i) => (
-        <rect key={i} className={usedCells.includes(i) ? "cell used" : "cell"} x={c.x} y={c.y} width={c.width} height={c.height} onClick={() => onCellClick?.(i)} />
+        <rect
+          key={i}
+          className={`${usedCells.includes(i) ? "cell used" : "cell"}${i === selectedCell ? " current" : ""}`}
+          x={c.x}
+          y={c.y}
+          width={c.width}
+          height={c.height}
+          onClick={() => onCellClick?.(i)}
+        />
       ))}
+      {cells.map((c, i) => cellMarks[i] && <circle key={i} className={`mark ${cellMarks[i]}`} cx={c.x + c.width - 2.5} cy={c.y + 2.5} r={1.1} />)}
     </svg>
   );
 }

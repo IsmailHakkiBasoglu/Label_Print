@@ -1,8 +1,8 @@
-import type { DesignElement, FontId } from "../core/document";
+import type { CellEntry, DesignElement, FontId } from "../core/document";
 import { searchSymbols } from "../library/symbols/search";
 import type { RenderDeps } from "../render/pdf";
 import { IconView } from "./IconView";
-import { activeDesign, useAppState, type Store } from "./store";
+import { activeDesign, currentGrid, useAppState, type Store } from "./store";
 
 const FONTS: [FontId, string][] = [
   ["sans", "Sade"],
@@ -28,24 +28,78 @@ function NumberField({ label, value, onChange }: { label: string; value: number;
   );
 }
 
-export function PropertiesPanel({ store, deps: _deps }: { store: Store; deps: RenderDeps }) {
+function CellFields({ store, deps, cell, entry }: { store: Store; deps: RenderDeps; cell: number; entry?: CellEntry }) {
+  const state = useAppState(store);
+  const symbolName = (id: string) => deps.symbols(id)?.tags[0] ?? id;
+  return (
+    <>
+      {activeDesign(state).elements.map((element) => {
+        const value = entry?.values[element.id];
+        return (
+          <div key={element.id} className="cell-field">
+            {element.kind === "text" ? (
+              <>
+                <label>
+                  Metin
+                  <textarea rows={2} value={value ?? element.text} onChange={(e) => store.setCellValue(cell, element.id, e.target.value)} />
+                </label>
+                <Suggestions text={value ?? element.text} onPick={(id) => store.pickSymbol(id)} />
+              </>
+            ) : (
+              <>
+                <small>Görsel: {value === "" ? "bu etikette gizli" : (symbolName(value ?? element.symbolId))}</small>
+                <p className="hint">Değiştirmek için soldaki Sembol sekmesinden seçin.</p>
+                {value !== "" && <button onClick={() => store.setCellValue(cell, element.id, "")}>Bu etikette gizle</button>}
+              </>
+            )}
+            {value !== undefined && <button onClick={() => store.clearCellValue(cell, element.id)}>Ortak içeriğe dön</button>}
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
+export function PropertiesPanel({ store, deps }: { store: Store; deps: RenderDeps }) {
   const state = useAppState(store);
   const element = activeDesign(state).elements.find((e) => e.id === state.selectedElementId);
   const update = (patch: Partial<DesignElement>) => element && store.updateElement(element.id, patch);
+  const cell = state.scope.kind === "cell" && !state.active ? state.scope.cell : null;
+  const entry = cell !== null ? currentGrid(state)?.content[cell] : undefined;
+  const locked = cell !== null && !entry?.designId;
+  const cellText = element?.kind === "text" && cell !== null ? entry?.values[element.id] : undefined;
 
   return (
     <aside className="panel">
-      <button onClick={() => store.addText()}>+ Yazı ekle</button>
-      {!element && <p className="hint">Düzenlemek için etikette bir eleman seçin.</p>}
-      {element && (
+      {cell !== null && (
+        <div className="cell-head">
+          <strong>{cell + 1}. etiket</strong>
+          {locked ? <button onClick={() => store.detachCell(cell)}>Bu hücreyi ayır</button> : <button onClick={() => store.reattachCell(cell)}>Ortağa döndür</button>}
+        </div>
+      )}
+      <button disabled={locked} onClick={() => store.addText()}>
+        + Yazı ekle
+      </button>
+      {locked && (
+        <>
+          <CellFields store={store} deps={deps} cell={cell} entry={entry} />
+          <p className="hint">Konum, boyut ve çerçeve ortak tasarımdan gelir. Bu etikette farklı olsun istiyorsanız hücreyi ayırın.</p>
+        </>
+      )}
+      {!locked && !element && <p className="hint">Düzenlemek için etikette bir eleman seçin.</p>}
+      {!locked && element && (
         <div className="properties">
           {element.kind === "text" && (
             <>
               <label>
                 Metin
-                <textarea rows={3} value={element.text} onChange={(e) => update({ text: e.target.value })} />
+                <textarea
+                  rows={3}
+                  value={cellText ?? element.text}
+                  onChange={(e) => (cell !== null ? store.setCellValue(cell, element.id, e.target.value) : update({ text: e.target.value }))}
+                />
               </label>
-              <Suggestions text={element.text} onPick={(id) => store.addSymbol(id)} />
+              <Suggestions text={cellText ?? element.text} onPick={(id) => store.pickSymbol(id)} />
               <label>
                 Yazı tipi
                 <select value={element.fontId} onChange={(e) => update({ fontId: e.target.value as FontId })}>

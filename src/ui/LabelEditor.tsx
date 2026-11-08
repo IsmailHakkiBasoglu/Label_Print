@@ -4,7 +4,7 @@ import type { FrameLabel } from "../library/frames";
 import { layoutDesign } from "../render/layout";
 import type { RenderDeps } from "../render/pdf";
 import { OpsView } from "../render/preview";
-import { activeDesign, currentGrid, currentPage, useAppState, type Store } from "./store";
+import { activeDesign, currentGrid, currentPage, editingDesign, useAppState, type Store } from "./store";
 
 const SNAP_MM = 0.5;
 const MIN_SIZE_MM = 2;
@@ -24,6 +24,8 @@ export function LabelEditor({ store, deps }: { store: Store; deps: RenderDeps })
   const svg = useRef<SVGSVGElement>(null);
   const design = activeDesign(state);
   const label = activeLabel(store, deps);
+  const cell = state.scope.kind === "cell" && !state.active ? state.scope.cell : null;
+  const locked = cell !== null && !currentGrid(state)?.content[cell]?.designId;
   const handle = Math.max(1.2, Math.min(label.width, label.height) * 0.05);
 
   function toMm(event: PointerEvent | ReactPointerEvent) {
@@ -35,6 +37,7 @@ export function LabelEditor({ store, deps }: { store: Store; deps: RenderDeps })
     event.preventDefault();
     event.stopPropagation();
     store.select(element.id);
+    if (locked) return;
     const start = toMm(event);
     const move = (e: PointerEvent) => {
       const now = toMm(e);
@@ -58,6 +61,7 @@ export function LabelEditor({ store, deps }: { store: Store; deps: RenderDeps })
         <span>
           {label.width} × {label.height} mm
         </span>
+        {cell !== null && <span>{cell + 1}. etiket</span>}
         {state.active && <button onClick={() => store.setActive(null)}>Etikete dön</button>}
       </div>
       <div className="canvas" onPointerDown={() => store.select(null)}>
@@ -67,13 +71,13 @@ export function LabelEditor({ store, deps }: { store: Store; deps: RenderDeps })
           ) : (
             <rect width={label.width} height={label.height} rx={label.shape === "rounded" ? label.cornerRadius ?? 2 : 0} className="label-bg" />
           )}
-          <OpsView ops={layoutDesign(design, label, deps)} />
+          <OpsView ops={layoutDesign(editingDesign(state), label, deps)} />
           {design.elements.map((el) => {
             const selected = el.id === state.selectedElementId;
             return (
               <g key={el.id}>
                 <rect className={selected ? "el selected" : "el"} x={el.x} y={el.y} width={el.width} height={el.height} onPointerDown={(e) => startDrag(e, el, false)} />
-                {selected && <rect className="handle" x={el.x + el.width - handle / 2} y={el.y + el.height - handle / 2} width={handle} height={handle} onPointerDown={(e) => startDrag(e, el, true)} />}
+                {selected && !locked && <rect className="handle" x={el.x + el.width - handle / 2} y={el.y + el.height - handle / 2} width={handle} height={handle} onPointerDown={(e) => startDrag(e, el, true)} />}
               </g>
             );
           })}

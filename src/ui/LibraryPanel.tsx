@@ -9,7 +9,7 @@ import { PATTERNS } from "../library/textPatterns";
 import type { RenderDeps } from "../render/pdf";
 import { IconView } from "./IconView";
 import { activeLabel } from "./LabelEditor";
-import { activeDesign, currentGrid, useAppState, type Store } from "./store";
+import { activeDesign, cellsLostBy, currentGrid, useAppState, type Store } from "./store";
 import { TemplateBuilder } from "./TemplateBuilder";
 import { TemplatePicker } from "./TemplatePicker";
 import { ZonesPanel } from "./ZonesPanel";
@@ -60,6 +60,11 @@ function TemplatesTab({ store, templates, onLibraryChanged }: Pick<Props, "store
   const [message, setMessage] = useState<string | null>(null);
   const zone = currentGrid(state);
 
+  function choose(template: Template) {
+    const lost = cellsLostBy(state.project, template.grid.columns * template.grid.rows);
+    if (lost === 0 || window.confirm(`Bu şablona sığmayan ${lost} etiketin içeriği silinecek. Devam edilsin mi?`)) store.setTemplate(template);
+  }
+
   async function importFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     event.target.value = "";
@@ -99,7 +104,7 @@ function TemplatesTab({ store, templates, onLibraryChanged }: Pick<Props, "store
           }}
         />
       ) : (
-        <TemplatePicker templates={templates} selectedId={zone?.templateId ?? ""} onSelect={(t) => store.setTemplate(t)} />
+        <TemplatePicker templates={templates} selectedId={zone?.templateId ?? ""} onSelect={choose} />
       )}
     </div>
   );
@@ -173,7 +178,7 @@ function SymbolsTab({ store, customSymbols, onLibraryChanged }: Pick<Props, "sto
       {message && <p className="notice">{message}</p>}
       <div className="icons grid">
         {list.map((s) => (
-          <button key={s.id} title={s.tags.join(", ")} aria-label={`Sembol ekle: ${s.id}`} onClick={() => store.addSymbol(s.id)}>
+          <button key={s.id} title={s.tags.join(", ")} aria-label={`Sembol ekle: ${s.id}`} onClick={() => store.pickSymbol(s.id)}>
             <IconView icon={s.icon} />
           </button>
         ))}
