@@ -2,11 +2,13 @@ import { useMemo, useState, type ChangeEvent } from "react";
 import { exportCustom, importCustom, saveCustom } from "../core/customTemplates";
 import { browserStorage } from "../core/storage";
 import type { Template } from "../core/templates";
-import { FRAMES } from "../library/frames";
+import { FRAMES, frameOps } from "../library/frames";
+import { ORNAMENT_CATEGORIES, ORNAMENTS } from "../library/ornaments/frames.data";
 import { importCustomSymbol } from "../library/symbols/custom";
 import { catalog, searchSymbols, type SymbolEntry } from "../library/symbols/search";
 import { PATTERNS } from "../library/textPatterns";
 import type { RenderDeps } from "../render/pdf";
+import { OpsView } from "../render/preview";
 import { IconView } from "./IconView";
 import { activeLabel } from "./LabelEditor";
 import { activeDesign, cellsLostBy, currentGrid, useAppState, type Store } from "./store";
@@ -16,6 +18,7 @@ import { ZonesPanel } from "./ZonesPanel";
 
 const TABS = ["Şablon", "Çerçeve", "Desen", "Sembol", "Bölge"] as const;
 const DEFAULT_FRAME = { strokeMm: 0.4, insetMm: 1, color: "#000000" };
+const LINE_FRAMES = "__lines";
 
 type Props = {
   store: Store;
@@ -37,7 +40,7 @@ export function LibraryPanel({ store, deps, templates, customSymbols, onLibraryC
         ))}
       </nav>
       {tab === "Şablon" && <TemplatesTab store={store} templates={templates} onLibraryChanged={onLibraryChanged} />}
-      {tab === "Çerçeve" && <FramesTab store={store} />}
+      {tab === "Çerçeve" && <FramesTab store={store} deps={deps} />}
       {tab === "Desen" && (
         <div className="list">
           {PATTERNS.map((p) => (
@@ -110,21 +113,48 @@ function TemplatesTab({ store, templates, onLibraryChanged }: Pick<Props, "store
   );
 }
 
-function FramesTab({ store }: { store: Store }) {
+function FramesTab({ store, deps }: { store: Store; deps: RenderDeps }) {
   const state = useAppState(store);
+  const [category, setCategory] = useState<string>(LINE_FRAMES);
   const design = activeDesign(state);
   const options = design.frameOptions ?? DEFAULT_FRAME;
   const change = (patch: Partial<typeof DEFAULT_FRAME>) => store.setFrame(design.frameId, { ...options, ...patch });
+  const label = activeLabel(store, deps);
+  const previewOptions = { ...options, color: "#20241f" };
   return (
     <div className="list">
       <button className={design.frameId ? "row" : "row selected"} onClick={() => store.setFrame(undefined, undefined)}>
         Çerçevesiz
       </button>
-      {FRAMES.map((f) => (
-        <button key={f.id} className={design.frameId === f.id ? "row selected" : "row"} onClick={() => store.setFrame(f.id, options)}>
-          {f.name}
-        </button>
-      ))}
+      <label>
+        Çerçeve türü
+        <select value={category} onChange={(e) => setCategory(e.target.value)}>
+          <option value={LINE_FRAMES}>Düz çizgiler</option>
+          {ORNAMENT_CATEGORIES.map((c) => (
+            <option key={c} value={c}>
+              {c[0].toLocaleUpperCase("tr") + c.slice(1)}
+            </option>
+          ))}
+        </select>
+      </label>
+      {category === LINE_FRAMES ? (
+        FRAMES.map((f) => (
+          <button key={f.id} className={design.frameId === f.id ? "row selected" : "row"} onClick={() => store.setFrame(f.id, options)}>
+            {f.name}
+          </button>
+        ))
+      ) : (
+        <div className="frame-grid">
+          {ORNAMENTS.filter((o) => o.category === category).map((o) => (
+            <button key={o.id} className={design.frameId === o.id ? "frame-card selected" : "frame-card"} onClick={() => store.setFrame(o.id, options)}>
+              <svg viewBox={`0 0 ${label.width} ${label.height}`} aria-hidden="true">
+                <OpsView ops={frameOps(o.id, label, previewOptions)} />
+              </svg>
+              {o.name}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="fields">
         <label>
           Kalınlık (mm)

@@ -2,7 +2,7 @@ import { resolveCellDesign } from "../core/cells";
 import type { FontId, LabelDesign, LabelProject, Page, TextElement, Zone } from "../core/document";
 import { labelRects, type Rect } from "../core/geometry";
 import type { Template } from "../core/templates";
-import { frameOps, type FrameLabel } from "../library/frames";
+import { frameLayout, type FrameLabel } from "../library/frames";
 import type { SymbolEntry } from "../library/symbols/search";
 import { fitText, type FitResult } from "../library/textPatterns";
 import type { FontTools } from "./fonts";
@@ -23,6 +23,7 @@ const OFFSET_ALLOWANCE_MM = 3;
 const LINE_HEIGHT = 1.2;
 const MM_PER_PT = 25.4 / 72;
 const DEFAULT_FRAME = { strokeMm: 0.4, insetMm: 1, color: "#000000" };
+const BAND_WARNING = "Yazı veya görsel çerçeve süsüne değiyor.";
 
 type FitCache = Map<string, FitResult>;
 
@@ -53,10 +54,22 @@ function textOps(el: TextElement, origin: { x: number; y: number }, deps: Layout
   });
 }
 
+function touchesBand(el: Rect, label: FrameLabel, band: number): boolean {
+  if (label.shape === "circle" || label.shape === "oval") {
+    const [a, b] = [label.width / 2 - band, label.height / 2 - band];
+    return [el.x, el.x + el.width].some((x) => [el.y, el.y + el.height].some((y) => ((x - label.width / 2) / a) ** 2 + ((y - label.height / 2) / b) ** 2 > 1));
+  }
+  return el.x < band || el.y < band || el.x + el.width > label.width - band || el.y + el.height > label.height - band;
+}
+
 function designOps(design: LabelDesign, box: Rect, label: FrameLabel, deps: LayoutDeps, warnings: string[], cache: FitCache): RenderOp[] {
   const ops: RenderOp[] = [];
   if (design.frameId) {
-    for (const op of frameOps(design.frameId, label, design.frameOptions ?? DEFAULT_FRAME)) ops.push({ ...op, x: box.x, y: box.y });
+    const options = design.frameOptions ?? DEFAULT_FRAME;
+    const frame = frameLayout(design.frameId, label, options);
+    for (const op of frame.ops) ops.push({ ...op, x: box.x, y: box.y });
+    if (frame.fellBack) warnings.push("Etiket süslü çerçeve için çok küçük; tek çizgi kullanıldı.");
+    if (frame.bandMm > 0 && design.elements.some((el) => touchesBand(el, label, options.insetMm + frame.bandMm))) warnings.push(BAND_WARNING);
   }
   for (const el of design.elements) {
     if (el.kind === "text") {
@@ -151,7 +164,7 @@ export function layoutProject(project: LabelProject, deps: LayoutDeps, opts: { g
         }
         const cellWarnings: string[] = [];
         ops.push(...designOps(design, box, template.label, deps, cellWarnings, cache));
-        warnings.push(...(zone.content[index] ? cellWarnings.map((w) => `${index + 1}. etiket: ${w}`) : cellWarnings));
+        warnings.push(...cellWarnings.map((w) => (zone.content[index] && w.startsWith('"') ? `${index + 1}. etiket: ${w}` : w)));
         if (opts.guides) ops.push({ kind: "guide", rect: box, shape: template.label.shape });
       }
     }

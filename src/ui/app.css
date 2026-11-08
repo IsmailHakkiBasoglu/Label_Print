@@ -61,6 +61,9 @@ main { flex: 1; min-height: 0; display: grid; grid-template-columns: 300px minma
 .mark { pointer-events: none; stroke: #fff; stroke-width: .3; }
 .mark.value { fill: var(--accent); }
 .mark.detached { fill: #c7791a; }
+.frame-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.frame-card { padding: 5px; font-size: 11px; display: flex; flex-direction: column; gap: 4px; align-items: stretch; text-align: center; }
+.frame-card svg { width: 100%; height: auto; background: #fff; }
 .cell-head { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 8px; }
 .cell-field { display: flex; flex-direction: column; gap: 5px; border: 1px solid var(--line); border-radius: 6px; padding: 7px; margin-bottom: 6px; }
 .sheet-view { position: relative; }

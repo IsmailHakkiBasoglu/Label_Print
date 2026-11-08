@@ -1,6 +1,8 @@
 import type { FrameOptions } from "../core/document";
 import type { Shape } from "../core/templates";
 import type { PathOp } from "../render/ops";
+import { ORNAMENTS } from "./ornaments/frames.data";
+import { ornamentLayout } from "./ornaments/layout";
 
 export const FRAMES = [
   { id: "single", name: "Tek çizgi" },
@@ -42,8 +44,22 @@ function outline(label: FrameLabel, inset: number): string {
   return rectPath(inset, inset, w, h);
 }
 
+export type FrameLayout = { ops: PathOp[]; bandMm: number; fellBack: boolean };
+
+/** Ornaments report their band so that content near it can be flagged; on tiny labels they fall back to a single line. */
+export function frameLayout(id: string, label: FrameLabel, opts: FrameOptions): FrameLayout {
+  const ornament = ORNAMENTS.find((o) => o.id === id);
+  if (!ornament) return { ops: lineFrame(id, label, opts), bandMm: 0, fellBack: false };
+  const result = ornamentLayout(ornament, label, opts);
+  return result.fellBack ? { ...result, ops: lineFrame("single", label, opts) } : result;
+}
+
 export function frameOps(id: string, label: FrameLabel, opts: FrameOptions): PathOp[] {
-  const op = (d: string, dash?: number[]): PathOp => ({
+  return frameLayout(id, label, opts).ops;
+}
+
+function lineFrame(id: string, label: FrameLabel, opts: FrameOptions): PathOp[] {
+  const op =(d: string, dash?: number[]): PathOp => ({
     kind: "path",
     d,
     x: 0,
