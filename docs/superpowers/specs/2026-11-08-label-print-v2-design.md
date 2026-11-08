@@ -91,7 +91,8 @@ Otomatik kayıt her değişiklikte `localStorage`'a yazıyor ve bu alan yaklaş�
 - Sembol önerisi açıksa (varsayılan) her satır için `searchSymbols`, ortak tasarımdaki ilk görsel öğesinin türünde (tek renk veya renkli) arar ve sonucu o öğeye yazar. Tasarımda görsel öğesi yoksa öneri kapalı görünür ve "Önce ortak tasarıma bir görsel ekleyin; hücreler onun yerini kullanır" açıklaması çıkar.
 - Eşleşme yoksa o hücrenin görseli boş kalır ve pencere "n satır için görsel bulunamadı" der. Yanlış görsel basılmaz.
 - Liste seçili hücre sayısından kısaysa artan hücreler kullanım dışı kalır, kağıt tekrar kullanılabilir. Doldurma öncesi önizlemede bu sayılar görünür.
-- Liste yaprağı aşarsa, aynı şablon ve aynı ortak tasarımla, hücrelerin tamamı kullanılabilir yeni sayfalar açılır. Yeniden doldurma önceki listenin açtığı sayfaları değiştirir ve onay ister.
+- Liste yaprağı aşarsa, aynı şablon ve aynı ortak tasarımla, hücrelerin tamamı kullanılabilir yeni sayfalar açılır. Bu sayfalar `Page.fromList: true` ile işaretlenir. Yeniden doldurma yalnız bu işaretli sayfaları değiştirir ve onay ister.
+- Desen uygulamak öğe kimliklerini yeniler; ortak hücrelerin değerleri aynı türdeki yeni öğelere sırayla taşınır, içerik kaybolmaz.
 
 ### Çok sayfa
 
