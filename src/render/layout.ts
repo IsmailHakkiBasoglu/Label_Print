@@ -1,3 +1,4 @@
+import { resolveCellDesign } from "../core/cells";
 import type { FontId, LabelDesign, LabelProject, Page, TextElement, Zone } from "../core/document";
 import { labelRects, type Rect } from "../core/geometry";
 import type { Template } from "../core/templates";
@@ -143,12 +144,14 @@ export function layoutProject(project: LabelProject, deps: LayoutDeps, opts: { g
           errors.push(`${index + 1}. etiket sayfa dışına taşıyor; yazıcı düzeltmesini azaltın.`);
           continue;
         }
-        const design = project.designs[zone.designId];
+        const design = resolveCellDesign(zone, index, project.designs);
         if (!design) {
           errors.push("Etiket tasarımı bulunamadı.");
           continue;
         }
-        ops.push(...designOps(design, box, template.label, deps, warnings, cache));
+        const cellWarnings: string[] = [];
+        ops.push(...designOps(design, box, template.label, deps, cellWarnings, cache));
+        warnings.push(...(zone.content[index] ? cellWarnings.map((w) => `${index + 1}. etiket: ${w}`) : cellWarnings));
         if (opts.guides) ops.push({ kind: "guide", rect: box, shape: template.label.shape });
       }
     }

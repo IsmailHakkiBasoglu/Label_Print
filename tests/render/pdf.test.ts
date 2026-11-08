@@ -77,6 +77,28 @@ describe("renderPdf geometry", () => {
   });
 });
 
+describe("hücre içeriği", () => {
+  it("her hücreye kendi yazısını basar ve konumları değiştirmez", async () => {
+    const t = tmpl("TW-2021");
+    const p = withText(newProject(t), "Ortak");
+    const plain = await readGuideRects(await bytesOf(withText(newProject(t), "Ortak")));
+    (p.pages[0].zones[0] as any).content = { 0: { values: { t: "Mısır" } }, 1: { values: { t: "Nohut" } } };
+    const bytes = await bytesOf(p);
+    const text = await readText(bytes);
+    expect(text).toContain("Mısır");
+    expect(text).toContain("Nohut");
+    expect(await readGuideRects(bytes)).toEqual(plain);
+  });
+
+  it("yalnız boş hücreleri olan proje için hata verir", async () => {
+    const p = withText(newProject(tmpl("TW-2021")), "x");
+    (p.pages[0].zones[0] as any).cells.used = [0];
+    (p.pages[0].zones[0] as any).content = { 0: { values: { t: "" } } };
+    const r = await renderPdf(p, deps, { guides: false });
+    expect(r.ok).toBe(false);
+  });
+});
+
 describe("renderPdf text", () => {
   it("embeds Turkish characters", async () => {
     expect((await readText(await bytesOf(withText(newProject(tmpl("TW-2021")), "ğüşıöçİ")))).replace(/\s/g, "")).toContain("ğüşıöçİ".repeat(1));
