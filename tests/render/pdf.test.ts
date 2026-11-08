@@ -178,7 +178,9 @@ describe("renderPdf text", () => {
   });
 
   it("warns about text that cannot fit", async () => {
-    const r = await renderPdf(withText(newProject(tmpl("TW-2021")), "kelime ".repeat(500), { width: 10, height: 4 }), deps, guides);
+    const p = withText(newProject(tmpl("TW-2021")), "kelime ".repeat(500), { width: 10, height: 4 });
+    (p.pages[0].zones[0] as any).cells.used = [0];
+    const r = await renderPdf(p, deps, guides);
     expect(r.ok).toBe(true);
     expect(r.ok && r.warnings.join()).toMatch(/sığmıyor/);
   });
