@@ -6,9 +6,9 @@
 - [ ] Köşe yarıçaplarını şablonlara eklemek (Tanex verisinde yok).
 
 ## Fikirler
-- [ ] Excel/CSV'den toplu etiket üretimi
+- [ ] Excel/CSV'den toplu etiket üretimi (şu an liste yapıştırma var)
 - [ ] Barkod ve QR
-- [ ] Çok sayfalı belge arayüzü (model hazır)
+- [ ] Yüklenen SVG'lerde gradyan ve dönüşüm desteği
 - [ ] Tek tıkla açılan masaüstü paketi
 - [ ] PDF boyutunu küçültmek (yazı tipleri şu an tam gömülüyor; pdf-lib'in alt kümeleme hatası nedeniyle)
 - [ ] Daha fazla yazı tipi ve kendi sembollerini projeye gömme

@@ -7,6 +7,7 @@ import {
   type DesignElement,
   type FrameOptions,
   type GridZone,
+  type ImageMeta,
   type LabelDesign,
   type LabelProject,
   type TextElement,
@@ -144,6 +145,10 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
     addSymbol(symbolId: string) {
       const id = newId("s");
       commit((_, design) => design.elements.push({ kind: "symbol", id, x: 2, y: 2, width: 12, height: 12, symbolId, color: "#000000" }), { selectedElementId: id });
+    },
+    addImage(id: string, meta: ImageMeta) {
+      commit((project) => void (project.images[id] = meta));
+      this.pickSymbol(`upload:${id}`);
     },
     /** From the library: replaces the selected cell's picture when there is one to replace, otherwise adds a new element. */
     pickSymbol(symbolId: string) {

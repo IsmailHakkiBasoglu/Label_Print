@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { PDFDocument, PDFName } from "pdf-lib";
 import { describe, expect, it } from "vitest";
 import { tanexTemplates } from "../../src/core/catalog";
 import { newProject, type LabelProject, type TextElement } from "../../src/core/document";
@@ -75,6 +76,45 @@ describe("renderPdf geometry", () => {
   it("omits guides when turned off", async () => {
     const p = withText(newProject(tmpl("TW-2021")), "x");
     expect(await readGuideRects(await bytesOf(p, { guides: false }))).toHaveLength(0);
+  });
+});
+
+describe("yüklenen görseller", () => {
+  const PNG = Uint8Array.from(atob("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="), (c) => c.charCodeAt(0));
+  const store = (bytes?: Uint8Array) => ({ put: async () => {}, get: async () => bytes });
+  const project = (widthPx: number, heightPx: number, box = { width: 50, height: 25 }) => {
+    const p = newProject(tmpl("TW-2021"));
+    p.images.abc = { name: "logo.png", mime: "image/png", widthPx, heightPx };
+    p.designs.d1.elements = [{ kind: "symbol", id: "s", x: 1, y: 1, ...box, symbolId: "upload:abc", color: "#000000" }];
+    return p;
+  };
+
+  it("en-boy oranını korur ve kutuya ortalar", () => {
+    const op: any = layoutProject(project(100, 100), deps, { guides: false }).pages[0].ops[0];
+    expect(op).toMatchObject({ kind: "image", imageId: "abc", width: 25, height: 25 });
+    expect(op.x - labelRects(tmpl("TW-2021"))[0].x).toBeCloseTo(1 + 12.5, 4);
+  });
+
+  it("300 DPI altında DPI değeriyle uyarır", () => expect(layoutProject(project(300, 150), deps, { guides: false }).warnings.join()).toContain("152 DPI"));
+  it("yeterli çözünürlükte uyarmaz", () => expect(layoutProject(project(600, 300), deps, { guides: false }).warnings).toEqual([]));
+  it("üst bilgisi yoksa hata verir", () => {
+    const p = project(100, 100);
+    p.images = {};
+    expect(layoutProject(p, deps, { guides: false }).errors.join()).toContain("görsel");
+  });
+  it("baytı yoksa PDF durur", async () => {
+    const r = await renderPdf(project(600, 300), { ...deps, images: store(undefined) }, { guides: false });
+    expect(r.ok === false && r.errors.join()).toContain("logo.png");
+  });
+  it("21 hücrede görseli tek kez gömer", async () => {
+    const bytes = await renderPdf(project(600, 300), { ...deps, images: store(PNG) }, { guides: false });
+    if (!bytes.ok) throw new Error(bytes.errors.join());
+    const doc = await PDFDocument.load(bytes.bytes);
+    const images = [...doc.context.enumerateIndirectObjects()].filter(([, o]: any) => o.dict?.get?.(PDFName.of("Subtype")) === PDFName.of("Image"));
+    // A PNG with transparency is one picture plus its mask.
+    expect(images.filter(([, o]: any) => o.dict.has(PDFName.of("SMask")))).toHaveLength(1);
+    expect(images).toHaveLength(2);
+    expect((await pageContent(bytes.bytes)).text.match(/ Do/g)).toHaveLength(21);
   });
 });
 

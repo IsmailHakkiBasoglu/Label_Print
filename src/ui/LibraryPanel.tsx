@@ -1,4 +1,5 @@
-import { useMemo, useState, type ChangeEvent } from "react";
+import { useContext, useMemo, useState, type ChangeEvent } from "react";
+import { ingestImage } from "../core/imageStore";
 import { exportCustom, importCustom, saveCustom } from "../core/customTemplates";
 import { browserStorage } from "../core/storage";
 import type { Template } from "../core/templates";
@@ -9,7 +10,7 @@ import { catalog, searchSymbols, type SymbolEntry } from "../library/symbols/sea
 import { isMultiColor } from "../library/symbols/svg";
 import { PATTERNS } from "../library/textPatterns";
 import type { RenderDeps } from "../render/pdf";
-import { OpsView } from "../render/preview";
+import { ImageUrlContext, OpsView } from "../render/preview";
 import { IconView } from "./IconView";
 import { activeLabel } from "./LabelEditor";
 import { activeDesign, cellsLostBy, currentGrid, useAppState, type Store } from "./store";
@@ -179,6 +180,8 @@ function SymbolsTab({ store, deps, customSymbols, onLibraryChanged }: Pick<Props
   const [category, setCategory] = useState("");
   const [colored, setColored] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const imageUrl = useContext(ImageUrlContext);
+  const uploads = Object.entries(useAppState(store).project.images);
   const all = useMemo(() => {
     const mine = customSymbols.filter((s) => isMultiColor(s.icon) === colored);
     return [...mine, ...(colored ? (deps.colorSymbols ?? []) : catalog)];
@@ -190,8 +193,15 @@ function SymbolsTab({ store, deps, customSymbols, onLibraryChanged }: Pick<Props
     const file = event.target.files?.[0];
     event.target.value = "";
     if (!file) return;
-    const result = importCustomSymbol(await file.text(), file.name.replace(/\.svg$/i, ""), browserStorage());
-    setMessage("error" in result ? result.error : "Sembol eklendi.");
+    if (!deps.images) return setMessage("Tarayıcı depolaması kullanılamıyor; görsel kaydedilemedi.");
+    const result = await ingestImage(new Uint8Array(await file.arrayBuffer()), file.name, deps.images);
+    if (result.kind === "error") return setMessage(result.error);
+    if (result.kind === "image") {
+      store.addImage(result.id, result.meta);
+      return setMessage(`${file.name} eklendi. "Renkli" bölümünden yeniden seçebilirsiniz.`);
+    }
+    const symbol = importCustomSymbol(result.text, file.name.replace(/\.svg$/i, ""), browserStorage());
+    setMessage("error" in symbol ? symbol.error : "Sembol eklendi.");
     onLibraryChanged();
   }
 
@@ -214,11 +224,20 @@ function SymbolsTab({ store, deps, customSymbols, onLibraryChanged }: Pick<Props
           ))}
         </select>
         <label className="file-button">
-          SVG ekle
-          <input type="file" accept=".svg" onChange={importFile} />
+          Görsel ekle
+          <input type="file" accept=".png,.jpg,.jpeg,.svg" onChange={importFile} />
         </label>
       </div>
       {message && <p className="notice">{message}</p>}
+      {colored && uploads.length > 0 && (
+        <div className="icons grid">
+          {uploads.map(([id, meta]) => (
+            <button key={id} title={meta.name} aria-label={`Görsel ekle: ${meta.name}`} onClick={() => store.pickSymbol(`upload:${id}`)}>
+              <img src={imageUrl(id)} alt="" width={26} height={26} className="upload-thumb" />
+            </button>
+          ))}
+        </div>
+      )}
       <div className="icons grid">
         {list.map((s) => (
           <button key={s.id} title={s.tags.join(", ")} aria-label={`Sembol ekle: ${s.id}`} onClick={() => store.pickSymbol(s.id)}>

@@ -1,5 +1,7 @@
 import { useState, type ChangeEvent } from "react";
-import { parseProject, serialize } from "../core/document";
+import { exportProject, importProject } from "../core/projectFile";
+import { browserStorage } from "../core/storage";
+import { loadCustomSymbols } from "../library/symbols/custom";
 import { calibrationPdf } from "../render/calibration";
 import { renderPdf, type RenderDeps } from "../render/pdf";
 import { useAppState, type Store } from "./store";
@@ -13,7 +15,7 @@ function download(content: BlobPart, name: string, type: string) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-export function Toolbar({ store, deps }: { store: Store; deps: RenderDeps }) {
+export function Toolbar({ store, deps, onLibraryChanged }: { store: Store; deps: RenderDeps; onLibraryChanged?: () => void }) {
   const state = useAppState(store);
   const [error, setError] = useState<string | null>(null);
   const [ready, setReady] = useState<{ bytes: Uint8Array; warnings: string[] } | null>(null);
@@ -30,13 +32,18 @@ export function Toolbar({ store, deps }: { store: Store; deps: RenderDeps }) {
     }
   }
 
+  async function save() {
+    download(await exportProject(state.project, { images: deps.images, customSymbols: loadCustomSymbols(browserStorage()) }), "etiket.labelprint.json", "application/json");
+  }
+
   async function open(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     event.target.value = "";
     if (!file) return;
-    const result = parseProject(await file.text());
+    const result = await importProject(await file.text(), { images: deps.images, storage: browserStorage() });
     if (result.ok) {
-      setError(null);
+      setError(result.warnings.length ? result.warnings.join(" ") : null);
+      onLibraryChanged?.();
       store.load(result.project);
     } else {
       setError(result.error);
@@ -67,7 +74,7 @@ export function Toolbar({ store, deps }: { store: Store; deps: RenderDeps }) {
       <button disabled={!state.canRedo} onClick={() => store.redo()}>
         İleri
       </button>
-      <button onClick={() => download(serialize(state.project), "etiket.labelprint.json", "application/json")}>Kaydet</button>
+      <button onClick={save}>Kaydet</button>
       <label className="file-button">
         Aç
         <input type="file" accept=".json" onChange={open} />

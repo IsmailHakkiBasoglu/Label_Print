@@ -5,8 +5,10 @@ Hazır etiket kağıtlarına basılacak etiketleri görerek tasarlayıp **ölç�
 - Tanex A4 şablonlarının 159'u hazır gelir; ölçüleri şüpheli olanlar "Kontrol et" rozetiyle ve nedeniyle gösterilir.
 - Kendi şablonunu tanımlama, şablonu JSON olarak içe aktarma.
 - Yaprakta yalnızca seçili etiketlere basma, yarım kalmış yaprağa "Buradan başlat", kağıdın bir bölümüne serbest içerik.
-- Parametrik çerçeveler, hazır yazı desenleri, otomatik metin sığdırma.
-- 228 sembol ve Türkçe arama: metne "Mısır" yazınca mısır koçanı önerilir. Kendi SVG'ni ekleyebilirsin.
+- Her etikete farklı isim ve görsel: listeyi yapıştır, hücreler sırayla dolsun, uygun görsel kendiliğinden gelsin. İstenen hücre ortak tasarımdan ayrılabilir, liste taşarsa yeni sayfa açılır.
+- 6 düz ve 24 süslü çerçeve; motifler gerilmeden her etiket ölçüsüne oturur. Hazır yazı desenleri, otomatik metin sığdırma.
+- 228 tek renk sembol ve 351 renkli görsel, Türkçe arama: "Mısır" yazınca mısır koçanı önerilir.
+- Kendi PNG, JPG veya SVG görselini ekleme; kaydedilen proje dosyası görselleri de içinde taşır.
 - Cetvelli kalibrasyon sayfası ve yazıcı kayması düzeltmesi.
 
 ## Çalıştırma
@@ -36,7 +38,7 @@ npm test
 | Komut | Görev |
 |---|---|
 | `npx tsx tools/import-tanex/run.ts` | Tanex sayfasından şablon kataloğunu yeniden üretir (`data/templates.tanex.json`) |
-| `npx tsx tools/build-symbols.ts` | Sembol kataloğunu `src/library/symbols/source.json` dosyasından üretir |
+| `npx tsx tools/build-symbols.ts` | Sembol kataloğunu `src/library/symbols/source.json` dosyasından üretir. `FLUENT_EMOJI_DIR` bir Fluent Emoji kopyasını gösteriyorsa renkli kataloğu da üretir |
 
 Şablon ölçüleri Tanex'in herkese açık Word şablonlarından okunur; Word dosyaları depoda bulunmaz. Bu proje Tanex ile bağlantılı değildir. Lisanslar için [THIRD_PARTY.md](THIRD_PARTY.md).
 

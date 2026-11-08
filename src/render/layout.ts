@@ -24,6 +24,9 @@ const LINE_HEIGHT = 1.2;
 const MM_PER_PT = 25.4 / 72;
 const DEFAULT_FRAME = { strokeMm: 0.4, insetMm: 1, color: "#000000" };
 const BAND_WARNING = "Yazı veya görsel çerçeve süsüne değiyor.";
+const UPLOAD_PREFIX = "upload:";
+const MM_PER_INCH = 25.4;
+const PRINT_DPI = 300;
 
 type FitCache = Map<string, FitResult>;
 
@@ -62,7 +65,9 @@ function touchesBand(el: Rect, label: FrameLabel, band: number): boolean {
   return el.x < band || el.y < band || el.x + el.width > label.width - band || el.y + el.height > label.height - band;
 }
 
-function designOps(design: LabelDesign, box: Rect, label: FrameLabel, deps: LayoutDeps, warnings: string[], cache: FitCache): RenderOp[] {
+type ImageContext = { images: LabelProject["images"]; errors: string[] };
+
+function designOps(design: LabelDesign, box: Rect, label: FrameLabel, deps: LayoutDeps, warnings: string[], cache: FitCache, ctx: ImageContext): RenderOp[] {
   const ops: RenderOp[] = [];
   if (design.frameId) {
     const options = design.frameOptions ?? DEFAULT_FRAME;
@@ -74,6 +79,20 @@ function designOps(design: LabelDesign, box: Rect, label: FrameLabel, deps: Layo
   for (const el of design.elements) {
     if (el.kind === "text") {
       ops.push(...textOps(el, box, deps, warnings, cache));
+      continue;
+    }
+    if (el.symbolId.startsWith(UPLOAD_PREFIX)) {
+      const imageId = el.symbolId.slice(UPLOAD_PREFIX.length);
+      const meta = ctx.images[imageId];
+      if (!meta) {
+        ctx.errors.push("Yüklenen görsel bulunamadı; görseli yeniden ekleyin.");
+        continue;
+      }
+      const fit = Math.min(el.width / meta.widthPx, el.height / meta.heightPx);
+      const [width, height] = [meta.widthPx * fit, meta.heightPx * fit];
+      ops.push({ kind: "image", imageId, x: box.x + el.x + (el.width - width) / 2, y: box.y + el.y + (el.height - height) / 2, width, height });
+      const dpi = Math.round(meta.widthPx / (width / MM_PER_INCH));
+      if (dpi < PRINT_DPI) warnings.push(`Görsel "${meta.name}" bu boyutta düşük çözünürlüklü (${dpi} DPI); baskı için ${PRINT_DPI} DPI önerilir.`);
       continue;
     }
     const symbol = deps.symbols(el.symbolId);
@@ -101,8 +120,8 @@ function designOps(design: LabelDesign, box: Rect, label: FrameLabel, deps: Layo
 }
 
 /** One label at the origin, for the editor canvas. */
-export function layoutDesign(design: LabelDesign, label: FrameLabel, deps: LayoutDeps): RenderOp[] {
-  return designOps(design, { x: 0, y: 0, width: label.width, height: label.height }, label, deps, [], new Map());
+export function layoutDesign(design: LabelDesign, label: FrameLabel, deps: LayoutDeps, images: LabelProject["images"] = {}): RenderOp[] {
+  return designOps(design, { x: 0, y: 0, width: label.width, height: label.height }, label, deps, [], new Map(), { images, errors: [] });
 }
 
 function zoneRects(zone: Zone, deps: LayoutDeps): Rect[] {
@@ -123,6 +142,7 @@ export function layoutProject(project: LabelProject, deps: LayoutDeps, opts: { g
   const warnings: string[] = [];
   const errors: string[] = [];
   const cache: FitCache = new Map();
+  const ctx: ImageContext = { images: project.images, errors };
   const offset = project.printOffset;
   const moved = (r: Rect): Rect => ({ ...r, x: r.x + offset.x, y: r.y + offset.y });
 
@@ -141,7 +161,7 @@ export function layoutProject(project: LabelProject, deps: LayoutDeps, opts: { g
           errors.push("Bir bölge sayfa dışına taşıyor.");
           continue;
         }
-        ops.push(...designOps(zone.design, box, { width: zone.width, height: zone.height, shape: "rect" }, deps, warnings, cache));
+        ops.push(...designOps(zone.design, box, { width: zone.width, height: zone.height, shape: "rect" }, deps, warnings, cache, ctx));
         continue;
       }
       const template = deps.templates(zone.templateId);
@@ -163,7 +183,7 @@ export function layoutProject(project: LabelProject, deps: LayoutDeps, opts: { g
           continue;
         }
         const cellWarnings: string[] = [];
-        ops.push(...designOps(design, box, template.label, deps, cellWarnings, cache));
+        ops.push(...designOps(design, box, template.label, deps, cellWarnings, cache, ctx));
         warnings.push(...cellWarnings.map((w) => (zone.content[index] && w.startsWith('"') ? `${index + 1}. etiket: ${w}` : w)));
         if (opts.guides) ops.push({ kind: "guide", rect: box, shape: template.label.shape });
       }

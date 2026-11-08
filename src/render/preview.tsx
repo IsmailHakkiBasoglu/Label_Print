@@ -1,3 +1,4 @@
+import { createContext, useContext } from "react";
 import type { FontId } from "../core/document";
 import type { Rect } from "../core/geometry";
 import type { LayoutPage } from "./layout";
@@ -9,10 +10,19 @@ export function fontStyle(id: FontId) {
   return { fontFamily: id.startsWith("serif") ? "LP Serif" : "LP Sans", fontWeight: id.endsWith("bold") ? 700 : 400, fontKerning: "none" as const };
 }
 
+/** Resolves an uploaded image id to a displayable URL; undefined while it is loading or missing. */
+export const ImageUrlContext = createContext<(id: string) => string | undefined>(() => undefined);
+
 export function OpsView({ ops }: { ops: RenderOp[] }) {
+  const imageUrl = useContext(ImageUrlContext);
   return (
     <>
       {ops.map((op, i) => {
+        if (op.kind === "image") {
+          const url = imageUrl(op.imageId);
+          const box = { x: op.x, y: op.y, width: op.width, height: op.height };
+          return url ? <image key={i} href={url} {...box} preserveAspectRatio="none" /> : <rect key={i} className="image-missing" {...box} />;
+        }
         if (op.kind === "guide") {
           const { x, y, width, height } = op.rect;
           return op.shape === "circle" || op.shape === "oval" ? (

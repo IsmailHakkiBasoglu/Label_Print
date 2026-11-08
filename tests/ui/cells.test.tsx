@@ -1,11 +1,11 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import type { GridZone } from "../../src/core/document";
 import { LibraryPanel } from "../../src/ui/LibraryPanel";
 import { PropertiesPanel } from "../../src/ui/PropertiesPanel";
 import { SheetView } from "../../src/ui/SheetView";
-import { activeDesign, createStore } from "../../src/ui/store";
+import { activeDesign, createStore, PROJECT_KEY } from "../../src/ui/store";
 import { deps, memoryStorage, tmpl } from "./helpers/deps";
 
 afterEach(() => {
@@ -193,6 +193,50 @@ describe("renkli görsel sekmesi", () => {
     fireEvent.click(screen.getByRole("button", { name: "Doldur" }));
     const symbolId = activeDesign(s.getState()).elements.find((e) => e.kind === "symbol")!.id;
     expect(grid(s).content[0].values[symbolId]).toBe("color:corn");
+  });
+});
+
+describe("görsel yükleme", () => {
+  const PNG = Uint8Array.from(atob("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="), (c) => c.charCodeAt(0));
+  const memory = () => {
+    const data = new Map<string, Uint8Array>();
+    return { put: async (id: string, b: Uint8Array) => void data.set(id, b), get: async (id: string) => data.get(id) };
+  };
+  function open(storage = memoryStorage()) {
+    const s = createStore(tmpl("TW-2021"), storage);
+    render(<LibraryPanel store={s} deps={{ ...deps, images: memory() }} templates={[]} customSymbols={[]} onLibraryChanged={() => {}} />);
+    fireEvent.click(screen.getByRole("button", { name: "Sembol" }));
+    return { s, storage };
+  }
+  const upload = (bytes: Uint8Array, name: string) => {
+    const file = new File([bytes as BlobPart], name);
+    Object.defineProperty(file, "arrayBuffer", { value: () => Promise.resolve(bytes.buffer) });
+    fireEvent.change(screen.getByLabelText("Görsel ekle"), { target: { files: [file] } });
+  };
+
+  it("PNG yükler, etikete koyar ve otomatik kayda bayt yazmaz", async () => {
+    const { s, storage } = open();
+    upload(PNG, "logo.png");
+    await waitFor(() => expect(Object.keys(s.getState().project.images)).toHaveLength(1));
+    const id = Object.keys(s.getState().project.images)[0];
+    expect(activeDesign(s.getState()).elements[0]).toMatchObject({ symbolId: `upload:${id}` });
+    expect(storage.getItem(PROJECT_KEY)).not.toContain("iVBOR");
+    expect(storage.getItem(PROJECT_KEY)!.length).toBeLessThan(5000);
+  });
+
+  it("yüklenen görsel listede yeniden seçilebilir", async () => {
+    const { s } = open();
+    upload(PNG, "logo.png");
+    await waitFor(() => expect(Object.keys(s.getState().project.images)).toHaveLength(1));
+    fireEvent.click(screen.getByRole("button", { name: "Renkli" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Görsel ekle: logo.png" }));
+    expect(activeDesign(s.getState()).elements).toHaveLength(2);
+  });
+
+  it("tanınmayan dosyada açık mesaj verir", async () => {
+    open();
+    upload(new TextEncoder().encode("GIF89a"), "x.png");
+    await waitFor(() => expect(screen.getByText(/PNG, JPG veya SVG/)).toBeTruthy());
   });
 });
 

@@ -31,7 +31,7 @@ function NumberField({ label, value, onChange }: { label: string; value: number;
 
 function CellFields({ store, deps, cell, entry }: { store: Store; deps: RenderDeps; cell: number; entry?: CellEntry }) {
   const state = useAppState(store);
-  const symbolName = (id: string) => deps.symbols(id)?.tags[0] ?? id;
+  const symbolName = (id: string) => deps.symbols(id)?.tags[0] ?? state.project.images[id.replace("upload:", "")]?.name ?? id;
   return (
     <>
       {activeDesign(state).elements.map((element) => {

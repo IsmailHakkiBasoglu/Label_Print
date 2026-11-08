@@ -13,17 +13,19 @@ import {
   setStrokingColor,
   stroke,
   type PDFFont,
+  type PDFImage,
   type PDFOperator,
   type PDFPage,
 } from "pdf-lib";
 import type { FontId, LabelProject } from "../core/document";
+import type { ImageStore } from "../core/imageStore";
 import { mmToPt, type Rect } from "../core/geometry";
 import type { FontBytes } from "./fonts";
 import { layoutProject, type LayoutDeps } from "./layout";
 import type { GuideOp, PathOp } from "./ops";
 import type { SymbolEntry } from "../library/symbols/search";
 
-export type RenderDeps = LayoutDeps & { fontBytes: FontBytes; colorSymbols?: SymbolEntry[] };
+export type RenderDeps = LayoutDeps & { fontBytes: FontBytes; colorSymbols?: SymbolEntry[]; images?: ImageStore };
 export type RenderResult = { ok: true; bytes: Uint8Array; warnings: string[] } | { ok: false; errors: string[] };
 
 const GUIDE_WIDTH_PT = 0.25;
@@ -81,6 +83,13 @@ export async function renderPdf(project: LabelProject, deps: RenderDeps, opts: {
   const layout = layoutProject(project, deps, opts);
   if (layout.errors.length) return { ok: false, errors: layout.errors };
 
+  const imageBytes = new Map<string, Uint8Array>();
+  for (const id of new Set(layout.pages.flatMap((p) => p.ops.flatMap((op) => (op.kind === "image" ? [op.imageId] : []))))) {
+    const bytes = await deps.images?.get(id);
+    if (!bytes) return { ok: false, errors: [`"${project.images[id].name}" görseli bulunamadı; görseli yeniden yükleyin.`] };
+    imageBytes.set(id, bytes);
+  }
+
   const doc = await PDFDocument.create();
   doc.registerFontkit(fontkit);
   const fonts = new Map<FontId, PDFFont>();
@@ -90,12 +99,22 @@ export async function renderPdf(project: LabelProject, deps: RenderDeps, opts: {
     return fonts.get(id)!;
   };
 
+  const embedded = new Map<string, PDFImage>();
+  const image = async (id: string) => {
+    if (!embedded.has(id)) {
+      const bytes = imageBytes.get(id)!;
+      embedded.set(id, await (project.images[id].mime === "image/png" ? doc.embedPng(bytes) : doc.embedJpg(bytes)));
+    }
+    return embedded.get(id)!;
+  };
+
   for (const layoutPage of layout.pages) {
     const height = mmToPt(layoutPage.sheet.height);
     const page = doc.addPage([mmToPt(layoutPage.sheet.width), height]);
     for (const op of layoutPage.ops) {
       if (op.kind === "guide") drawGuide(page, op, height);
       else if (op.kind === "path") drawPath(page, op, height);
+      else if (op.kind === "image") page.drawImage(await image(op.imageId), { x: mmToPt(op.x), y: height - mmToPt(op.y + op.height), width: mmToPt(op.width), height: mmToPt(op.height) });
       else page.drawText(op.text, { x: mmToPt(op.x), y: height - mmToPt(op.y), size: op.sizePt, font: await font(op.font), color: hexToRgb(op.color) });
     }
   }

@@ -11,12 +11,16 @@ import { LabelEditor } from "./LabelEditor";
 import { LibraryPanel } from "./LibraryPanel";
 import { PropertiesPanel } from "./PropertiesPanel";
 import { SheetView } from "./SheetView";
-import { createStore } from "./store";
+import { createIdbImageStore } from "../core/imageStore";
+import { ImageUrlContext } from "../render/preview";
+import { createStore, useAppState } from "./store";
+import { useImageUrls } from "./useImageUrls";
 import { Toolbar } from "./Toolbar";
 import "./app.css";
 
 const DEFAULT_TEMPLATE = tanexTemplates.find((t) => t.id === "TW-2021")!;
 const store = createStore(DEFAULT_TEMPLATE, browserStorage());
+const images = createIdbImageStore();
 
 const base = import.meta.env.BASE_URL;
 const fontFaces = `
@@ -31,6 +35,7 @@ export function App() {
   const [colorSymbols, setColorSymbols] = useState<SymbolEntry[]>([]);
   const [failure, setFailure] = useState<string | null>(null);
   const [revision, setRevision] = useState(0);
+  const imageUrl = useImageUrls(useAppState(store).project.images, images);
 
   useEffect(() => {
     Promise.all([loadFontBytes(), loadColorCatalog()]).then(
@@ -51,6 +56,7 @@ export function App() {
     const symbols = [...customSymbols, ...catalog, ...colorSymbols];
     return {
       colorSymbols,
+      images,
       templates: (id) => templates.find((t) => t.id === id),
       symbols: (id) => symbols.find((s) => s.id === id),
       tools: createFontTools(fontBytes),
@@ -62,9 +68,10 @@ export function App() {
   if (!deps) return <p className="loading">Yükleniyor…</p>;
 
   return (
+    <ImageUrlContext.Provider value={imageUrl}>
     <div className="app">
       <style>{fontFaces}</style>
-      <Toolbar store={store} deps={deps} />
+      <Toolbar store={store} deps={deps} onLibraryChanged={() => setRevision((r) => r + 1)} />
       <main>
         <LibraryPanel store={store} deps={deps} templates={templates} customSymbols={customSymbols} onLibraryChanged={() => setRevision((r) => r + 1)} />
         <div className="workspace">
@@ -74,5 +81,6 @@ export function App() {
         <PropertiesPanel store={store} deps={deps} />
       </main>
     </div>
+    </ImageUrlContext.Provider>
   );
 }

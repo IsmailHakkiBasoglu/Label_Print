@@ -71,7 +71,7 @@ export function LabelEditor({ store, deps }: { store: Store; deps: RenderDeps })
           ) : (
             <rect width={label.width} height={label.height} rx={label.shape === "rounded" ? label.cornerRadius ?? 2 : 0} className="label-bg" />
           )}
-          <OpsView ops={layoutDesign(editingDesign(state), label, deps)} />
+          <OpsView ops={layoutDesign(editingDesign(state), label, deps, state.project.images)} />
           {design.elements.map((el) => {
             const selected = el.id === state.selectedElementId;
             return (

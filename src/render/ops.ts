@@ -18,4 +18,7 @@ export type TextOp = { kind: "text"; x: number; y: number; text: string; font: F
 
 export type GuideOp = { kind: "guide"; rect: Rect; shape: Shape };
 
-export type RenderOp = PathOp | TextOp | GuideOp;
+/** A user's PNG or JPG; `x`, `y` are the top-left corner in mm. */
+export type ImageOp = { kind: "image"; imageId: string; x: number; y: number; width: number; height: number };
+
+export type RenderOp = PathOp | TextOp | GuideOp | ImageOp;
