@@ -45,6 +45,37 @@ export type LabelProject = {
   printOffset: { x: number; y: number };
 };
 
+const FONT_IDS = ["sans", "sans-bold", "serif", "serif-bold"];
+const isNumber = (v: unknown): v is number => typeof v === "number" && Number.isFinite(v);
+const isBox = (v: any) => isNumber(v?.x) && isNumber(v.y) && isNumber(v.width) && v.width > 0 && isNumber(v.height) && v.height > 0;
+
+function isElement(e: any): boolean {
+  if (!isBox(e) || typeof e.id !== "string" || typeof e.color !== "string") return false;
+  if (e.kind === "symbol") return typeof e.symbolId === "string";
+  return e.kind === "text" && typeof e.text === "string" && FONT_IDS.includes(e.fontId) && isNumber(e.sizePt) && e.sizePt > 0 && ["left", "center", "right"].includes(e.align);
+}
+
+function isDesign(d: any): boolean {
+  if (!Array.isArray(d?.elements) || !d.elements.every(isElement)) return false;
+  const o = d.frameOptions;
+  return (d.frameId === undefined || typeof d.frameId === "string") && (o === undefined || (isNumber(o.strokeMm) && o.strokeMm > 0 && isNumber(o.insetMm) && typeof o.color === "string"));
+}
+
+function isZone(z: any): boolean {
+  if (z?.kind === "free") return isBox(z) && isDesign(z.design);
+  return (
+    z?.kind === "grid" &&
+    typeof z.templateId === "string" &&
+    Array.isArray(z.cells?.used) &&
+    z.cells.used.every(Number.isInteger) &&
+    Array.isArray(z.designIds) &&
+    z.designIds.length > 0 &&
+    z.designIds.every((id: unknown) => typeof id === "string")
+  );
+}
+
+const isPage = (p: any) => isNumber(p?.sheet?.width) && p.sheet.width > 0 && isNumber(p.sheet.height) && p.sheet.height > 0 && Array.isArray(p.zones) && p.zones.every(isZone);
+
 export function newProject(template: Template): LabelProject {
   const count = template.grid.columns * template.grid.rows;
   return {
@@ -72,10 +103,15 @@ export function parseProject(text: string): { ok: true; project: LabelProject } 
     return { ok: false, error: "Dosya okunamadı: geçerli bir Label Print dosyası değil." };
   }
   if (value?.version !== 1) return { ok: false, error: "Bu dosya sürümü desteklenmiyor." };
-  const offsetOk = typeof value.printOffset?.x === "number" && typeof value.printOffset?.y === "number";
-  const pagesOk = Array.isArray(value.pages) && value.pages.every((p: any) => p?.sheet && Array.isArray(p.zones));
-  if (!offsetOk || !pagesOk || typeof value.designs !== "object" || value.designs === null) {
-    return { ok: false, error: "Dosya bozuk: gerekli alanlar eksik." };
-  }
+  const valid =
+    isNumber(value.printOffset?.x) &&
+    isNumber(value.printOffset?.y) &&
+    Array.isArray(value.pages) &&
+    value.pages.length > 0 &&
+    value.pages.every(isPage) &&
+    typeof value.designs === "object" &&
+    value.designs !== null &&
+    Object.values(value.designs).every(isDesign);
+  if (!valid) return { ok: false, error: "Dosya bozuk: gerekli alanlar eksik veya hatalı." };
   return { ok: true, project: value as LabelProject };
 }

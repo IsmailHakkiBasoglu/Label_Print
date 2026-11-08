@@ -23,10 +23,34 @@ function points(a: Attrs): string[] {
   return out;
 }
 
+const NUMBER = /^[\s,]*([-+]?(?:\d*\.\d+|\d+\.?)(?:[eE][-+]?\d+)?)/;
+const FLAG = /^[\s,]*([01])/;
+
+/** Rewrites path data with every argument separated, because pdf-lib cannot read compact forms such as arc flags written as "011". */
+export function normalizePathData(d: string): string {
+  let rest = d.trim();
+  let out = "";
+  while (rest) {
+    const command = /^[\s,]*([a-zA-Z])/.exec(rest);
+    if (!command) return d;
+    rest = rest.slice(command[0].length);
+    const isArc = command[1].toLowerCase() === "a";
+    const args: string[] = [];
+    for (;;) {
+      const match = (isArc && [3, 4].includes(args.length % 7) ? FLAG : NUMBER).exec(rest);
+      if (!match) break;
+      args.push(match[1]);
+      rest = rest.slice(match[0].length);
+    }
+    out += command[1] + args.join(" ");
+  }
+  return out;
+}
+
 function shapeToPath(tag: string, a: Attrs): string | null {
   switch (tag) {
     case "path":
-      return a.d ?? null;
+      return a.d ? normalizePathData(a.d) : null;
     case "circle":
     case "ellipse": {
       const [cx, cy] = [num(a, "cx"), num(a, "cy")];

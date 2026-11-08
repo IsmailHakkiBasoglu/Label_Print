@@ -89,7 +89,10 @@
    "shape": "rect"
   },
   "source": "tanex",
-  "status": "verified"
+  "status": "check",
+  "notes": [
+   "Altta bir satır daha sığıyor; Word dosyası eksik olabilir."
+  ]
  },
  {
   "id": "TW-2004",
@@ -112,7 +115,10 @@
    "shape": "rect"
   },
   "source": "tanex",
-  "status": "verified"
+  "status": "check",
+  "notes": [
+   "Yatay boşluklar dengesiz (sol 5.01, sağ 3.88 mm)."
+  ]
  },
  {
   "id": "TW-2006",
@@ -296,7 +302,10 @@
    "shape": "rect"
   },
   "source": "tanex",
-  "status": "verified"
+  "status": "check",
+  "notes": [
+   "Yatay boşluklar dengesiz (sol 5.01, sağ 3.88 mm)."
+  ]
  },
  {
   "id": "TW-2018",
@@ -437,7 +446,10 @@
    "shape": "rect"
   },
   "source": "tanex",
-  "status": "verified"
+  "status": "check",
+  "notes": [
+   "Yatay boşluklar dengesiz (sol 7.99, sağ 38.01 mm)."
+  ]
  },
  {
   "id": "TW-2027",
@@ -915,7 +927,10 @@
    "shape": "rect"
   },
   "source": "tanex",
-  "status": "verified"
+  "status": "check",
+  "notes": [
+   "Altta bir satır daha sığıyor; Word dosyası eksik olabilir."
+  ]
  },
  {
   "id": "TW-2065",
@@ -1557,12 +1572,12 @@
    "height": 297
   },
   "grid": {
-   "columns": 4,
-   "rows": 5,
-   "marginLeft": 15.998472222222222,
-   "marginTop": 14.005277777777776,
-   "gapX": 5.984583333333326,
-   "gapY": 5.7905555555555495
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
   },
   "label": {
    "width": 40,
@@ -1570,7 +1585,10 @@
    "shape": "circle"
   },
   "source": "tanex",
-  "status": "verified"
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket yüksekliği: tablonun kenarında etiket ölçüsüne uymayan bir satır/sütun var."
+  ]
  },
  {
   "id": "TW-2141",
@@ -2472,7 +2490,10 @@
    "shape": "rect"
   },
   "source": "tanex",
-  "status": "verified"
+  "status": "check",
+  "notes": [
+   "Word sayfası A4 değil (209.99×298.04 mm)."
+  ]
  },
  {
   "id": "TW-2320",
@@ -3415,7 +3436,8 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Sayfada tek ölçü var, şekil belirsiz: kontrol edin."
+   "Sayfada tek ölçü var, şekil belirsiz: kontrol edin.",
+   "Yatay boşluklar dengesiz (sol 45.51, sağ 47.49 mm)."
   ]
  },
  {
@@ -3488,7 +3510,10 @@
    "shape": "rect"
   },
   "source": "tanex",
-  "status": "verified"
+  "status": "check",
+  "notes": [
+   "Altta bir satır daha sığıyor; Word dosyası eksik olabilir."
+  ]
  },
  {
   "id": "TW-4097",
@@ -3534,7 +3559,10 @@
    "shape": "rect"
   },
   "source": "tanex",
-  "status": "verified"
+  "status": "check",
+  "notes": [
+   "Altta bir satır daha sığıyor; Word dosyası eksik olabilir."
+  ]
  },
  {
   "id": "TW-4574",
@@ -3582,7 +3610,8 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Sayfadaki ölçü (64×100) Word dosyasının tersi; Word yönü kullanıldı."
+   "Sayfadaki ölçü (64×100) Word dosyasının tersi; Word yönü kullanıldı.",
+   "Word sayfası A4 değil (122.03×234.02 mm)."
   ]
  },
  {
@@ -3660,7 +3689,8 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Sayfadaki ölçü (20×55) Word dosyasının tersi; Word yönü kullanıldı."
+   "Sayfadaki ölçü (20×55) Word dosyasının tersi; Word yönü kullanıldı.",
+   "Word sayfası A4 değil (195.03×228.11 mm)."
   ]
  },
  {
@@ -3686,7 +3716,8 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Sayfadaki ölçü (22×55) Word dosyasının tersi; Word yönü kullanıldı."
+   "Sayfadaki ölçü (22×55) Word dosyasının tersi; Word yönü kullanıldı.",
+   "Word sayfası A4 değil (195.03×226.61 mm)."
   ]
  },
  {
@@ -3712,7 +3743,8 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Sayfadaki ölçü (35×55) Word dosyasının tersi; Word yönü kullanıldı."
+   "Sayfadaki ölçü (35×55) Word dosyasının tersi; Word yönü kullanıldı.",
+   "Word sayfası A4 değil (193.06×230.06 mm)."
   ]
  },
  {
@@ -3738,7 +3770,8 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Sayfadaki ölçü (35×77) Word dosyasının tersi; Word yönü kullanıldı."
+   "Sayfadaki ölçü (35×77) Word dosyasının tersi; Word yönü kullanıldı.",
+   "Word sayfası A4 değil (181.01×228.07 mm)."
   ]
  },
  {
@@ -3764,7 +3797,8 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Sayfadaki ölçü (35×97) Word dosyasının tersi; Word yönü kullanıldı."
+   "Sayfadaki ölçü (35×97) Word dosyasının tersi; Word yönü kullanıldı.",
+   "Word sayfası A4 değil (217.03×230.59 mm)."
   ]
  },
  {

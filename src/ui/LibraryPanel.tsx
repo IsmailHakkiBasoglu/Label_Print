@@ -1,5 +1,5 @@
 import { useMemo, useState, type ChangeEvent } from "react";
-import { importCustom, saveCustom } from "../core/customTemplates";
+import { exportCustom, importCustom, saveCustom } from "../core/customTemplates";
 import { browserStorage } from "../core/storage";
 import type { Template } from "../core/templates";
 import { FRAMES } from "../library/frames";
@@ -69,6 +69,15 @@ function TemplatesTab({ store, templates, onLibraryChanged }: Pick<Props, "store
     setMessage([`${result.added.length} şablon eklendi.`, ...result.renamed.map((id) => `${id} adı çakıştı, yeni kod verildi.`), ...result.errors].join(" "));
   }
 
+  function exportFile() {
+    const url = URL.createObjectURL(new Blob([exportCustom(browserStorage())], { type: "application/json" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "ozel-sablonlar.json";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
   return (
     <div>
       <div className="actions">
@@ -77,6 +86,7 @@ function TemplatesTab({ store, templates, onLibraryChanged }: Pick<Props, "store
           İçe aktar
           <input type="file" accept=".json" onChange={importFile} />
         </label>
+        <button onClick={exportFile}>Dışa aktar</button>
       </div>
       {message && <p className="notice">{message}</p>}
       {building ? (

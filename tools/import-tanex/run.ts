@@ -5,6 +5,7 @@ import { strFromU8, unzipSync } from "fflate";
 import { validateTemplate, type Template } from "../../src/core/templates";
 import { parseDocumentXml } from "./parse-docx";
 import { parseListHtml, parseSize, type TanexRow } from "./parse-list";
+import { plausibilityNotes } from "./plausibility";
 
 const PAGE = "https://www.tanexlabel.com/sablonlar-ve-olculer/";
 const CACHE = join(import.meta.dirname, ".cache");
@@ -34,6 +35,7 @@ async function convert(row: TanexRow): Promise<Template> {
   const label = { width: size.width, height: size.height, shape: size.shape };
   const fallback = { sheet: A4, grid: { columns: 1, rows: 1, marginTop: 0, marginLeft: 0, gapX: 0, gapY: 0 } };
   let layout = fallback;
+  let parsedGrid = false;
   try {
     if (row.url.toLowerCase().endsWith(".doc")) throw new Error("Eski .doc biçimi okunamıyor; ızgarayı elle girin.");
     const xml = strFromU8(unzipSync(await cached(row.url))["word/document.xml"]);
@@ -46,6 +48,7 @@ async function convert(row: TanexRow): Promise<Template> {
       parsed = swapped;
     }
     layout = parsed;
+    parsedGrid = true;
   } catch (error) {
     notes.push(`Izgara okunamadı: ${(error as Error).message}`);
   }
@@ -59,6 +62,7 @@ async function convert(row: TanexRow): Promise<Template> {
     status: "verified",
   };
   notes.push(...validateTemplate(template));
+  if (parsedGrid) notes.push(...plausibilityNotes(template));
   if (notes.length) {
     template.status = "check";
     template.notes = notes;
@@ -84,5 +88,3 @@ writeFileSync(OUTPUT, JSON.stringify(results, null, 1) + "\n");
 const check = results.filter((t) => t.status === "check");
 console.log(`toplam=${results.length} verified=${results.length - check.length} check=${check.length}`);
 for (const t of check) console.log(`${t.id}: ${t.notes!.join(" | ")}`);
-const asym = results.filter((t) => t.status === "verified" && Math.abs(t.sheet.width - (2 * t.grid.marginLeft + t.grid.columns * t.label.width + (t.grid.columns - 1) * t.grid.gapX)) > 0.4);
-console.log(`yatay simetrik olmayan (>0.4mm): ${asym.length} ${asym.map((t) => t.id).join(" ")}`);

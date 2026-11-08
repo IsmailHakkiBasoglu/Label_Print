@@ -16,6 +16,10 @@ export function saveCustom(template: Template, storage: StorageLike): void {
   safeWrite(storage, KEY, JSON.stringify([...loadCustom(storage), template]));
 }
 
+export function exportCustom(storage: StorageLike): string {
+  return JSON.stringify(loadCustom(storage), null, 2);
+}
+
 export function searchTemplates(query: string, templates: Template[]): Template[] {
   const tokens = query.toLocaleLowerCase("tr").replace(/,/g, ".").split(/\s+/).filter(Boolean);
   return templates.filter((t) => {

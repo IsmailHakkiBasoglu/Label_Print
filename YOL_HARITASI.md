@@ -1,7 +1,7 @@
 # Yol Haritası
 
 ## Sıradaki
-- [ ] "Kontrol et" durumundaki 45 Tanex şablonunu gözden geçirmek. Bazılarında sayfadaki ölçü Word hücresinden farklı (örn. TW-2222: 105×23 / Word 105×25,4); gerçek kağıtla doğrulanmalı.
+- [ ] "Kontrol et" durumundaki 54 Tanex şablonunu gözden geçirmek. Bazılarında sayfadaki ölçü Word hücresinden farklı (örn. TW-2222: 105×23 / Word 105×25,4); gerçek kağıtla doğrulanmalı.
 - [ ] Eski `.doc` biçimindeki TW-2041'in ızgarasını girmek.
 - [ ] Köşe yarıçaplarını şablonlara eklemek (Tanex verisinde yok).
 

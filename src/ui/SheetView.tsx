@@ -8,7 +8,7 @@ import { useAppState, type Store } from "./store";
 export function SheetView({ store, deps }: { store: Store; deps: RenderDeps }) {
   const state = useAppState(store);
   const [startMode, setStartMode] = useState(false);
-  const layout = useMemo(() => layoutProject(state.project, deps, { guides: state.guides }), [state.project, state.guides, deps]);
+  const layout = useMemo(() => layoutProject(state.project, deps, { guides: true }), [state.project, deps]);
   const zone = state.project.pages[0].zones.find((z) => z.kind === "grid");
   const template = zone?.kind === "grid" ? deps.templates(zone.templateId) : undefined;
   const cells = template ? labelRects(template) : [];

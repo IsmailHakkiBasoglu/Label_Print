@@ -34,7 +34,7 @@ async function bytesOf(p: LabelProject, opts = guides) {
 
 describe("renderPdf geometry", () => {
   it("creates an exact A4 page", async () => {
-    const { width, height } = await pageContent(await bytesOf(newProject(tmpl("TW-2021"))));
+    const { width, height } = await pageContent(await bytesOf(withText(newProject(tmpl("TW-2021")), "x")));
     expect(width).toBeCloseTo(595.2756, 4);
     expect(height).toBeCloseTo(841.8898, 4);
   });
@@ -42,7 +42,7 @@ describe("renderPdf geometry", () => {
   it("places all TW-2021 labels within 0.01 mm", async () => {
     const t = tmpl("TW-2021");
     const expected = labelRects(t);
-    const actual = await readGuideRects(await bytesOf(newProject(t)));
+    const actual = await readGuideRects(await bytesOf(withText(newProject(t), "x")));
     expect(actual).toHaveLength(21);
     actual.forEach((r, i) => {
       expect(Math.abs(r.x - expected[i].x)).toBeLessThanOrEqual(0.01);
@@ -54,7 +54,7 @@ describe("renderPdf geometry", () => {
 
   it("applies the printer offset", async () => {
     const t = tmpl("TW-2021");
-    const p = newProject(t);
+    const p = withText(newProject(t), "x");
     p.printOffset = { x: 1, y: -0.5 };
     const [first] = await readGuideRects(await bytesOf(p));
     expect(first.x).toBeCloseTo(labelRects(t)[0].x + 1, 2);
@@ -62,7 +62,7 @@ describe("renderPdf geometry", () => {
   });
 
   it("draws round guides as curves", async () => {
-    expect(await countGuideCurves(await bytesOf(newProject(tmpl("TW-2130"))))).toBe(48);
+    expect(await countGuideCurves(await bytesOf(withText(newProject(tmpl("TW-2130")), "x")))).toBe(48);
   });
 
   it("prints only selected cells", async () => {

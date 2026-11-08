@@ -21,9 +21,13 @@ export function Toolbar({ store, deps }: { store: Store; deps: RenderDeps }) {
 
   async function makePdf() {
     setError(null);
-    const result = await renderPdf(state.project, deps, { guides: state.guides });
-    if (result.ok) setReady(result);
-    else setError(result.errors.join(" "));
+    try {
+      const result = await renderPdf(state.project, deps, { guides: state.guides });
+      if (result.ok) setReady(result);
+      else setError(result.errors.join(" "));
+    } catch (e) {
+      setError(`PDF oluşturulamadı: ${(e as Error).message}`);
+    }
   }
 
   async function open(event: ChangeEvent<HTMLInputElement>) {
@@ -70,7 +74,7 @@ export function Toolbar({ store, deps }: { store: Store; deps: RenderDeps }) {
       </label>
       <span className="spacer" />
       <label className="inline">
-        <input type="checkbox" checked={state.guides} onChange={(e) => store.setGuides(e.target.checked)} /> Kılavuz çizgileri
+        <input type="checkbox" checked={state.guides} onChange={(e) => store.setGuides(e.target.checked)} /> PDF'e kılavuz çizgileri
       </label>
       <span className="group" title="Yazıcı kayması için milimetre düzeltmesi">
         Yazıcı düzeltmesi {offsetField("x", x)} {offsetField("y", y)}

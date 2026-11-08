@@ -46,7 +46,7 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
     project: restored?.ok ? restored.project : newProject(defaultTemplate),
     selectedElementId: null,
     active: null,
-    guides: true,
+    guides: false,
     canUndo: false,
     canRedo: false,
   };

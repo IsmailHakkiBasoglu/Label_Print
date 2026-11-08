@@ -2,6 +2,7 @@ import type { DesignElement, FontId, SymbolElement, TextElement } from "../core/
 import type { FontMeasure } from "../render/fonts";
 
 export const MIN_TEXT_PT = 4;
+const MAX_TEXT_PT = 200;
 const PT_PER_MM = 72 / 25.4;
 const STEP_PT = 0.25;
 
@@ -42,7 +43,7 @@ export function fitText(
   measure: FontMeasure,
   lineHeight = 1.2,
 ): FitResult {
-  for (let sizePt = Math.max(startPt, MIN_TEXT_PT); ; sizePt = Math.max(sizePt - STEP_PT, MIN_TEXT_PT)) {
+  for (let sizePt = Math.min(Math.max(startPt, MIN_TEXT_PT), MAX_TEXT_PT); ; sizePt = Math.max(sizePt - STEP_PT, MIN_TEXT_PT)) {
     const lines = wrap(text, font, sizePt, box.width, measure);
     const fits = (lines.length * sizePt * lineHeight) / PT_PER_MM <= box.height && lines.every((l) => measure(l, font, sizePt) <= box.width);
     if (fits) return { sizePt, lines, overflow: false };

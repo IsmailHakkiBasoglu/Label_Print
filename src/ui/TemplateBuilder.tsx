@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { labelRects } from "../core/geometry";
 import { validateTemplate, type Shape, type Template } from "../core/templates";
+import { SheetPreview } from "../render/preview";
 
 const NUMBER_FIELDS = [
   ["sheetWidth", "Kağıt genişliği"],
@@ -49,11 +51,12 @@ export function TemplateBuilder({ onSave }: { onSave: (t: Template) => void }) {
         {NUMBER_FIELDS.map(([key, label]) => (
           <label key={key}>
             {label}
-            <input type="number" step="0.01" value={v[key]} onChange={(e) => setV({ ...v, [key]: e.target.valueAsNumber ?? Number(e.target.value) })} />
+            <input type="number" step="0.01" value={Number.isNaN(v[key]) ? "" : v[key]} onChange={(e) => setV({ ...v, [key]: e.target.value === "" ? NaN : Number(e.target.value) })} />
           </label>
         ))}
       </div>
       {errors.length > 0 && <div role="alert" className="error">{errors.join(" ")}</div>}
+      {errors.length === 0 && <SheetPreview page={{ sheet: template.sheet, ops: labelRects(template).map((rect) => ({ kind: "guide" as const, rect, shape })) }} />}
       <button className="primary" disabled={errors.length > 0 || !name.trim()} onClick={() => onSave(template)}>
         Şablonu kaydet
       </button>

@@ -6,7 +6,7 @@ import type { RenderOp } from "./ops";
 const MM_PER_PT = 25.4 / 72;
 
 export function fontStyle(id: FontId) {
-  return { fontFamily: id.startsWith("serif") ? "LP Serif" : "LP Sans", fontWeight: id.endsWith("bold") ? 700 : 400 };
+  return { fontFamily: id.startsWith("serif") ? "LP Serif" : "LP Sans", fontWeight: id.endsWith("bold") ? 700 : 400, fontKerning: "none" as const };
 }
 
 export function OpsView({ ops }: { ops: RenderOp[] }) {

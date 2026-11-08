@@ -18,12 +18,18 @@ type Axis = { count: number; lead: number; gap: number } | { error: string };
 /** Sizes alternate labels and spacers; finds labels and returns their count, lead-in and spacing. */
 function readAxis(sizes: number[], label: number, name: string): Axis {
   const positions: number[] = [];
+  const matched: number[] = [];
   let cursor = 0;
-  for (const size of sizes) {
-    if (Math.abs(size - label) <= MATCH_MM) positions.push(cursor);
+  sizes.forEach((size, i) => {
+    if (Math.abs(size - label) <= MATCH_MM) {
+      positions.push(cursor);
+      matched.push(i);
+    }
     cursor += size;
-  }
+  });
   if (positions.length === 0) return { error: `${name} ölçüsü Word tablosunda bulunamadı.` };
+  const outer = sizes.filter((_, i) => i < matched[0] || i > matched[matched.length - 1]);
+  if (outer.some((size) => size >= label / 2)) return { error: `${name}: tablonun kenarında etiket ölçüsüne uymayan bir satır/sütun var.` };
   if (positions.length === 1) return { count: 1, lead: positions[0], gap: 0 };
   const pitch = (positions[positions.length - 1] - positions[0]) / (positions.length - 1);
   if (positions.some((p, i) => Math.abs(p - positions[0] - i * pitch) > MATCH_MM)) {

@@ -23,7 +23,9 @@ export function createFontTools(bytes: FontBytes): FontTools {
   return {
     measure(text, id, sizePt) {
       const font = get(id);
-      return (font.layout(text).advanceWidth / font.unitsPerEm) * sizePt * MM_PER_PT;
+      // PDF text is drawn glyph by glyph without kerning, so measure the same way.
+      const advance = font.layout(text).glyphs.reduce((sum: number, g: any) => sum + g.advanceWidth, 0);
+      return (advance / font.unitsPerEm) * sizePt * MM_PER_PT;
     },
     unsupported(text, id) {
       const font = get(id);

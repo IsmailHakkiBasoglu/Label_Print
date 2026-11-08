@@ -23,6 +23,8 @@ export function normalizeSheet(width: number, height: number): { width: number; 
 export function validateTemplate(t: Template): string[] {
   const errors: string[] = [];
   const { sheet, grid, label } = t;
+  const all = [sheet.width, sheet.height, label.width, label.height, grid.columns, grid.rows, grid.marginTop, grid.marginLeft, grid.gapX, grid.gapY];
+  if (!all.every(Number.isFinite)) return ["Tüm ölçüleri girin."];
   if (!(sheet.width > 0 && sheet.height > 0)) errors.push("Kağıt ölçüleri sıfırdan büyük olmalı.");
   if (!(label.width > 0 && label.height > 0)) errors.push("Etiket ölçüleri sıfırdan büyük olmalı.");
   if (!(Number.isInteger(grid.columns) && grid.columns >= 1)) errors.push("Sütun sayısı en az 1 tam sayı olmalı.");
