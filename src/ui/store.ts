@@ -1,15 +1,18 @@
 import { useSyncExternalStore } from "react";
+import { gridZones, pruneDesigns, resolveCellDesign } from "../core/cells";
 import {
   newProject,
   parseProject,
   serialize,
   type DesignElement,
   type FrameOptions,
+  type GridZone,
   type LabelDesign,
   type LabelProject,
   type TextElement,
 } from "../core/document";
 import type { Rect } from "../core/geometry";
+import { applyListFill, type ListFillOptions } from "../core/listFill";
 import { safeRead, safeWrite, type StorageLike } from "../core/storage";
 import type { Template } from "../core/templates";
 import { applyPattern as buildPattern } from "../library/textPatterns";
@@ -20,8 +23,11 @@ const HISTORY_LIMIT = 50;
 const SAMPLE_TEXTS = ["Başlık", "Alt başlık", "Bilgi"];
 
 export type Active = { zone: number } | null;
+export type Scope = { kind: "all" } | { kind: "cell"; cell: number };
 export type AppState = {
   project: LabelProject;
+  pageIndex: number;
+  scope: Scope;
   selectedElementId: string | null;
   active: Active;
   guides: boolean;
@@ -29,13 +35,47 @@ export type AppState = {
   canRedo: boolean;
 };
 
+type PageRef = Pick<AppState, "project" | "pageIndex">;
+
+export const currentPage = (state: PageRef) => state.project.pages[state.pageIndex];
+export const currentGrid = (state: PageRef) => currentPage(state).zones.find((z): z is GridZone => z.kind === "grid");
+
+/** The design that edits apply to: a free zone's, a detached cell's, or the shared one. */
 export function activeDesign(state: AppState): LabelDesign {
   if (state.active) {
-    const zone = state.project.pages[0].zones[state.active.zone];
+    const zone = currentPage(state).zones[state.active.zone];
     if (zone?.kind === "free") return zone.design;
   }
-  const grid = state.project.pages[0].zones.find((z) => z.kind === "grid");
-  return state.project.designs[grid?.kind === "grid" ? grid.designId : "d1"] ?? { elements: [] };
+  const grid = currentGrid(state);
+  const own = grid && state.scope.kind === "cell" ? grid.content[state.scope.cell]?.designId : undefined;
+  return state.project.designs[own ?? grid?.designId ?? "d1"] ?? { elements: [] };
+}
+
+/** What the editor draws: the active design with the selected cell's values applied. */
+export function editingDesign(state: AppState): LabelDesign {
+  const grid = currentGrid(state);
+  if (state.active || !grid || state.scope.kind !== "cell") return activeDesign(state);
+  return resolveCellDesign(grid, state.scope.cell, state.project.designs) ?? activeDesign(state);
+}
+
+/** How many cells with content a template of this capacity could not hold. */
+export function cellsLostBy(project: LabelProject, capacity: number): number {
+  return gridZones(project).reduce((n, z) => n + Object.keys(z.content).filter((k) => Number(k) >= capacity).length, 0);
+}
+
+/** A pattern rebuilds the elements with new ids; cell values follow them by kind and order. */
+function remapValues(project: LabelProject, design: LabelDesign, before: DesignElement[]) {
+  const mapping = new Map<string, string>();
+  for (const kind of ["text", "symbol"] as const) {
+    const next = design.elements.filter((e) => e.kind === kind);
+    before.filter((e) => e.kind === kind).forEach((e, i) => next[i] && mapping.set(e.id, next[i].id));
+  }
+  for (const zone of gridZones(project)) {
+    for (const entry of Object.values(zone.content)) {
+      if (project.designs[entry.designId ?? zone.designId] !== design) continue;
+      entry.values = Object.fromEntries(Object.entries(entry.values).flatMap(([id, value]) => (mapping.has(id) ? [[mapping.get(id)!, value]] : [])));
+    }
+  }
 }
 
 export type Store = ReturnType<typeof createStore>;
@@ -45,6 +85,8 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
   const restored = saved ? parseProject(saved) : null;
   let state: AppState = {
     project: restored?.ok ? restored.project : newProject(defaultTemplate),
+    pageIndex: 0,
+    scope: { kind: "all" },
     selectedElementId: null,
     active: null,
     guides: false,
@@ -79,10 +121,13 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
   function restore(project: LabelProject) {
     lastMergeKey = null;
     safeWrite(storage, PROJECT_KEY, serialize(project));
-    set({ project, selectedElementId: null, active: null });
+    const pageIndex = Math.min(state.pageIndex, project.pages.length - 1);
+    set({ project, pageIndex, scope: pageIndex === state.pageIndex ? state.scope : { kind: "all" }, selectedElementId: null, active: null });
   }
 
   const newId = (prefix: string) => `${prefix}-${Date.now().toString(36)}-${nextId++}`;
+  const gridOf = (project: LabelProject) => currentGrid({ project, pageIndex: state.pageIndex });
+  const leaveCell = { scope: { kind: "all" } as Scope, active: null, selectedElementId: null };
 
   return {
     getState: () => state,
@@ -119,10 +164,12 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
     },
     applyPattern(patternId: string, label: { width: number; height: number }) {
       commit(
-        (_, design) => {
-          const texts = design.elements.filter((e): e is TextElement => e.kind === "text").map((e) => e.text);
-          const symbol = design.elements.find((e) => e.kind === "symbol");
+        (project, design) => {
+          const before = design.elements;
+          const texts = before.filter((e): e is TextElement => e.kind === "text").map((e) => e.text);
+          const symbol = before.find((e) => e.kind === "symbol");
           design.elements = buildPattern(patternId, label, texts.length ? texts : SAMPLE_TEXTS, symbol?.kind === "symbol" ? symbol.symbolId : undefined);
+          remapValues(project, design, before);
         },
         { selectedElementId: null },
       );
@@ -134,28 +181,118 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
       });
     },
     setTemplate(template: Template) {
-      commit(
-        (project) => {
-          const page = project.pages[0];
+      const capacity = template.grid.columns * template.grid.rows;
+      commit((project) => {
+        const used = Array.from({ length: capacity }, (_, i) => i);
+        const orphaned: string[] = [];
+        const shared = gridZones(project)[0]?.designId ?? "d1";
+        for (const page of project.pages) {
           page.sheet = { ...template.sheet };
-          const used = Array.from({ length: template.grid.columns * template.grid.rows }, (_, i) => i);
-          const index = page.zones.findIndex((z) => z.kind === "grid");
-          if (index >= 0) {
-            const zone = page.zones[index];
-            if (zone.kind === "grid") Object.assign(zone, { templateId: template.id, cells: { used } });
-          } else {
-            page.zones.unshift({ kind: "grid", templateId: template.id, cells: { used }, designId: "d1", content: {} });
-            project.designs.d1 ??= { elements: [] };
+          const zone = page.zones.find((z): z is GridZone => z.kind === "grid");
+          if (!zone) {
+            page.zones.unshift({ kind: "grid", templateId: template.id, cells: { used: [...used] }, designId: shared, content: {} });
+            continue;
           }
-        },
-        { active: null, selectedElementId: null },
-      );
+          Object.assign(zone, { templateId: template.id, cells: { used: [...used] } });
+          for (const key of Object.keys(zone.content).map(Number).filter((k) => k >= capacity)) {
+            const designId = zone.content[key].designId;
+            if (designId) orphaned.push(designId);
+            delete zone.content[key];
+          }
+        }
+        project.designs[shared] ??= { elements: [] };
+        pruneDesigns(project, orphaned);
+      }, leaveCell);
     },
     setCells(used: number[]) {
       commit((project) => {
-        const zone = project.pages[0].zones.find((z) => z.kind === "grid");
-        if (zone?.kind === "grid") zone.cells.used = used;
+        const zone = gridOf(project);
+        if (zone) zone.cells.used = used;
       });
+    },
+    setPage(pageIndex: number) {
+      if (pageIndex < 0 || pageIndex >= state.project.pages.length) return;
+      lastMergeKey = null;
+      set({ pageIndex, ...leaveCell });
+    },
+    addPage(capacity: number) {
+      commit(
+        (project) => {
+          const page = project.pages[state.pageIndex];
+          const grid = gridOf(project);
+          const used = Array.from({ length: capacity }, (_, i) => i);
+          project.pages.push({ sheet: { ...page.sheet }, zones: grid ? [{ kind: "grid", templateId: grid.templateId, cells: { used }, designId: grid.designId, content: {} }] : [] });
+        },
+        { pageIndex: state.project.pages.length, ...leaveCell },
+      );
+    },
+    removePage(index: number) {
+      if (state.project.pages.length <= 1) return;
+      const pageIndex = Math.min(index < state.pageIndex ? state.pageIndex - 1 : state.pageIndex, state.project.pages.length - 2);
+      commit(
+        (project) => {
+          const [removed] = project.pages.splice(index, 1);
+          pruneDesigns(project, removed.zones.flatMap((z) => (z.kind === "grid" ? [z.designId, ...Object.values(z.content).flatMap((e) => e.designId ?? [])] : [])));
+        },
+        { pageIndex, ...leaveCell },
+      );
+    },
+    setScope(scope: Scope) {
+      lastMergeKey = null;
+      set({ scope, active: null, selectedElementId: null });
+    },
+    setCellValue(cell: number, elementId: string, value: string) {
+      commit(
+        (project) => {
+          const zone = gridOf(project);
+          if (zone) (zone.content[cell] ??= { values: {} }).values[elementId] = value;
+        },
+        {},
+        `cell:${state.pageIndex}:${cell}:${elementId}`,
+      );
+    },
+    clearCellValue(cell: number, elementId: string) {
+      commit((project) => {
+        const zone = gridOf(project);
+        const entry = zone?.content[cell];
+        if (!zone || !entry) return;
+        delete entry.values[elementId];
+        if (!entry.designId && Object.keys(entry.values).length === 0) delete zone.content[cell];
+      });
+    },
+    detachCell(cell: number) {
+      const designId = newId("d");
+      commit((project) => {
+        const zone = gridOf(project);
+        if (!zone || zone.content[cell]?.designId) return;
+        const entry = (zone.content[cell] ??= { values: {} });
+        const copy: LabelDesign = structuredClone(project.designs[zone.designId]);
+        copy.elements = copy.elements.map((e) => {
+          const value = entry.values[e.id];
+          if (!value) return e;
+          return e.kind === "text" ? { ...e, text: value } : { ...e, symbolId: value };
+        });
+        project.designs[designId] = copy;
+        entry.designId = designId;
+      });
+    },
+    reattachCell(cell: number) {
+      commit((project) => {
+        const zone = gridOf(project);
+        const entry = zone?.content[cell];
+        if (!zone || !entry?.designId) return;
+        const designId = entry.designId;
+        const shared = new Set(project.designs[zone.designId].elements.map((e) => e.id));
+        entry.values = Object.fromEntries(Object.entries(entry.values).filter(([id]) => shared.has(id)));
+        delete entry.designId;
+        if (Object.keys(entry.values).length === 0) delete zone.content[cell];
+        pruneDesigns(project, [designId]);
+      });
+    },
+    fillFromList(lines: string[], options: Omit<ListFillOptions, "newId">) {
+      const result = applyListFill(state.project, state.pageIndex, lines, { ...options, newId: () => newId("t") });
+      commit((project) => void Object.assign(project, result.project), { pageIndex: result.pageIndex, ...leaveCell });
+      return result.report;
     },
     setOffset(printOffset: { x: number; y: number }) {
       commit((project) => void (project.printOffset = printOffset), {}, "offset");
@@ -165,18 +302,19 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
     },
     setActive(active: Active) {
       lastMergeKey = null;
-      set({ active, selectedElementId: null });
+      set({ active, selectedElementId: null, scope: { kind: "all" } });
     },
     addFreeZone(rect: Rect) {
-      commit((project) => void project.pages[0].zones.push({ kind: "free", ...rect, design: { elements: [] } }));
+      commit((project) => void project.pages[state.pageIndex].zones.push({ kind: "free", ...rect, design: { elements: [] } }));
     },
     removeZone(index: number) {
-      commit((project) => void project.pages[0].zones.splice(index, 1), { active: null, selectedElementId: null });
+      commit((project) => void project.pages[state.pageIndex].zones.splice(index, 1), { active: null, selectedElementId: null });
     },
     load(project: LabelProject) {
       past = [...past.slice(-HISTORY_LIMIT + 1), state.project];
       future = [];
       restore(project);
+      set({ pageIndex: 0, scope: { kind: "all" } });
     },
     undo() {
       const previous = past.at(-1);

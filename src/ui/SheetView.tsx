@@ -3,16 +3,16 @@ import { labelRects } from "../core/geometry";
 import { layoutProject } from "../render/layout";
 import type { RenderDeps } from "../render/pdf";
 import { SheetPreview } from "../render/preview";
-import { useAppState, type Store } from "./store";
+import { currentGrid, useAppState, type Store } from "./store";
 
 export function SheetView({ store, deps }: { store: Store; deps: RenderDeps }) {
   const state = useAppState(store);
   const [startMode, setStartMode] = useState(false);
   const layout = useMemo(() => layoutProject(state.project, deps, { guides: true }), [state.project, deps]);
-  const zone = state.project.pages[0].zones.find((z) => z.kind === "grid");
-  const template = zone?.kind === "grid" ? deps.templates(zone.templateId) : undefined;
+  const zone = currentGrid(state);
+  const template = zone ? deps.templates(zone.templateId) : undefined;
   const cells = template ? labelRects(template) : [];
-  const used = zone?.kind === "grid" ? zone.cells.used : [];
+  const used = zone ? zone.cells.used : [];
 
   function clickCell(index: number) {
     if (startMode) {
@@ -36,7 +36,7 @@ export function SheetView({ store, deps }: { store: Store; deps: RenderDeps }) {
           {startMode ? "Başlanacak etikete tıklayın" : "Buradan başlat"}
         </button>
       </div>
-      <SheetPreview page={layout.pages[0]} cells={cells} usedCells={used} onCellClick={clickCell} />
+      <SheetPreview page={layout.pages[state.pageIndex]} cells={cells} usedCells={used} onCellClick={clickCell} />
       {[...layout.errors, ...layout.warnings].map((message) => (
         <p key={message} className="notice">
           {message}

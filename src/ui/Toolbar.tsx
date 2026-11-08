@@ -79,7 +79,7 @@ export function Toolbar({ store, deps }: { store: Store; deps: RenderDeps }) {
       <span className="group" title="Yazıcı kayması için milimetre düzeltmesi">
         Yazıcı düzeltmesi {offsetField("x", x)} {offsetField("y", y)}
       </span>
-      <button onClick={async () => download(await calibrationPdf(state.project.pages[0].sheet, deps.fontBytes) as BlobPart, "kalibrasyon.pdf", "application/pdf")}>Kalibrasyon</button>
+      <button onClick={async () => download(await calibrationPdf(state.project.pages[state.pageIndex].sheet, deps.fontBytes) as BlobPart, "kalibrasyon.pdf", "application/pdf")}>Kalibrasyon</button>
       <button className="primary" onClick={makePdf}>
         PDF Al
       </button>

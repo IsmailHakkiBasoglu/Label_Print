@@ -1,8 +1,147 @@
 import { describe, expect, it } from "vitest";
-import { activeDesign, createStore, LEGACY_PROJECT_KEY, PROJECT_KEY } from "../../src/ui/store";
+import type { GridZone } from "../../src/core/document";
+import { activeDesign, createStore, editingDesign, LEGACY_PROJECT_KEY, PROJECT_KEY } from "../../src/ui/store";
 import { memoryStorage, tmpl } from "./helpers/deps";
 
 const make = (storage = memoryStorage()) => createStore(tmpl("TW-2021"), storage);
+
+const gridAt = (s: ReturnType<typeof make>, page = 0) => s.getState().project.pages[page].zones[0] as GridZone;
+
+describe("hücre işlemleri", () => {
+  function withText() {
+    const s = make();
+    s.addText();
+    return { s, id: activeDesign(s.getState()).elements[0].id };
+  }
+
+  it("hücre değeri ortak tasarımı değiştirmez", () => {
+    const { s, id } = withText();
+    s.setCellValue(3, id, "Mısır");
+    expect(gridAt(s).content[3].values[id]).toBe("Mısır");
+    expect(activeDesign(s.getState()).elements[0]).toMatchObject({ text: "Yazı" });
+  });
+
+  it("clearCellValue boş kalan kaydı siler", () => {
+    const { s, id } = withText();
+    s.setCellValue(3, id, "Mısır");
+    s.clearCellValue(3, id);
+    expect(gridAt(s).content[3]).toBeUndefined();
+  });
+
+  it("detachCell değerleri tasarıma yazar, designId atar ve değerleri korur", () => {
+    const { s, id } = withText();
+    s.setCellValue(3, id, "Mısır");
+    s.detachCell(3);
+    const entry = gridAt(s).content[3];
+    expect(entry.designId).toBeDefined();
+    expect(s.getState().project.designs[entry.designId!].elements[0]).toMatchObject({ id, text: "Mısır" });
+    expect(entry.values[id]).toBe("Mısır");
+  });
+
+  it("reattachCell tasarımı siler, uyuşan değerleri korur", () => {
+    const { s, id } = withText();
+    s.setCellValue(3, id, "Mısır");
+    s.detachCell(3);
+    const designId = gridAt(s).content[3].designId!;
+    s.reattachCell(3);
+    expect(s.getState().project.designs[designId]).toBeUndefined();
+    expect(gridAt(s).content[3]).toEqual({ values: { [id]: "Mısır" } });
+  });
+
+  it("ayrılmış hücrede updateElement yalnız kendi tasarımını değiştirir", () => {
+    const { s, id } = withText();
+    s.detachCell(3);
+    s.setScope({ kind: "cell", cell: 3 });
+    s.updateElement(id, { x: 9 });
+    expect(activeDesign(s.getState()).elements[0].x).toBe(9);
+    expect(s.getState().project.designs.d1.elements[0].x).toBe(2);
+  });
+
+  it("editingDesign seçili hücrenin çözülmüş içeriğini verir", () => {
+    const { s, id } = withText();
+    s.setCellValue(3, id, "Mısır");
+    s.setScope({ kind: "cell", cell: 3 });
+    expect(editingDesign(s.getState()).elements[0]).toMatchObject({ text: "Mısır" });
+    s.setScope({ kind: "all" });
+    expect(editingDesign(s.getState()).elements[0]).toMatchObject({ text: "Yazı" });
+  });
+
+  it("desen uygulanınca değerler aynı türdeki yeni öğelere sırayla taşınır", () => {
+    const { s, id } = withText();
+    s.setCellValue(3, id, "Mısır");
+    s.applyPattern("title", { width: 60, height: 30 });
+    const newId = s.getState().project.designs.d1.elements.find((e) => e.kind === "text")!.id;
+    expect(gridAt(s).content[3].values).toEqual({ [newId]: "Mısır" });
+  });
+
+  it("küçülen şablon sığmayan içeriği ve ayrılmış tasarımları siler", () => {
+    const { s, id } = withText();
+    s.setCellValue(20, id, "Son");
+    s.setCellValue(1, id, "Kalan");
+    s.detachCell(20);
+    const designId = gridAt(s).content[20].designId!;
+    s.setTemplate(tmpl("TW-2001"));
+    expect(Object.keys(gridAt(s).content)).toEqual([]);
+    expect(s.getState().project.designs[designId]).toBeUndefined();
+  });
+
+  it("şablon değişimi sığan içeriği korur", () => {
+    const { s, id } = withText();
+    s.setCellValue(1, id, "Kalan");
+    s.setTemplate(tmpl("TW-2130"));
+    expect(gridAt(s).content[1].values[id]).toBe("Kalan");
+  });
+
+  it("şablon tüm sayfalara uygulanır", () => {
+    const { s } = withText();
+    s.addPage(21);
+    s.setTemplate(tmpl("TW-2130"));
+    expect(gridAt(s, 1).templateId).toBe("TW-2130");
+    expect(gridAt(s, 0).templateId).toBe("TW-2130");
+  });
+
+  it("yeni sayfa ortak tasarımı paylaşır ve kendi içeriğiyle başlar", () => {
+    const { s, id } = withText();
+    s.setCellValue(0, id, "A");
+    s.addPage(21);
+    expect(s.getState().pageIndex).toBe(1);
+    expect(gridAt(s, 1)).toMatchObject({ designId: "d1", content: {} });
+    expect(gridAt(s, 1).cells.used).toHaveLength(21);
+  });
+
+  it("hücre işlemleri etkin sayfaya uygulanır", () => {
+    const { s, id } = withText();
+    s.addPage(21);
+    s.setCellValue(2, id, "İkinci");
+    expect(gridAt(s, 1).content[2]).toBeDefined();
+    expect(gridAt(s, 0).content[2]).toBeUndefined();
+  });
+
+  it("son sayfa silinemez, silinince etkin sayfa geçerli kalır", () => {
+    const { s } = withText();
+    s.removePage(0);
+    expect(s.getState().project.pages).toHaveLength(1);
+    s.addPage(21);
+    s.removePage(1);
+    expect(s.getState().pageIndex).toBe(0);
+  });
+
+  it("geri alınca pageIndex son geçerli sayfaya çekilir", () => {
+    const { s } = withText();
+    s.addPage(21);
+    s.undo();
+    expect(s.getState().project.pages).toHaveLength(1);
+    expect(s.getState().pageIndex).toBe(0);
+  });
+
+  it("sayfa geçişi geri alma geçmişine girmez", () => {
+    const { s } = withText();
+    s.addPage(21);
+    s.setPage(0);
+    s.undo();
+    expect(s.getState().project.pages).toHaveLength(1);
+  });
+});
 
 describe("store", () => {
   it("adds a symbol and selects it", () => {

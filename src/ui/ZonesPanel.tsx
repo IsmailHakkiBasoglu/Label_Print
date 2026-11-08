@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAppState, type Store } from "./store";
+import { currentPage, useAppState, type Store } from "./store";
 
 const FIELDS = [
   ["x", "X"],
@@ -16,7 +16,7 @@ export function ZonesPanel({ store }: { store: Store }) {
     <div className="zones">
       <p className="hint">Kağıdın bir bölümüne serbest içerik koyun. Etiket ızgarasını kullanmayacağınız yerleri "Yaprak" görünümünde kapatın.</p>
       <ul>
-        {state.project.pages[0].zones.map((zone, i) => (
+        {currentPage(state).zones.map((zone, i) => (
           <li key={i} className="row">
             <span>{zone.kind === "grid" ? `Izgara: ${zone.templateId}` : `Serbest ${zone.width}×${zone.height} mm`}</span>
             <button onClick={() => store.setActive(zone.kind === "free" ? { zone: i } : null)}>Düzenle</button>

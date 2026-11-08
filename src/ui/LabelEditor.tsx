@@ -4,19 +4,18 @@ import type { FrameLabel } from "../library/frames";
 import { layoutDesign } from "../render/layout";
 import type { RenderDeps } from "../render/pdf";
 import { OpsView } from "../render/preview";
-import { activeDesign, useAppState, type Store } from "./store";
+import { activeDesign, currentGrid, currentPage, useAppState, type Store } from "./store";
 
 const SNAP_MM = 0.5;
 const MIN_SIZE_MM = 2;
 const snap = (n: number) => Math.round(n / SNAP_MM) * SNAP_MM;
 
 export function activeLabel(store: Store, deps: RenderDeps): FrameLabel {
-  const { project, active } = store.getState();
-  const zones = project.pages[0].zones;
-  const free = active ? zones[active.zone] : undefined;
+  const state = store.getState();
+  const free = state.active ? currentPage(state).zones[state.active.zone] : undefined;
   if (free?.kind === "free") return { width: free.width, height: free.height, shape: "rect" };
-  const grid = zones.find((z) => z.kind === "grid");
-  const template = grid?.kind === "grid" ? deps.templates(grid.templateId) : undefined;
+  const grid = currentGrid(state);
+  const template = grid ? deps.templates(grid.templateId) : undefined;
   return template?.label ?? { width: 50, height: 30, shape: "rect" };
 }
 

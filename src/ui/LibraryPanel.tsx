@@ -9,7 +9,7 @@ import { PATTERNS } from "../library/textPatterns";
 import type { RenderDeps } from "../render/pdf";
 import { IconView } from "./IconView";
 import { activeLabel } from "./LabelEditor";
-import { activeDesign, useAppState, type Store } from "./store";
+import { activeDesign, currentGrid, useAppState, type Store } from "./store";
 import { TemplateBuilder } from "./TemplateBuilder";
 import { TemplatePicker } from "./TemplatePicker";
 import { ZonesPanel } from "./ZonesPanel";
@@ -58,7 +58,7 @@ function TemplatesTab({ store, templates, onLibraryChanged }: Pick<Props, "store
   const state = useAppState(store);
   const [building, setBuilding] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const zone = state.project.pages[0].zones.find((z) => z.kind === "grid");
+  const zone = currentGrid(state);
 
   async function importFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -99,7 +99,7 @@ function TemplatesTab({ store, templates, onLibraryChanged }: Pick<Props, "store
           }}
         />
       ) : (
-        <TemplatePicker templates={templates} selectedId={zone?.kind === "grid" ? zone.templateId : ""} onSelect={(t) => store.setTemplate(t)} />
+        <TemplatePicker templates={templates} selectedId={zone?.templateId ?? ""} onSelect={(t) => store.setTemplate(t)} />
       )}
     </div>
   );
