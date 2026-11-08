@@ -13,7 +13,7 @@ import type { RenderDeps } from "../render/pdf";
 import { ImageUrlContext, OpsView } from "../render/preview";
 import { IconView } from "./IconView";
 import { activeLabel } from "./LabelEditor";
-import { activeDesign, cellsLostBy, currentGrid, useAppState, type Store } from "./store";
+import { activeDesign, cellsLostBy, currentGrid, isCellLocked, useAppState, type Store } from "./store";
 import { TemplateBuilder } from "./TemplateBuilder";
 import { TemplatePicker } from "./TemplatePicker";
 import { ZonesPanel } from "./ZonesPanel";
@@ -21,6 +21,20 @@ import { ZonesPanel } from "./ZonesPanel";
 const TABS = ["Şablon", "Çerçeve", "Desen", "Sembol", "Bölge"] as const;
 const DEFAULT_FRAME = { strokeMm: 0.4, insetMm: 1, color: "#000000" };
 const LINE_FRAMES = "__lines";
+const LOCKED_HINT = 'Bu etiket ortak tasarımı kullanıyor. Yalnız bunu değiştirmek için sağdan "Bu hücreyi ayır"ı seçin, hepsini değiştirmek için "Tüm hücreler"e dönün.';
+const NO_PICTURE_HINT = 'Bu etikette görsel yeri yok. Önce "Tüm hücreler" modunda ortak tasarıma görsel ekleyin veya hücreyi ayırın.';
+
+/** Redraws a rotated JPEG the way browsers display it, because PDF embedding ignores the EXIF orientation. */
+async function uprightJpeg(bytes: Uint8Array): Promise<Uint8Array> {
+  const bitmap = await createImageBitmap(new Blob([bytes as BlobPart], { type: "image/jpeg" }));
+  const canvas = document.createElement("canvas");
+  canvas.width = bitmap.width;
+  canvas.height = bitmap.height;
+  canvas.getContext("2d")!.drawImage(bitmap, 0, 0);
+  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.95));
+  if (!blob) throw new Error("JPEG üretilemedi");
+  return new Uint8Array(await blob.arrayBuffer());
+}
 
 type Props = {
   store: Store;
@@ -32,6 +46,14 @@ type Props = {
 
 export function LibraryPanel({ store, deps, templates, customSymbols, onLibraryChanged }: Props) {
   const [tab, setTab] = useState<(typeof TABS)[number]>("Şablon");
+  const locked = isCellLocked(useAppState(store));
+
+  function applyPattern(patternId: string) {
+    const label = activeLabel(store, deps);
+    const loss = store.patternLoss(patternId, label);
+    if (loss === 0 || window.confirm(`Bu desende yeri olmayan ${loss} hücre içeriği silinecek. Devam edilsin mi?`)) store.applyPattern(patternId, label);
+  }
+
   return (
     <aside className="panel library">
       <nav className="tabs">
@@ -45,12 +67,13 @@ export function LibraryPanel({ store, deps, templates, customSymbols, onLibraryC
       {tab === "Çerçeve" && <FramesTab store={store} deps={deps} />}
       {tab === "Desen" && (
         <div className="list">
+          {locked && <p className="notice">{LOCKED_HINT}</p>}
           {PATTERNS.map((p) => (
-            <button key={p.id} className="row" onClick={() => store.applyPattern(p.id, activeLabel(store, deps))}>
+            <button key={p.id} className="row" disabled={locked} onClick={() => applyPattern(p.id)}>
               {p.name}
             </button>
           ))}
-          <p className="hint">Desen, etiketteki yazıları ve ilk sembolü korur, yerleşimi yeniden kurar.</p>
+          <p className="hint">Desen yerleşimi yeniden kurar. Yeni düzende yeri olmayan içerik silinir; hücre içeriği silinecekse önce sorulur.</p>
         </div>
       )}
       {tab === "Sembol" && <SymbolsTab store={store} deps={deps} customSymbols={customSymbols} onLibraryChanged={onLibraryChanged} />}
@@ -104,7 +127,7 @@ function TemplatesTab({ store, templates, onLibraryChanged }: Pick<Props, "store
           onSave={(t) => {
             saveCustom(t, browserStorage());
             onLibraryChanged();
-            store.setTemplate(t);
+            choose(t);
             setBuilding(false);
           }}
         />
@@ -123,9 +146,11 @@ function FramesTab({ store, deps }: { store: Store; deps: RenderDeps }) {
   const change = (patch: Partial<typeof DEFAULT_FRAME>) => store.setFrame(design.frameId, { ...options, ...patch });
   const label = activeLabel(store, deps);
   const previewOptions = { ...options, color: "#20241f" };
+  const locked = isCellLocked(state);
   return (
     <div className="list">
-      <button className={design.frameId ? "row" : "row selected"} onClick={() => store.setFrame(undefined, undefined)}>
+      {locked && <p className="notice">{LOCKED_HINT}</p>}
+      <button disabled={locked} className={design.frameId ? "row" : "row selected"} onClick={() => store.setFrame(undefined, undefined)}>
         Çerçevesiz
       </button>
       <label>
@@ -141,14 +166,14 @@ function FramesTab({ store, deps }: { store: Store; deps: RenderDeps }) {
       </label>
       {category === LINE_FRAMES ? (
         FRAMES.map((f) => (
-          <button key={f.id} className={design.frameId === f.id ? "row selected" : "row"} onClick={() => store.setFrame(f.id, options)}>
+          <button key={f.id} disabled={locked} className={design.frameId === f.id ? "row selected" : "row"} onClick={() => store.setFrame(f.id, options)}>
             {f.name}
           </button>
         ))
       ) : (
         <div className="frame-grid">
           {ORNAMENTS.filter((o) => o.category === category).map((o) => (
-            <button key={o.id} className={design.frameId === o.id ? "frame-card selected" : "frame-card"} onClick={() => store.setFrame(o.id, options)}>
+            <button key={o.id} disabled={locked} className={design.frameId === o.id ? "frame-card selected" : "frame-card"} onClick={() => store.setFrame(o.id, options)}>
               <svg viewBox={`0 0 ${label.width} ${label.height}`} aria-hidden="true">
                 <OpsView ops={frameOps(o.id, label, previewOptions)} />
               </svg>
@@ -182,6 +207,7 @@ function SymbolsTab({ store, deps, customSymbols, onLibraryChanged }: Pick<Props
   const [message, setMessage] = useState<string | null>(null);
   const imageUrl = useContext(ImageUrlContext);
   const uploads = Object.entries(useAppState(store).project.images);
+  const pick = (id: string) => setMessage(store.pickSymbol(id) ? null : NO_PICTURE_HINT);
   const all = useMemo(() => {
     const mine = customSymbols.filter((s) => isMultiColor(s.icon) === colored);
     return [...mine, ...(colored ? (deps.colorSymbols ?? []) : catalog)];
@@ -194,11 +220,11 @@ function SymbolsTab({ store, deps, customSymbols, onLibraryChanged }: Pick<Props
     event.target.value = "";
     if (!file) return;
     if (!deps.images) return setMessage("Tarayıcı depolaması kullanılamıyor; görsel kaydedilemedi.");
-    const result = await ingestImage(new Uint8Array(await file.arrayBuffer()), file.name, deps.images);
+    const result = await ingestImage(new Uint8Array(await file.arrayBuffer()), file.name, deps.images, uprightJpeg);
     if (result.kind === "error") return setMessage(result.error);
     if (result.kind === "image") {
-      store.addImage(result.id, result.meta);
-      return setMessage(`${file.name} eklendi. "Renkli" bölümünden yeniden seçebilirsiniz.`);
+      const placed = store.addImage(result.id, result.meta);
+      return setMessage(placed ? `${file.name} eklendi. "Renkli" bölümünden yeniden seçebilirsiniz.` : `${file.name} kütüphaneye eklendi. ${NO_PICTURE_HINT}`);
     }
     const symbol = importCustomSymbol(result.text, file.name.replace(/\.svg$/i, ""), browserStorage());
     setMessage("error" in symbol ? symbol.error : "Sembol eklendi.");
@@ -232,7 +258,7 @@ function SymbolsTab({ store, deps, customSymbols, onLibraryChanged }: Pick<Props
       {colored && uploads.length > 0 && (
         <div className="icons grid">
           {uploads.map(([id, meta]) => (
-            <button key={id} title={meta.name} aria-label={`Görsel ekle: ${meta.name}`} onClick={() => store.pickSymbol(`upload:${id}`)}>
+            <button key={id} title={meta.name} aria-label={`Görsel ekle: ${meta.name}`} onClick={() => pick(`upload:${id}`)}>
               <img src={imageUrl(id)} alt="" width={26} height={26} className="upload-thumb" />
             </button>
           ))}
@@ -240,7 +266,7 @@ function SymbolsTab({ store, deps, customSymbols, onLibraryChanged }: Pick<Props
       )}
       <div className="icons grid">
         {list.map((s) => (
-          <button key={s.id} title={s.tags.join(", ")} aria-label={`Sembol ekle: ${s.id}`} onClick={() => store.pickSymbol(s.id)}>
+          <button key={s.id} title={s.tags.join(", ")} aria-label={`Sembol ekle: ${s.id}`} onClick={() => pick(s.id)}>
             <IconView icon={s.icon} />
           </button>
         ))}

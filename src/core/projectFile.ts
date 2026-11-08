@@ -57,6 +57,6 @@ export async function importProject(text: string, deps: { images?: ImageStore; s
       warnings.push(`"${meta.name}" görseli tarayıcıya kaydedilemedi.`);
     }
   }
-  mergeCustomSymbols(symbolData, deps.storage);
+  if (!mergeCustomSymbols(symbolData, deps.storage)) warnings.push("Dosyadaki özel semboller tarayıcıya kaydedilemedi.");
   return { ok: true, project, warnings };
 }

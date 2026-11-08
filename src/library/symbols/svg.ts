@@ -129,11 +129,24 @@ function nextStyle(a: Attrs, parent: Style & { stroked: boolean }): Style & { st
   };
 }
 
+/** Drawing programs often write colours in `style`; it wins over the plain attributes, as in CSS. */
+function withStyle(a: Attrs): Attrs {
+  if (!a.style) return a;
+  const merged = { ...a };
+  for (const declaration of a.style.split(";")) {
+    const [key, ...rest] = declaration.split(":");
+    const name = key.trim().toLowerCase();
+    if (["fill", "stroke", "stroke-width"].includes(name)) merged[name] = rest.join(":").trim();
+  }
+  return merged;
+}
+
 function walk(nodes: any[], style: Style & { stroked: boolean }, out: VectorPath[]): string | null {
   for (const node of nodes) {
     const tag = Object.keys(node).find((k) => k !== ":@");
     if (!tag || tag === "#text") continue;
-    const a: Attrs = node[":@"] ?? {};
+    if (tag === "style") return "Stil (style) etiketi içeren SVG desteklenmiyor.";
+    const a: Attrs = withStyle(node[":@"] ?? {});
     if ((tag === "g" || SHAPES.has(tag)) && a.transform) return "Dönüşüm (transform) içeren SVG desteklenmiyor.";
     const badColor = tag === "g" || SHAPES.has(tag) ? colorError(a) : null;
     if (badColor) return badColor;
@@ -167,7 +180,7 @@ export function parseSvg(text: string): VectorIcon | { error: string } {
   }
   const root = Array.isArray(tree) ? tree.find((n) => n.svg) : undefined;
   if (!root) return { error: "Bu dosya SVG değil." };
-  const a: Attrs = root[":@"] ?? {};
+  const a: Attrs = withStyle(root[":@"] ?? {});
   const box = (a.viewBox ?? `0 0 ${parseFloat(a.width ?? "0")} ${parseFloat(a.height ?? "0")}`).trim().split(/[\s,]+/).map(Number);
   if (box.length !== 4 || box.some(Number.isNaN) || !(box[2] > 0 && box[3] > 0)) return { error: "SVG boyutu (viewBox) eksik." };
   const paths: VectorPath[] = [];

@@ -52,7 +52,8 @@ export function applyListFill(source: LabelProject, pageIndex: number, lines: st
     entry.values[symbol.id] = match ?? "";
   };
 
-  const firstCells = [...zone.cells.used].sort((a, b) => a - b);
+  const firstCells = [...(zone.listBase ?? zone.cells.used)].sort((a, b) => a - b);
+  zone.listBase = firstCells;
   const onFirst = lines.slice(0, firstCells.length);
   onFirst.forEach((line, i) => write(zone, firstCells[i], line));
   for (const cell of firstCells.slice(onFirst.length)) {

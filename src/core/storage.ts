@@ -9,11 +9,13 @@ export function safeRead(storage: StorageLike, key: string): string | null {
   }
 }
 
-export function safeWrite(storage: StorageLike, key: string, value: string): void {
+/** Returns false when nothing was stored; the app keeps working from memory. */
+export function safeWrite(storage: StorageLike, key: string, value: string): boolean {
   try {
     storage.setItem(key, value);
+    return true;
   } catch {
-    // The app keeps working from memory.
+    return false;
   }
 }
 

@@ -38,6 +38,32 @@ export function imageSize(bytes: Uint8Array, mime: Mime): { widthPx: number; hei
   return null;
 }
 
+/** The EXIF orientation (1 = upright). PDF embedding ignores it, while browsers honour it. */
+export function jpegOrientation(bytes: Uint8Array): number {
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  let offset = 2;
+  while (offset + 4 <= bytes.length && bytes[offset] === 0xff) {
+    const marker = bytes[offset + 1];
+    if (marker === 0xda || SOF_MARKERS.has(marker)) return 1;
+    const length = view.getUint16(offset + 2);
+    const isExif = marker === 0xe1 && new TextDecoder().decode(bytes.subarray(offset + 4, offset + 10)) === "Exif\0\0";
+    if (isExif) {
+      const tiff = offset + 10;
+      const little = bytes[tiff] === 0x49;
+      const ifd = tiff + view.getUint32(tiff + 4, little);
+      const count = view.getUint16(ifd, little);
+      for (let i = 0; i < count; i++) {
+        const entry = ifd + 2 + i * 12;
+        if (entry + 12 > bytes.length) return 1;
+        if (view.getUint16(entry, little) === 0x0112) return view.getUint16(entry + 8, little);
+      }
+      return 1;
+    }
+    offset += 2 + length;
+  }
+  return 1;
+}
+
 async function canEmbed(bytes: Uint8Array, mime: Mime): Promise<boolean> {
   try {
     const doc = await PDFDocument.create();
@@ -48,7 +74,8 @@ async function canEmbed(bytes: Uint8Array, mime: Mime): Promise<boolean> {
   }
 }
 
-export async function ingestImage(bytes: Uint8Array, name: string, store: ImageStore): Promise<IngestResult> {
+/** `upright` redraws a rotated JPEG; it needs a browser canvas, so the caller supplies it. */
+export async function ingestImage(bytes: Uint8Array, name: string, store: ImageStore, upright?: (bytes: Uint8Array) => Promise<Uint8Array>): Promise<IngestResult> {
   const mime = sniffImage(bytes);
   if (!mime) return { kind: "error", error: "Yalnız PNG, JPG veya SVG yüklenebilir." };
   if (mime === "image/svg+xml") {
@@ -56,6 +83,15 @@ export async function ingestImage(bytes: Uint8Array, name: string, store: ImageS
     return { kind: "svg", text: new TextDecoder().decode(bytes) };
   }
   if (bytes.length > MAX_IMAGE_BYTES) return { kind: "error", error: "Görsel dosyası en fazla 10 MB olabilir." };
+  if (mime === "image/jpeg" && jpegOrientation(bytes) > 1) {
+    const refused: IngestResult = { kind: "error", error: "Bu fotoğraf döndürülmüş kaydedilmiş ve düzeltilemedi; PNG olarak kaydedip deneyin." };
+    if (!upright) return refused;
+    try {
+      return await ingestImage(await upright(bytes), name, store);
+    } catch {
+      return refused;
+    }
+  }
   const size = imageSize(bytes, mime);
   if (!size || size.widthPx === 0 || size.heightPx === 0 || !(await canEmbed(bytes, mime))) return { kind: "error", error: "Bu görsel PDF'e gömülemiyor; başka bir dosya deneyin." };
   const id = await sha256Hex(bytes);

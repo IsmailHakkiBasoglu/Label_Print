@@ -15,6 +15,8 @@ import { createIdbImageStore } from "../core/imageStore";
 import { ImageUrlContext } from "../render/preview";
 import { createStore, useAppState } from "./store";
 import { useImageUrls } from "./useImageUrls";
+import { ErrorBoundary } from "./ErrorBoundary";
+import { newProject } from "../core/document";
 import { Toolbar } from "./Toolbar";
 import "./app.css";
 
@@ -69,6 +71,7 @@ export function App() {
 
   return (
     <ImageUrlContext.Provider value={imageUrl}>
+    <ErrorBoundary onReset={() => store.load(newProject(DEFAULT_TEMPLATE))}>
     <div className="app">
       <style>{fontFaces}</style>
       <Toolbar store={store} deps={deps} onLibraryChanged={() => setRevision((r) => r + 1)} />
@@ -81,6 +84,7 @@ export function App() {
         <PropertiesPanel store={store} deps={deps} />
       </main>
     </div>
+    </ErrorBoundary>
     </ImageUrlContext.Provider>
   );
 }

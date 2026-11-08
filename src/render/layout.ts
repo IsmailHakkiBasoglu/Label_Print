@@ -83,7 +83,7 @@ function designOps(design: LabelDesign, box: Rect, label: FrameLabel, deps: Layo
     }
     if (el.symbolId.startsWith(UPLOAD_PREFIX)) {
       const imageId = el.symbolId.slice(UPLOAD_PREFIX.length);
-      const meta = ctx.images[imageId];
+      const meta = Object.hasOwn(ctx.images, imageId) ? ctx.images[imageId] : undefined;
       if (!meta) {
         ctx.errors.push("Yüklenen görsel bulunamadı; görseli yeniden ekleyin.");
         continue;

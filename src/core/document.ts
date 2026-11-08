@@ -35,7 +35,8 @@ export type CellSelection = { used: number[] };
 /** `values` maps an element id to the text or image shown in this cell; `designId` detaches the cell from the shared design. */
 export type CellEntry = { values: Record<string, string>; designId?: string };
 
-export type GridZone = { kind: "grid"; templateId: string; cells: CellSelection; designId: string; content: Record<number, CellEntry> };
+/** `listBase` remembers the selection a list fill started from, so a longer refill can use the cells a shorter one switched off. */
+export type GridZone = { kind: "grid"; templateId: string; cells: CellSelection; designId: string; content: Record<number, CellEntry>; listBase?: number[] };
 export type FreeZone = { kind: "free"; x: number; y: number; width: number; height: number; design: LabelDesign };
 export type Zone = GridZone | FreeZone;
 
@@ -56,8 +57,11 @@ const FONT_IDS = ["sans", "sans-bold", "serif", "serif-bold"];
 const isNumber = (v: unknown): v is number => typeof v === "number" && Number.isFinite(v);
 const isBox = (v: any) => isNumber(v?.x) && isNumber(v.y) && isNumber(v.width) && v.width > 0 && isNumber(v.height) && v.height > 0;
 
+/** Ids become object keys at lookup time, so names inherited from Object must never pass as ids. */
+const isSafeId = (v: unknown): v is string => typeof v === "string" && !["__proto__", "constructor", "prototype", "hasOwnProperty", "toString", "valueOf"].includes(v);
+
 function isElement(e: any): boolean {
-  if (!isBox(e) || typeof e.id !== "string" || typeof e.color !== "string") return false;
+  if (!isBox(e) || !isSafeId(e.id) || typeof e.color !== "string") return false;
   if (e.kind === "symbol") return typeof e.symbolId === "string";
   return e.kind === "text" && typeof e.text === "string" && FONT_IDS.includes(e.fontId) && isNumber(e.sizePt) && e.sizePt > 0 && ["left", "center", "right"].includes(e.align);
 }
@@ -78,7 +82,18 @@ function isCellEntry(e: any): boolean {
 
 function isZone(z: any): boolean {
   if (z?.kind === "free") return isFreeZone(z);
-  return isGridBase(z) && typeof z.designId === "string" && isRecord(z.content) && Object.entries(z.content).every(([k, e]) => /^\d+$/.test(k) && isCellEntry(e));
+  const validBase = z?.listBase === undefined || (Array.isArray(z.listBase) && z.listBase.every(Number.isInteger));
+  return isGridBase(z) && validBase && typeof z.designId === "string" && isRecord(z.content) && Object.entries(z.content).every(([k, e]) => /^\d+$/.test(k) && isCellEntry(e));
+}
+
+function referencesValid(project: LabelProject): boolean {
+  const known = (id: string) => isSafeId(id) && Object.hasOwn(project.designs, id);
+  const zones = project.pages.flatMap((p) => p.zones.filter((z): z is GridZone => z.kind === "grid"));
+  return (
+    Object.keys(project.designs).every(isSafeId) &&
+    Object.keys(project.images).every(isSafeId) &&
+    zones.every((z) => known(z.designId) && Object.values(z.content).every((e) => e.designId === undefined || known(e.designId)))
+  );
 }
 
 const isZoneV1 = (z: any) => isFreeZone(z) || (isGridBase(z) && Array.isArray(z.designIds) && z.designIds.length > 0 && z.designIds.every((id: unknown) => typeof id === "string"));
@@ -149,7 +164,8 @@ export function parseProject(text: string): { ok: true; project: LabelProject } 
   }
   if (value?.version !== 1 && value?.version !== 2) return { ok: false, error: "Bu dosya sürümü desteklenmiyor." };
   const damaged = { ok: false as const, error: "Dosya bozuk: gerekli alanlar eksik veya hatalı." };
-  if (value.version === 1) return hasCommonFields(value, isZoneV1) ? { ok: true, project: migrateV1(value) } : damaged;
-  if (!hasCommonFields(value, isZone) || !isRecord(value.images) || !Object.values(value.images).every(isMeta)) return damaged;
-  return { ok: true, project: value as LabelProject };
+  if (value.version === 1 && !hasCommonFields(value, isZoneV1)) return damaged;
+  if (value.version === 2 && (!hasCommonFields(value, isZone) || !isRecord(value.images) || !Object.values(value.images).every(isMeta))) return damaged;
+  const project: LabelProject = value.version === 1 ? migrateV1(value) : value;
+  return referencesValid(project) ? { ok: true, project } : damaged;
 }

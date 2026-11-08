@@ -90,6 +90,7 @@ export function Toolbar({ store, deps, onLibraryChanged }: { store: Store; deps:
       <button className="primary" onClick={makePdf}>
         PDF Al
       </button>
+      {state.saveFailed && <div className="error banner">Otomatik kayıt yapılamıyor; çalışmanızı kaybetmemek için Kaydet ile dosyaya alın.</div>}
       {error && (
         <div role="alert" className="error banner">
           {error}

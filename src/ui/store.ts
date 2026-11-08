@@ -32,6 +32,7 @@ export type AppState = {
   selectedElementId: string | null;
   active: Active;
   guides: boolean;
+  saveFailed: boolean;
   canUndo: boolean;
   canRedo: boolean;
 };
@@ -64,13 +65,29 @@ export function cellsLostBy(project: LabelProject, capacity: number): number {
   return gridZones(project).reduce((n, z) => n + Object.keys(z.content).filter((k) => Number(k) >= capacity).length, 0);
 }
 
-/** A pattern rebuilds the elements with new ids; cell values follow them by kind and order. */
-function remapValues(project: LabelProject, design: LabelDesign, before: DesignElement[]) {
+/** True for a cell that follows the shared design: only its text and picture may change. */
+export function isCellLocked(state: AppState): boolean {
+  return state.scope.kind === "cell" && !state.active && !currentGrid(state)?.content[state.scope.cell]?.designId;
+}
+
+function patternMapping(before: DesignElement[], after: DesignElement[]): Map<string, string> {
   const mapping = new Map<string, string>();
   for (const kind of ["text", "symbol"] as const) {
-    const next = design.elements.filter((e) => e.kind === kind);
+    const next = after.filter((e) => e.kind === kind);
     before.filter((e) => e.kind === kind).forEach((e, i) => next[i] && mapping.set(e.id, next[i].id));
   }
+  return mapping;
+}
+
+function rebuildPattern(patternId: string, label: { width: number; height: number }, before: DesignElement[]): DesignElement[] {
+  const texts = before.filter((e): e is TextElement => e.kind === "text").map((e) => e.text);
+  const symbol = before.find((e) => e.kind === "symbol");
+  return buildPattern(patternId, label, texts.length ? texts : SAMPLE_TEXTS, symbol?.kind === "symbol" ? symbol.symbolId : undefined);
+}
+
+/** A pattern rebuilds the elements with new ids; cell values follow them by kind and order. */
+function remapValues(project: LabelProject, design: LabelDesign, before: DesignElement[]) {
+  const mapping = patternMapping(before, design.elements);
   for (const zone of gridZones(project)) {
     for (const entry of Object.values(zone.content)) {
       if (project.designs[entry.designId ?? zone.designId] !== design) continue;
@@ -91,6 +108,7 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
     selectedElementId: null,
     active: null,
     guides: false,
+    saveFailed: false,
     canUndo: false,
     canRedo: false,
   };
@@ -115,15 +133,15 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
       future = [];
     }
     lastMergeKey = mergeKey ?? null;
-    safeWrite(storage, PROJECT_KEY, serialize(project));
-    set({ project, ...patch });
+    const saved = safeWrite(storage, PROJECT_KEY, serialize(project));
+    set({ project, saveFailed: !saved, ...patch });
   }
 
   function restore(project: LabelProject) {
     lastMergeKey = null;
-    safeWrite(storage, PROJECT_KEY, serialize(project));
+    const saved = safeWrite(storage, PROJECT_KEY, serialize(project));
     const pageIndex = Math.min(state.pageIndex, project.pages.length - 1);
-    set({ project, pageIndex, scope: pageIndex === state.pageIndex ? state.scope : { kind: "all" }, selectedElementId: null, active: null });
+    set({ project, saveFailed: !saved, pageIndex, scope: pageIndex === state.pageIndex ? state.scope : { kind: "all" }, selectedElementId: null, active: null });
   }
 
   const newId = (prefix: string) => `${prefix}-${Date.now().toString(36)}-${nextId++}`;
@@ -146,15 +164,17 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
       const id = newId("s");
       commit((_, design) => design.elements.push({ kind: "symbol", id, x: 2, y: 2, width: 12, height: 12, symbolId, color: "#000000" }), { selectedElementId: id });
     },
-    addImage(id: string, meta: ImageMeta) {
+    addImage(id: string, meta: ImageMeta): boolean {
       commit((project) => void (project.images[id] = meta));
-      this.pickSymbol(`upload:${id}`);
+      return this.pickSymbol(`upload:${id}`);
     },
     /** From the library: replaces the selected cell's picture when there is one to replace, otherwise adds a new element. */
-    pickSymbol(symbolId: string) {
+    pickSymbol(symbolId: string): boolean {
       const target = activeDesign(state).elements.find((e) => e.kind === "symbol" && (!state.selectedElementId || e.id === state.selectedElementId)) ?? activeDesign(state).elements.find((e) => e.kind === "symbol");
       if (state.scope.kind === "cell" && !state.active && target) this.setCellValue(state.scope.cell, target.id, symbolId);
+      else if (isCellLocked(state)) return false;
       else this.addSymbol(symbolId);
+      return true;
     },
     updateElement(id: string, patch: Partial<DesignElement>) {
       commit(
@@ -174,18 +194,28 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
       set({ selectedElementId: id });
     },
     applyPattern(patternId: string, label: { width: number; height: number }) {
+      if (isCellLocked(state)) return;
       commit(
         (project, design) => {
           const before = design.elements;
-          const texts = before.filter((e): e is TextElement => e.kind === "text").map((e) => e.text);
-          const symbol = before.find((e) => e.kind === "symbol");
-          design.elements = buildPattern(patternId, label, texts.length ? texts : SAMPLE_TEXTS, symbol?.kind === "symbol" ? symbol.symbolId : undefined);
+          design.elements = rebuildPattern(patternId, label, before);
           remapValues(project, design, before);
         },
         { selectedElementId: null },
       );
     },
+    /** How many filled-in cell values a pattern has no place for. */
+    patternLoss(patternId: string, label: { width: number; height: number }): number {
+      const design = activeDesign(state);
+      const mapping = patternMapping(design.elements, rebuildPattern(patternId, label, design.elements));
+      const ids = new Set(design.elements.map((e) => e.id));
+      return gridZones(state.project)
+        .flatMap((zone) => Object.values(zone.content).filter((entry) => state.project.designs[entry.designId ?? zone.designId] === design))
+        .flatMap((entry) => Object.entries(entry.values))
+        .filter(([id, value]) => value !== "" && ids.has(id) && !mapping.has(id)).length;
+    },
     setFrame(frameId: string | undefined, frameOptions?: FrameOptions) {
+      if (isCellLocked(state)) return;
       commit((_, design) => {
         design.frameId = frameId;
         design.frameOptions = frameOptions;
@@ -218,7 +248,9 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
     setCells(used: number[]) {
       commit((project) => {
         const zone = gridOf(project);
-        if (zone) zone.cells.used = used;
+        if (!zone) return;
+        zone.cells.used = used;
+        delete zone.listBase;
       });
     },
     setPage(pageIndex: number) {
