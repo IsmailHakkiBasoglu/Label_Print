@@ -84,7 +84,8 @@ export async function renderPdf(project: LabelProject, deps: RenderDeps, opts: {
   doc.registerFontkit(fontkit);
   const fonts = new Map<FontId, PDFFont>();
   const font = async (id: FontId) => {
-    if (!fonts.has(id)) fonts.set(id, await doc.embedFont(deps.fontBytes[id], { subset: true }));
+    // Subsetting these fonts corrupts their outlines, so the whole font is embedded.
+    if (!fonts.has(id)) fonts.set(id, await doc.embedFont(deps.fontBytes[id], { subset: false }));
     return fonts.get(id)!;
   };
 

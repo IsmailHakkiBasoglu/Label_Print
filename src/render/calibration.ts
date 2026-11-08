@@ -10,7 +10,7 @@ const CROSS = 4;
 export async function calibrationPdf(sheet: { width: number; height: number }, fontBytes: FontBytes): Promise<Uint8Array> {
   const doc = await PDFDocument.create();
   doc.registerFontkit(fontkit);
-  const font = await doc.embedFont(fontBytes.sans, { subset: true });
+  const font = await doc.embedFont(fontBytes.sans, { subset: false });
   const pageHeight = mmToPt(sheet.height);
   const page = doc.addPage([mmToPt(sheet.width), pageHeight]);
   const line = (x1: number, y1: number, x2: number, y2: number) => {

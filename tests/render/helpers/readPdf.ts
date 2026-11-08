@@ -1,3 +1,4 @@
+import fontkit from "@pdf-lib/fontkit";
 import { unzlibSync, strFromU8 } from "fflate";
 import { PDFArray, PDFDocument, PDFRawStream, PDFRef } from "pdf-lib";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
@@ -26,6 +27,32 @@ export async function readGuideRects(bytes: Uint8Array, index = 0): Promise<PdfR
     const [x, y, w, h] = m.slice(1, 5).map(Number);
     return { x: x * PT_TO_MM, y: (height - y - h) * PT_TO_MM, width: w * PT_TO_MM, height: h * PT_TO_MM };
   });
+}
+
+/** Glyph ids shown by `Tj` that have no outline in the embedded font program (excluding spaces). */
+export async function invisibleGlyphs(bytes: Uint8Array): Promise<{ shown: number; invisible: number }> {
+  const doc = await PDFDocument.load(bytes);
+  const programs: any[] = [];
+  for (const [, object] of doc.context.enumerateIndirectObjects()) {
+    if (!(object instanceof PDFRawStream)) continue;
+    try {
+      const font: any = fontkit.create(unzlibSync(object.getContents()));
+      if (font.numGlyphs) programs.push(font);
+    } catch {
+      // Not a font stream.
+    }
+  }
+  const { text } = await pageContent(bytes);
+  let shown = 0;
+  let invisible = 0;
+  for (const match of text.matchAll(/<([0-9A-Fa-f]+)> Tj/g)) {
+    for (let i = 0; i < match[1].length; i += 4) {
+      const gid = parseInt(match[1].slice(i, i + 4), 16);
+      shown++;
+      if (programs[0].getGlyph(gid).path.commands.length === 0) invisible++;
+    }
+  }
+  return { shown, invisible };
 }
 
 export async function countGuideCurves(bytes: Uint8Array): Promise<number> {

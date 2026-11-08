@@ -7,7 +7,7 @@ import { catalog } from "../../src/library/symbols/search";
 import { calibrationPdf } from "../../src/render/calibration";
 import { createFontTools, FONT_FILES, type FontBytes } from "../../src/render/fonts";
 import { renderPdf, type RenderDeps } from "../../src/render/pdf";
-import { countGuideCurves, pageContent, readGuideRects, readText } from "./helpers/readPdf";
+import { countGuideCurves, invisibleGlyphs, pageContent, readGuideRects, readText } from "./helpers/readPdf";
 
 const fontBytes = Object.fromEntries(Object.entries(FONT_FILES).map(([id, f]) => [id, new Uint8Array(readFileSync(`public/fonts/${f}`))])) as FontBytes;
 const deps: RenderDeps = {
@@ -80,6 +80,12 @@ describe("renderPdf geometry", () => {
 describe("renderPdf text", () => {
   it("embeds Turkish characters", async () => {
     expect((await readText(await bytesOf(withText(newProject(tmpl("TW-2021")), "ğüşıöçİ")))).replace(/\s/g, "")).toContain("ğüşıöçİ".repeat(1));
+  });
+
+  it("embeds real outlines for every shown glyph", async () => {
+    const result = await invisibleGlyphs(await bytesOf(withText(newProject(tmpl("TW-2021")), "OrganikMısırİçindekilerğüşıöç")));
+    expect(result.shown).toBeGreaterThan(20);
+    expect(result.invisible).toBe(0);
   });
 
   it("warns about characters the font lacks and still renders", async () => {
