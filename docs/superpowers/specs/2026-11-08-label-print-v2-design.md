@@ -88,9 +88,9 @@ Otomatik kayıt her değişiklikte `localStorage`'a yazıyor ve bu alan yaklaş�
 - "Listeden doldur" penceresinde her satır bir hücreye gider. Boş satırlar atlanır.
 - Satır, ortak tasarımdaki ilk yazı öğesine yazılır. Tasarımda yazı yoksa önce merkeze bir yazı öğesi eklenir.
 - Doldurma, seçili hücre sırasına göre birinci kullanılan hücreden başlar. Yalnız seçili (kullanılan) hücreler dolar; kağıtta önceden harcanmış hücreler atlanır.
-- Sembol önerisi açıksa (varsayılan) her satır için `searchSymbols` çalışır. Ortak tasarımda görsel öğesi varsa onun türünde (tek renk veya renkli) arar, yoksa renkli arar ve görsel öğesi eklenmez; yalnız mevcut görsel öğesi doldurulur.
+- Sembol önerisi açıksa (varsayılan) her satır için `searchSymbols`, ortak tasarımdaki ilk görsel öğesinin türünde (tek renk veya renkli) arar ve sonucu o öğeye yazar. Tasarımda görsel öğesi yoksa öneri kapalı görünür ve "Önce ortak tasarıma bir görsel ekleyin; hücreler onun yerini kullanır" açıklaması çıkar.
 - Eşleşme yoksa o hücrenin görseli boş kalır ve pencere "n satır için görsel bulunamadı" der. Yanlış görsel basılmaz.
-- Liste dolu hücrelerden kısaysa kalan hücreler kullanım dışı kalır, kağıt tekrar kullanılabilir. Doldurma öncesi önizlemede bu sayılar görünür.
+- Liste seçili hücre sayısından kısaysa artan hücreler kullanım dışı kalır, kağıt tekrar kullanılabilir. Doldurma öncesi önizlemede bu sayılar görünür.
 - Liste yaprağı aşarsa, aynı şablon ve aynı ortak tasarımla, hücrelerin tamamı kullanılabilir yeni sayfalar açılır. Yeniden doldurma önceki listenin açtığı sayfaları değiştirir ve onay ister.
 
 ### Çok sayfa
@@ -159,7 +159,7 @@ type ImageOp = { kind: "image"; imageId: string; x: number; y: number; width: nu
 
 - Tür dosya uzantısına değil, içeriğin ilk baytlarına göre belirlenir. PNG, JPG, SVG dışındakiler reddedilir.
 - Tek dosya en fazla 10 MB.
-- SVG mevcut beyaz liste ayrıştırıcıdan geçer, script ve bağlantılar çıktıya ulaşmaz. SVG'ler v1 özel sembol deposuna renkleriyle yazılır.
+- SVG mevcut beyaz liste ayrıştırıcıdan geçer, script ve bağlantılar çıktıya ulaşmaz. SVG'ler v1 özel sembol deposuna renkleriyle yazılır; bu depo `localStorage`'da olduğu için tek SVG en fazla 200 KB olabilir. Projede kullanılan özel SVG'ler dışa aktarılan dosyaya `symbolData` alanıyla girer ve içe aktarmada depoya eklenir.
 - PNG/JPG o öğenin baskı boyutunda 300 DPI'nin altındaysa, DPI değeriyle uyarı verilir. Basım durmaz.
 - `pdf-lib`'in gömemediği dosya (örn. desteklenmeyen JPEG türü) yükleme anında denenip reddedilir, basım anında hata çıkmaz.
 
