@@ -6,6 +6,7 @@ import { labelRects } from "../../src/core/geometry";
 import { catalog } from "../../src/library/symbols/search";
 import { calibrationPdf } from "../../src/render/calibration";
 import { createFontTools, FONT_FILES, type FontBytes } from "../../src/render/fonts";
+import { layoutProject } from "../../src/render/layout";
 import { renderPdf, type RenderDeps } from "../../src/render/pdf";
 import { countGuideCurves, invisibleGlyphs, pageContent, readGuideRects, readText } from "./helpers/readPdf";
 
@@ -74,6 +75,26 @@ describe("renderPdf geometry", () => {
   it("omits guides when turned off", async () => {
     const p = withText(newProject(tmpl("TW-2021")), "x");
     expect(await readGuideRects(await bytesOf(p, { guides: false }))).toHaveLength(0);
+  });
+});
+
+describe("renkli semboller", () => {
+  const colored = { id: "kirmizi", category: "x", tags: ["x"], icon: { viewBox: [0, 0, 10, 10] as [number, number, number, number], paths: [{ d: "M0 0L10 0L10 10Z", fill: true, strokeWidth: 0, fillColor: "#ff0000" }] } };
+  const local = { ...deps, symbols: (id: string) => (id === "kirmizi" ? colored : deps.symbols(id)) };
+  const project = (symbolId: string) => {
+    const p = newProject(tmpl("TW-2021"));
+    p.designs.d1.elements = [{ kind: "symbol", id: "s", x: 1, y: 1, width: 10, height: 10, symbolId, color: "#0000ff" }];
+    return p;
+  };
+
+  it("sabit rengi öğe renginin önüne geçirir", () => {
+    const ops = layoutProject(project("kirmizi"), local, { guides: false }).pages[0].ops;
+    expect(ops[0]).toMatchObject({ kind: "path", fill: "#ff0000" });
+  });
+
+  it("tek renk sembol öğe rengini kullanır", () => {
+    const ops = layoutProject(project("corn"), local, { guides: false }).pages[0].ops.filter((o) => o.kind === "path") as any[];
+    expect(ops.every((o) => (o.stroke?.color ?? o.fill) === "#0000ff")).toBe(true);
   });
 });
 

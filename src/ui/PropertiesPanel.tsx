@@ -1,5 +1,6 @@
 import type { CellEntry, DesignElement, FontId } from "../core/document";
-import { searchSymbols } from "../library/symbols/search";
+import { searchSymbols, type SymbolEntry } from "../library/symbols/search";
+import { isMultiColor } from "../library/symbols/svg";
 import type { RenderDeps } from "../render/pdf";
 import { IconView } from "./IconView";
 import { activeDesign, currentGrid, useAppState, type Store } from "./store";
@@ -43,7 +44,7 @@ function CellFields({ store, deps, cell, entry }: { store: Store; deps: RenderDe
                   Metin
                   <textarea rows={2} value={value ?? element.text} onChange={(e) => store.setCellValue(cell, element.id, e.target.value)} />
                 </label>
-                <Suggestions text={value ?? element.text} onPick={(id) => store.pickSymbol(id)} />
+                <Suggestions text={value ?? element.text} colored={deps.colorSymbols} onPick={(id) => store.pickSymbol(id)} />
               </>
             ) : (
               <>
@@ -68,6 +69,10 @@ export function PropertiesPanel({ store, deps }: { store: Store; deps: RenderDep
   const entry = cell !== null ? currentGrid(state)?.content[cell] : undefined;
   const locked = cell !== null && !entry?.designId;
   const cellText = element?.kind === "text" && cell !== null ? entry?.values[element.id] : undefined;
+  const hasOwnColors = (id: string) => {
+    const entrySymbol = deps.symbols(id);
+    return entrySymbol ? isMultiColor(entrySymbol.icon) : id.startsWith("upload:");
+  };
 
   return (
     <aside className="panel">
@@ -99,7 +104,7 @@ export function PropertiesPanel({ store, deps }: { store: Store; deps: RenderDep
                   onChange={(e) => (cell !== null ? store.setCellValue(cell, element.id, e.target.value) : update({ text: e.target.value }))}
                 />
               </label>
-              <Suggestions text={cellText ?? element.text} onPick={(id) => store.pickSymbol(id)} />
+              <Suggestions text={cellText ?? element.text} colored={deps.colorSymbols} onPick={(id) => store.pickSymbol(id)} />
               <label>
                 Yazı tipi
                 <select value={element.fontId} onChange={(e) => update({ fontId: e.target.value as FontId })}>
@@ -121,10 +126,12 @@ export function PropertiesPanel({ store, deps }: { store: Store; deps: RenderDep
               </label>
             </>
           )}
-          <label>
-            Renk
-            <input type="color" value={element.color} onChange={(e) => update({ color: e.target.value })} />
-          </label>
+          {!(element.kind === "symbol" && hasOwnColors(element.symbolId)) && (
+            <label>
+              Renk
+              <input type="color" value={element.color} onChange={(e) => update({ color: e.target.value })} />
+            </label>
+          )}
           <div className="fields">
             <NumberField label="X (mm)" value={element.x} onChange={(x) => update({ x })} />
             <NumberField label="Y (mm)" value={element.y} onChange={(y) => update({ y })} />
@@ -140,8 +147,8 @@ export function PropertiesPanel({ store, deps }: { store: Store; deps: RenderDep
   );
 }
 
-function Suggestions({ text, onPick }: { text: string; onPick: (id: string) => void }) {
-  const hits = searchSymbols(text, 6);
+function Suggestions({ text, colored = [], onPick }: { text: string; colored?: SymbolEntry[]; onPick: (id: string) => void }) {
+  const hits = [...searchSymbols(text, 6), ...searchSymbols(text, 6, colored)];
   if (hits.length === 0) return null;
   return (
     <div className="suggestions">

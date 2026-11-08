@@ -162,6 +162,40 @@ describe("özellikler paneli hücre modu", () => {
   });
 });
 
+describe("renkli görsel sekmesi", () => {
+  const colored = { id: "color:corn", category: "Sebze", tags: ["mısır"], icon: { viewBox: [0, 0, 1, 1] as [number, number, number, number], paths: [{ d: "M0 0L1 1", fill: true, strokeWidth: 0, fillColor: "#ffcc00" }] } };
+  const localDeps = { ...deps, colorSymbols: [colored], symbols: (id: string) => (id === colored.id ? colored : deps.symbols(id)) };
+
+  it("sekmeler arasında kataloğu değiştirir", () => {
+    const s = store();
+    render(<LibraryPanel store={s} deps={localDeps} templates={[]} customSymbols={[]} onLibraryChanged={() => {}} />);
+    fireEvent.click(screen.getByRole("button", { name: "Sembol" }));
+    fireEvent.change(screen.getByLabelText("Sembol ara"), { target: { value: "mısır" } });
+    expect(screen.queryByRole("button", { name: "Sembol ekle: color:corn" })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Renkli" }));
+    fireEvent.click(screen.getByRole("button", { name: "Sembol ekle: color:corn" }));
+    expect(activeDesign(s.getState()).elements[0]).toMatchObject({ symbolId: "color:corn" });
+  });
+
+  it("renkli görselde renk denetimini gizler", () => {
+    const s = store();
+    s.addSymbol("color:corn");
+    render(<PropertiesPanel store={s} deps={localDeps} />);
+    expect(screen.queryByLabelText("Renk")).toBeNull();
+  });
+
+  it("liste önerisi ortak görselin türünde arar", () => {
+    const s = store();
+    s.addSymbol("color:corn");
+    render(<SheetView store={s} deps={localDeps} />);
+    fireEvent.click(screen.getByRole("button", { name: "Listeden doldur" }));
+    fireEvent.change(screen.getByLabelText("Liste (her satır bir etiket)"), { target: { value: "Mısır" } });
+    fireEvent.click(screen.getByRole("button", { name: "Doldur" }));
+    const symbolId = activeDesign(s.getState()).elements.find((e) => e.kind === "symbol")!.id;
+    expect(grid(s).content[0].values[symbolId]).toBe("color:corn");
+  });
+});
+
 describe("kütüphane hücre modu", () => {
   const props = { templates: [tmpl("TW-2021"), tmpl("TW-2001")], customSymbols: [], onLibraryChanged: () => {} };
 

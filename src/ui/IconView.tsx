@@ -4,7 +4,15 @@ export function IconView({ icon }: { icon: VectorIcon }) {
   return (
     <svg viewBox={icon.viewBox.join(" ")} width="26" height="26" aria-hidden="true">
       {icon.paths.map((p, i) => (
-        <path key={i} d={p.d} fill={p.fill ? "currentColor" : "none"} stroke={p.strokeWidth ? "currentColor" : "none"} strokeWidth={p.strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+        <path
+          key={i}
+          d={p.d}
+          fill={p.fill ? (p.fillColor ?? "currentColor") : "none"}
+          stroke={p.strokeWidth ? (p.strokeColor ?? "currentColor") : "none"}
+          strokeWidth={p.strokeWidth}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       ))}
     </svg>
   );

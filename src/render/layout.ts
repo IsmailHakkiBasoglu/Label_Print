@@ -92,8 +92,8 @@ function designOps(design: LabelDesign, box: Rect, label: FrameLabel, deps: Layo
         x,
         y,
         scale,
-        ...(path.fill ? { fill: el.color } : {}),
-        ...(path.strokeWidth > 0 ? { stroke: { color: el.color, widthMm: path.strokeWidth * scale } } : {}),
+        ...(path.fill ? { fill: path.fillColor ?? el.color } : {}),
+        ...(path.strokeWidth > 0 ? { stroke: { color: path.strokeColor ?? el.color, widthMm: path.strokeWidth * scale } } : {}),
       });
     }
   }

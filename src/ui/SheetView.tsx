@@ -86,7 +86,7 @@ export function SheetView({ store, deps }: { store: Store; deps: RenderDeps }) {
           {message}
         </p>
       ))}
-      {filling && template && <ListFillDialog store={store} capacity={cells.length} label={template.label} onClose={() => setFilling(false)} />}
+      {filling && template && <ListFillDialog store={store} deps={deps} capacity={cells.length} label={template.label} onClose={() => setFilling(false)} />}
     </section>
   );
 }

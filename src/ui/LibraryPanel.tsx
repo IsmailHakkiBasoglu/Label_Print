@@ -6,6 +6,7 @@ import { FRAMES, frameOps } from "../library/frames";
 import { ORNAMENT_CATEGORIES, ORNAMENTS } from "../library/ornaments/frames.data";
 import { importCustomSymbol } from "../library/symbols/custom";
 import { catalog, searchSymbols, type SymbolEntry } from "../library/symbols/search";
+import { isMultiColor } from "../library/symbols/svg";
 import { PATTERNS } from "../library/textPatterns";
 import type { RenderDeps } from "../render/pdf";
 import { OpsView } from "../render/preview";
@@ -51,7 +52,7 @@ export function LibraryPanel({ store, deps, templates, customSymbols, onLibraryC
           <p className="hint">Desen, etiketteki yazıları ve ilk sembolü korur, yerleşimi yeniden kurar.</p>
         </div>
       )}
-      {tab === "Sembol" && <SymbolsTab store={store} customSymbols={customSymbols} onLibraryChanged={onLibraryChanged} />}
+      {tab === "Sembol" && <SymbolsTab store={store} deps={deps} customSymbols={customSymbols} onLibraryChanged={onLibraryChanged} />}
       {tab === "Bölge" && <ZonesPanel store={store} />}
     </aside>
   );
@@ -173,11 +174,15 @@ function FramesTab({ store, deps }: { store: Store; deps: RenderDeps }) {
   );
 }
 
-function SymbolsTab({ store, customSymbols, onLibraryChanged }: Pick<Props, "store" | "customSymbols" | "onLibraryChanged">) {
+function SymbolsTab({ store, deps, customSymbols, onLibraryChanged }: Pick<Props, "store" | "deps" | "customSymbols" | "onLibraryChanged">) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
+  const [colored, setColored] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const all = useMemo(() => [...customSymbols, ...catalog], [customSymbols]);
+  const all = useMemo(() => {
+    const mine = customSymbols.filter((s) => isMultiColor(s.icon) === colored);
+    return [...mine, ...(colored ? (deps.colorSymbols ?? []) : catalog)];
+  }, [customSymbols, colored, deps.colorSymbols]);
   const categories = useMemo(() => [...new Set(all.map((s) => s.category))], [all]);
   const list = query.trim() ? searchSymbols(query, 60, all) : all.filter((s) => !category || s.category === category);
 
@@ -192,6 +197,14 @@ function SymbolsTab({ store, customSymbols, onLibraryChanged }: Pick<Props, "sto
 
   return (
     <div>
+      <div className="actions">
+        <button className={colored ? "" : "selected"} onClick={() => (setColored(false), setCategory(""))}>
+          Tek renk
+        </button>
+        <button className={colored ? "selected" : ""} onClick={() => (setColored(true), setCategory(""))}>
+          Renkli
+        </button>
+      </div>
       <input aria-label="Sembol ara" placeholder="Ara: mısır, zeytin, kutu…" value={query} onChange={(e) => setQuery(e.target.value)} />
       <div className="actions">
         <select aria-label="Kategori" value={category} onChange={(e) => setCategory(e.target.value)}>

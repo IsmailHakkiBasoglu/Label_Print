@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
 import { fillWouldReplace, parseLines, previewListFill, type ListFillOptions } from "../core/listFill";
 import { searchSymbols } from "../library/symbols/search";
+import type { RenderDeps } from "../render/pdf";
 import { currentGrid, useAppState, type Store } from "./store";
 
-type Props = { store: Store; capacity: number; label: { width: number; height: number }; onClose: () => void };
+type Props = { store: Store; deps: RenderDeps; capacity: number; label: { width: number; height: number }; onClose: () => void };
 
 function describe(r: ReturnType<typeof previewListFill>): string {
   return [
@@ -16,7 +17,7 @@ function describe(r: ReturnType<typeof previewListFill>): string {
     .join(" · ");
 }
 
-export function ListFillDialog({ store, capacity, label, onClose }: Props) {
+export function ListFillDialog({ store, deps, capacity, label, onClose }: Props) {
   const state = useAppState(store);
   const [text, setText] = useState("");
   const [wantSuggest, setWantSuggest] = useState(true);
@@ -28,7 +29,9 @@ export function ListFillDialog({ store, capacity, label, onClose }: Props) {
   const options: Omit<ListFillOptions, "newId"> = {
     cellCount: capacity,
     label,
-    ...(wantSuggest && hasSymbol ? { suggest: (line: string) => searchSymbols(line, 1)[0]?.id ?? null } : {}),
+    ...(wantSuggest && hasSymbol
+      ? { suggest: (line: string, sample: string) => searchSymbols(line, 1, sample.startsWith("color:") ? deps.colorSymbols : undefined)[0]?.id ?? null }
+      : {}),
   };
   const report = lines.length ? previewListFill(state.project, state.pageIndex, lines, { ...options, newId: () => "onizleme" }) : null;
 

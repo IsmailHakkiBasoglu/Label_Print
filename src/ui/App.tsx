@@ -3,7 +3,8 @@ import { tanexTemplates } from "../core/catalog";
 import { loadCustom } from "../core/customTemplates";
 import { browserStorage } from "../core/storage";
 import { loadCustomSymbols } from "../library/symbols/custom";
-import { catalog } from "../library/symbols/search";
+import { loadColorCatalog } from "../library/symbols/colorCatalog";
+import { catalog, type SymbolEntry } from "../library/symbols/search";
 import { createFontTools, FONT_FILES, loadFontBytes, type FontBytes } from "../render/fonts";
 import type { RenderDeps } from "../render/pdf";
 import { LabelEditor } from "./LabelEditor";
@@ -27,11 +28,18 @@ const fontFaces = `
 
 export function App() {
   const [fontBytes, setFontBytes] = useState<FontBytes | null>(null);
+  const [colorSymbols, setColorSymbols] = useState<SymbolEntry[]>([]);
   const [failure, setFailure] = useState<string | null>(null);
   const [revision, setRevision] = useState(0);
 
   useEffect(() => {
-    loadFontBytes().then(setFontBytes, (e: Error) => setFailure(e.message));
+    Promise.all([loadFontBytes(), loadColorCatalog()]).then(
+      ([fonts, colored]) => {
+        setColorSymbols(colored);
+        setFontBytes(fonts);
+      },
+      (e: Error) => setFailure(e.message),
+    );
   }, []);
 
   const custom = useMemo(() => loadCustom(browserStorage()), [revision]);
@@ -40,14 +48,15 @@ export function App() {
 
   const deps = useMemo<RenderDeps | null>(() => {
     if (!fontBytes) return null;
-    const symbols = [...customSymbols, ...catalog];
+    const symbols = [...customSymbols, ...catalog, ...colorSymbols];
     return {
+      colorSymbols,
       templates: (id) => templates.find((t) => t.id === id),
       symbols: (id) => symbols.find((s) => s.id === id),
       tools: createFontTools(fontBytes),
       fontBytes,
     };
-  }, [fontBytes, templates, customSymbols]);
+  }, [fontBytes, templates, customSymbols, colorSymbols]);
 
   if (failure) return <p role="alert" className="error banner">{failure}</p>;
   if (!deps) return <p className="loading">Yükleniyor…</p>;

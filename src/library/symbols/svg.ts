@@ -1,10 +1,50 @@
 import { XMLParser } from "fast-xml-parser";
 
-export type VectorPath = { d: string; fill: boolean; strokeWidth: number };
+/** `fillColor` and `strokeColor` are set only for fixed colours; without them the path takes the element's colour. */
+export type VectorPath = { d: string; fill: boolean; strokeWidth: number; fillColor?: string; strokeColor?: string };
 export type VectorIcon = { viewBox: [number, number, number, number]; paths: VectorPath[] };
 
 type Attrs = Record<string, string>;
-type Style = { fill: boolean; strokeWidth: number };
+type Style = { fill: boolean; strokeWidth: number; fillColor?: string; strokeColor?: string };
+
+const NAMED_COLORS: Record<string, string> = {
+  black: "#000000", white: "#ffffff", red: "#ff0000", lime: "#00ff00", green: "#008000", blue: "#0000ff", yellow: "#ffff00",
+  orange: "#ffa500", purple: "#800080", pink: "#ffc0cb", gray: "#808080", grey: "#808080", brown: "#a52a2a",
+};
+
+type ParsedColor = { color?: string } | { error: string };
+
+function parseColor(raw: string): ParsedColor {
+  const value = raw.trim().toLowerCase();
+  if (value === "currentcolor") return {};
+  if (value.startsWith("url(")) return { error: "Gradyan içeren SVG desteklenmiyor." };
+  if (/^#[0-9a-f]{6}$/.test(value)) return { color: value };
+  if (/^#[0-9a-f]{3}$/.test(value)) return { color: `#${[...value.slice(1)].map((c) => c + c).join("")}` };
+  const rgb = /^rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/.exec(value);
+  if (rgb) return { color: `#${rgb.slice(1, 4).map((n) => Math.min(Number(n), 255).toString(16).padStart(2, "0")).join("")}` };
+  if (NAMED_COLORS[value]) return { color: NAMED_COLORS[value] };
+  return { error: `Renk okunamadı: ${raw}` };
+}
+
+function colorError(a: Attrs): string | null {
+  for (const key of ["fill", "stroke"]) {
+    if (a[key] === undefined || a[key] === "none") continue;
+    const parsed = parseColor(a[key]);
+    if ("error" in parsed) return parsed.error;
+  }
+  return null;
+}
+
+function inheritColor(value: string | undefined, parent: string | undefined): string | undefined {
+  if (value === undefined) return parent;
+  if (value === "none") return undefined;
+  const parsed = parseColor(value);
+  return "color" in parsed ? parsed.color : undefined;
+}
+
+export function isMultiColor(icon: VectorIcon): boolean {
+  return icon.paths.some((p) => p.fillColor !== undefined || p.strokeColor !== undefined);
+}
 
 const parser = new XMLParser({
   ignoreAttributes: false,
@@ -84,6 +124,8 @@ function nextStyle(a: Attrs, parent: Style & { stroked: boolean }): Style & { st
     fill: a.fill !== undefined ? a.fill !== "none" : parent.fill,
     stroked: a.stroke !== undefined ? a.stroke !== "none" : parent.stroked,
     strokeWidth: a["stroke-width"] !== undefined ? Number(a["stroke-width"]) : parent.strokeWidth,
+    fillColor: inheritColor(a.fill, parent.fillColor),
+    strokeColor: inheritColor(a.stroke, parent.strokeColor),
   };
 }
 
@@ -93,13 +135,23 @@ function walk(nodes: any[], style: Style & { stroked: boolean }, out: VectorPath
     if (!tag || tag === "#text") continue;
     const a: Attrs = node[":@"] ?? {};
     if ((tag === "g" || SHAPES.has(tag)) && a.transform) return "Dönüşüm (transform) içeren SVG desteklenmiyor.";
+    const badColor = tag === "g" || SHAPES.has(tag) ? colorError(a) : null;
+    if (badColor) return badColor;
     const own = nextStyle(a, style);
     if (tag === "g") {
       const error = walk(node.g, own, out);
       if (error) return error;
     } else if (SHAPES.has(tag)) {
       const d = shapeToPath(tag, a);
-      if (d && (own.fill || own.stroked)) out.push({ d, fill: own.fill, strokeWidth: own.stroked ? own.strokeWidth : 0 });
+      if (d && (own.fill || own.stroked)) {
+        out.push({
+          d,
+          fill: own.fill,
+          strokeWidth: own.stroked ? own.strokeWidth : 0,
+          ...(own.fill && own.fillColor ? { fillColor: own.fillColor } : {}),
+          ...(own.stroked && own.strokeColor ? { strokeColor: own.strokeColor } : {}),
+        });
+      }
     }
   }
   return null;
@@ -119,6 +171,8 @@ export function parseSvg(text: string): VectorIcon | { error: string } {
   const box = (a.viewBox ?? `0 0 ${parseFloat(a.width ?? "0")} ${parseFloat(a.height ?? "0")}`).trim().split(/[\s,]+/).map(Number);
   if (box.length !== 4 || box.some(Number.isNaN) || !(box[2] > 0 && box[3] > 0)) return { error: "SVG boyutu (viewBox) eksik." };
   const paths: VectorPath[] = [];
+  const rootColorError = colorError(a);
+  if (rootColorError) return { error: rootColorError };
   const error = walk(root.svg, nextStyle(a, { fill: true, stroked: false, strokeWidth: 1 }), paths);
   if (error) return { error };
   if (paths.length === 0) return { error: "SVG içinde çizim yok." };

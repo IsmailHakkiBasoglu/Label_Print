@@ -21,8 +21,9 @@ import { mmToPt, type Rect } from "../core/geometry";
 import type { FontBytes } from "./fonts";
 import { layoutProject, type LayoutDeps } from "./layout";
 import type { GuideOp, PathOp } from "./ops";
+import type { SymbolEntry } from "../library/symbols/search";
 
-export type RenderDeps = LayoutDeps & { fontBytes: FontBytes };
+export type RenderDeps = LayoutDeps & { fontBytes: FontBytes; colorSymbols?: SymbolEntry[] };
 export type RenderResult = { ok: true; bytes: Uint8Array; warnings: string[] } | { ok: false; errors: string[] };
 
 const GUIDE_WIDTH_PT = 0.25;
