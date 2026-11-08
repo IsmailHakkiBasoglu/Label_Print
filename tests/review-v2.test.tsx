@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import fontkit from "@pdf-lib/fontkit";
+import { createFontTools } from "../src/render/fonts";
 import { createMemoryImageStore, ingestImage, jpegOrientation } from "../src/core/imageStore";
 import { newProject, parseProject, type GridZone } from "../src/core/document";
 import { applyListFill } from "../src/core/listFill";
@@ -212,6 +214,18 @@ describe("depolama hatası", () => {
   it("içe aktarılan sembol kaydedilemezse false döner", () => {
     const good = { id: "custom-1", category: "Benim", tags: ["x"], icon: { viewBox: [0, 0, 1, 1], paths: [{ d: "M0 0", fill: true, strokeWidth: 0 }] } };
     expect(mergeCustomSymbols([good], full())).toBe(false);
+  });
+});
+
+describe("yazı ölçümü", () => {
+  it("aynı metni bir kez şekillendirir, boyuta göre ölçekler", () => {
+    const layout = vi.fn(() => ({ glyphs: [{ advanceWidth: 500 }] }));
+    vi.spyOn(fontkit, "create").mockReturnValue({ layout, unitsPerEm: 1000 } as any);
+    const { measure } = createFontTools({ sans: new Uint8Array() } as any);
+    const small = measure("kelime", "sans", 10);
+    const large = measure("kelime", "sans", 20);
+    expect(layout).toHaveBeenCalledOnce();
+    expect(large).toBeCloseTo(small * 2, 8);
   });
 });
 
