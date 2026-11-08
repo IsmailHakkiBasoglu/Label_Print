@@ -1,0 +1,3796 @@
+[
+ {
+  "id": "TW-2000",
+  "name": "TW-2000 210×297 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginLeft": 0,
+   "marginTop": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 210,
+   "height": 297,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2001",
+  "name": "TW-2001 199.6×289.1 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginLeft": 5.2034722222222225,
+   "marginTop": 3.898194444444444,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 199.6,
+   "height": 289.1,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2002",
+  "name": "TW-2002 199.6×143.5 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 2,
+   "marginLeft": 5.185833333333333,
+   "marginTop": 4.991805555555556,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 199.6,
+   "height": 143.5,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2003",
+  "name": "TW-2003 210×99 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 2,
+   "marginLeft": 0,
+   "marginTop": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 210,
+   "height": 99,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2004",
+  "name": "TW-2004 99.1×139 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 2,
+   "marginLeft": 5.009444444444444,
+   "marginTop": 10.001249999999999,
+   "gapX": 2.905694444444464,
+   "gapY": 0
+  },
+  "label": {
+   "width": 99.1,
+   "height": 139,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2006",
+  "name": "TW-2006 99.1×93.1 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 3,
+   "marginLeft": 4.586111111111111,
+   "marginTop": 8.784166666666666,
+   "gapX": 2.9056944444444355,
+   "gapY": 0
+  },
+  "label": {
+   "width": 99.1,
+   "height": 93.1,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2007",
+  "name": "TW-2007 200×37 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 7,
+   "marginLeft": 5.009444444444444,
+   "marginTop": 10.001249999999999,
+   "gapX": 0,
+   "gapY": 3.0049999999999955
+  },
+  "label": {
+   "width": 200,
+   "height": 37,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2008",
+  "name": "TW-2008 99.1×67.7 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 4,
+   "marginLeft": 5.009444444444444,
+   "marginTop": 14.005277777777776,
+   "gapX": 2.7116666666666873,
+   "gapY": 0
+  },
+  "label": {
+   "width": 99.1,
+   "height": 67.7,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2010",
+  "name": "TW-2010 99.1×57 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 5,
+   "marginLeft": 4.497916666666667,
+   "marginTop": 5.997222222222222,
+   "gapX": 2.7116666666666873,
+   "gapY": 0
+  },
+  "label": {
+   "width": 99.1,
+   "height": 57,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2012",
+  "name": "TW-2012 63.5×72 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 4,
+   "marginLeft": 6.8086111111111105,
+   "marginTop": 4.497916666666667,
+   "gapX": 3.0162499999999994,
+   "gapY": 0
+  },
+  "label": {
+   "width": 63.5,
+   "height": 72,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2014",
+  "name": "TW-2014 99.1×38.1 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 7,
+   "marginLeft": 4.497916666666667,
+   "marginTop": 15.204722222222221,
+   "gapX": 2.7116666666666873,
+   "gapY": 0
+  },
+  "label": {
+   "width": 99.1,
+   "height": 38.1,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2015",
+  "name": "TW-2015 45×45 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 5,
+   "marginLeft": 24.994305555555552,
+   "marginTop": 6.491111111111111,
+   "gapX": 12.485138888888883,
+   "gapY": 14.689999999999998
+  },
+  "label": {
+   "width": 45,
+   "height": 45,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2016",
+  "name": "TW-2016 99.1×34 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 8,
+   "marginLeft": 5.009444444444444,
+   "marginTop": 12.99986111111111,
+   "gapX": 2.905694444444464,
+   "gapY": 0
+  },
+  "label": {
+   "width": 99.1,
+   "height": 34,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2018",
+  "name": "TW-2018 63.5×46.6 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 6,
+   "marginLeft": 6.8086111111111105,
+   "marginTop": 8.695972222222222,
+   "gapX": 2.998611111111117,
+   "gapY": 0
+  },
+  "label": {
+   "width": 63.5,
+   "height": 46.6,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2020",
+  "name": "TW-2020 26×95 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 10,
+   "marginLeft": 9.983611111111111,
+   "marginTop": 18.485555555555553,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 95,
+   "height": 26,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Sayfadaki ölçü (26×95) Word dosyasının tersi; Word yönü kullanıldı."
+  ]
+ },
+ {
+  "id": "TW-2021",
+  "name": "TW-2021 63.5×38.1 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 7,
+   "marginLeft": 6.8086111111111105,
+   "marginTop": 15.204722222222221,
+   "gapX": 3.0162500000000136,
+   "gapY": 0
+  },
+  "label": {
+   "width": 63.5,
+   "height": 38.1,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2022",
+  "name": "TW-2022 50×22 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 4,
+   "rows": 13,
+   "marginLeft": 4.991805555555556,
+   "marginTop": 5.485694444444444,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 50,
+   "height": 22,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2024",
+  "name": "TW-2024 64×34 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 8,
+   "marginLeft": 5.997222222222222,
+   "marginTop": 12.488333333333333,
+   "gapX": 3.010138888888889,
+   "gapY": 0
+  },
+  "label": {
+   "width": 64,
+   "height": 34,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2025",
+  "name": "TW-2025 41×25 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 4,
+   "rows": 11,
+   "marginLeft": 7.990416666666666,
+   "marginTop": 13.987638888888887,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 41,
+   "height": 25,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2027",
+  "name": "TW-2027 70×32 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 9,
+   "marginLeft": 0,
+   "marginTop": 4.497916666666667,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 70,
+   "height": 32,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2028",
+  "name": "TW-2028 52.5×41 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 4,
+   "rows": 7,
+   "marginLeft": 0,
+   "marginTop": 4.991805555555556,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 52.5,
+   "height": 41,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2030",
+  "name": "TW-2030 38×44 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 38,
+   "height": 44,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2032",
+  "name": "TW-2032 52.5×35 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 4,
+   "rows": 8,
+   "marginLeft": 0,
+   "marginTop": 8.484305555555554,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 52.5,
+   "height": 35,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2033",
+  "name": "TW-2033 63.5×25.4 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 11,
+   "marginLeft": 6.7380555555555555,
+   "marginTop": 8.784166666666666,
+   "gapX": 2.998611111111117,
+   "gapY": 0
+  },
+  "label": {
+   "width": 63.5,
+   "height": 25.4,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2035",
+  "name": "TW-2035 52.5×33 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 4,
+   "rows": 9,
+   "marginLeft": 0,
+   "marginTop": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 52.5,
+   "height": 33,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2036",
+  "name": "TW-2036 45×30 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 4,
+   "rows": 9,
+   "marginLeft": 4.497916666666667,
+   "marginTop": 13.49375,
+   "gapX": 6.999444444444443,
+   "gapY": 0
+  },
+  "label": {
+   "width": 45,
+   "height": 30,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2037",
+  "name": "TW-2037 70×37.125 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 8,
+   "marginLeft": 0,
+   "marginTop": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 70,
+   "height": 37.125,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2040",
+  "name": "TW-2040 52.5×29.7 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 4,
+   "rows": 10,
+   "marginLeft": 0,
+   "marginTop": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 52.5,
+   "height": 29.7,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2041",
+  "name": "TW-2041 118×41 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 118,
+   "height": 41,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Eski .doc biçimi okunamıyor; ızgarayı elle girin."
+  ]
+ },
+ {
+  "id": "TW-2042",
+  "name": "TW-2042 42×42 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 4,
+   "rows": 6,
+   "marginLeft": 20.990277777777777,
+   "marginTop": 22.489583333333332,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 42,
+   "height": 42,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2044",
+  "name": "TW-2044 48.5×25.4 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 4,
+   "rows": 11,
+   "marginLeft": 7.990416666666666,
+   "marginTop": 8.784166666666666,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 48.5,
+   "height": 25.4,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2047",
+  "name": "TW-2047 210×47.81 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 6,
+   "marginLeft": 0,
+   "marginTop": 5.097638888888889,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 210,
+   "height": 47.81,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2048",
+  "name": "TW-2048 32×32 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 32,
+   "height": 32,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2050",
+  "name": "TW-2050 70×50,8 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 5,
+   "marginLeft": 0,
+   "marginTop": 21.501805555555556,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 70,
+   "height": 50.8,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2052",
+  "name": "TW-2052 46.4×21.2 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 4,
+   "rows": 13,
+   "marginLeft": 7.690555555555555,
+   "marginTop": 10.689166666666667,
+   "gapX": 2.988888888888887,
+   "gapY": 0
+  },
+  "label": {
+   "width": 46.4,
+   "height": 21.2,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2054",
+  "name": "TW-2054 35×33.6 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 35,
+   "height": 33.6,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2055",
+  "name": "TW-2055 37×24 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 37,
+   "height": 24,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2059",
+  "name": "TW-2059 -42×59,69 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 42,
+   "height": 59.69,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2060",
+  "name": "TW-2060 30×9 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 6,
+   "rows": 30,
+   "marginLeft": 5.009444444444444,
+   "marginTop": 13.511388888888888,
+   "gapX": 4.007777777777775,
+   "gapY": 0
+  },
+  "label": {
+   "width": 30,
+   "height": 9,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2065",
+  "name": "TW-2065 38.1×21.2 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 38.1,
+   "height": 21.2,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2067",
+  "name": "TW-2067 67×46 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 67,
+   "height": 46,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2069",
+  "name": "TW-2069 210×29.69 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 10,
+   "marginLeft": 0,
+   "marginTop": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 210,
+   "height": 29.69,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2072",
+  "name": "TW-2072 26.25×33.16 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 26.25,
+   "height": 33.16,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2080",
+  "name": "TW-2080 26.2×29.7 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 8,
+   "rows": 10,
+   "marginLeft": 0,
+   "marginTop": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 26.2,
+   "height": 29.7,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2095",
+  "name": "TW-2095 30×12 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 5,
+   "rows": 19,
+   "marginLeft": 17.991666666666667,
+   "marginTop": 2.998611111111111,
+   "gapX": 5.983333333333334,
+   "gapY": 3.4869444444444504
+  },
+  "label": {
+   "width": 30,
+   "height": 12,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2096",
+  "name": "TW-2096 43.5×8.5 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 43.5,
+   "height": 8.5,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2100",
+  "name": "TW-2100 210×280 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginLeft": 0,
+   "marginTop": 8.484305555555554,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 210,
+   "height": 280,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2104",
+  "name": "TW-2104 192×59 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 4,
+   "marginLeft": 8.995833333333334,
+   "marginTop": 30.497638888888886,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 192,
+   "height": 59,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2102",
+  "name": "TW-2102 210×148.5 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 210,
+   "height": 148.5,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2105",
+  "name": "TW-2105 105×37.125 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 105,
+   "height": 37.125,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2106",
+  "name": "TW-2106 70×148.5 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 70,
+   "height": 148.5,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2107",
+  "name": "TW-2107 192,5×39 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 7,
+   "marginLeft": 8.748888888888889,
+   "marginTop": 11.994444444444444,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 192.5,
+   "height": 39,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2108",
+  "name": "TW-2108 192×34 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 8,
+   "marginLeft": 8.995833333333334,
+   "marginTop": 12.505972222222221,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 192,
+   "height": 34,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2114",
+  "name": "TW-2114 105×41 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 7,
+   "marginLeft": 0,
+   "marginTop": 5.009444444444444,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 105,
+   "height": 41,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2115",
+  "name": "TW-2115 70×56 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 5,
+   "marginLeft": 0,
+   "marginTop": 8.484305555555554,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 70,
+   "height": 56,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2116",
+  "name": "TW-2116 116×41 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 116,
+   "height": 41,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2117",
+  "name": "TW-2117 118×37 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 118,
+   "height": 37,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2118",
+  "name": "TW-2118 58.4×43.2 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 58.4,
+   "height": 43.2,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2120",
+  "name": "TW-2120 31×14 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 6,
+   "rows": 20,
+   "marginLeft": 11.994444444444444,
+   "marginTop": 8.995833333333334,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 31,
+   "height": 14,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2121",
+  "name": "TW-2121 70×38 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 7,
+   "marginLeft": 0,
+   "marginTop": 15.504583333333333,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 70,
+   "height": 38,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2124",
+  "name": "TW-2124 70×42.43 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 7,
+   "marginLeft": 0,
+   "marginTop": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 70,
+   "height": 42.43,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2125",
+  "name": "TW-2125 25 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 25,
+   "height": 25,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Sayfada tek ölçü var, şekil belirsiz: kontrol edin.",
+   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2130",
+  "name": "TW-2130 30mm Yuvarlak",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 6,
+   "rows": 8,
+   "marginLeft": 8.484305555555554,
+   "marginTop": 19.98486111111111,
+   "gapX": 2.596666666666664,
+   "gapY": 2.596666666666664
+  },
+  "label": {
+   "width": 30,
+   "height": 30,
+   "shape": "circle"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2133",
+  "name": "TW-2133 70×25 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 11,
+   "marginLeft": 0,
+   "marginTop": 10.989027777777777,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 70,
+   "height": 25,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2137",
+  "name": "TW-2137 35×37.1 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 6,
+   "rows": 8,
+   "marginLeft": 0,
+   "marginTop": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 35,
+   "height": 37.1,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2140",
+  "name": "TW-2140 40mm Yuvarlak",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 4,
+   "rows": 5,
+   "marginLeft": 15.998472222222222,
+   "marginTop": 14.005277777777776,
+   "gapX": 5.984583333333326,
+   "gapY": 5.7905555555555495
+  },
+  "label": {
+   "width": 40,
+   "height": 40,
+   "shape": "circle"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2141",
+  "name": "TW-2141 70×41 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 7,
+   "marginLeft": 0,
+   "marginTop": 4.991805555555556,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 70,
+   "height": 41,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2148",
+  "name": "TW-2148 40.6×25.4 mm oval",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 4,
+   "rows": 9,
+   "marginLeft": 16.298333333333332,
+   "marginTop": 17.991666666666667,
+   "gapX": 4.9965277777777715,
+   "gapY": 3.898194444444446
+  },
+  "label": {
+   "width": 40.6,
+   "height": 25.4,
+   "shape": "oval"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2150",
+  "name": "TW-2150 50 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 50,
+   "height": 50,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Sayfada tek ölçü var, şekil belirsiz: kontrol edin.",
+   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2154",
+  "name": "TW-2154 35×42.64 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 35,
+   "height": 42.64,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2160",
+  "name": "TW-2160 60 mm Yuvarlak",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 4,
+   "marginLeft": 7.990416666666666,
+   "marginTop": 17.991666666666667,
+   "gapX": 6.992499999999993,
+   "gapY": 6.992499999999993
+  },
+  "label": {
+   "width": 60,
+   "height": 60,
+   "shape": "circle"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2163",
+  "name": "TW-2163 210×16.38 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 210,
+   "height": 16.38,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2164",
+  "name": "TW-2164 52.5×18 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 4,
+   "rows": 16,
+   "marginLeft": 0,
+   "marginTop": 4.497916666666667,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 52.5,
+   "height": 18,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2165",
+  "name": "TW-2165 38.1×21.2 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 5,
+   "rows": 13,
+   "marginLeft": 9.789583333333333,
+   "marginTop": 10.689166666666667,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 38.1,
+   "height": 21.2,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2169",
+  "name": "TW-2169 210×16.9 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 210,
+   "height": 16.9,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2172",
+  "name": "TW-2172 35×23 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 6,
+   "rows": 12,
+   "marginLeft": 0,
+   "marginTop": 10.495138888888889,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 35,
+   "height": 23,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2180",
+  "name": "TW-2180 37×14.25 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 37,
+   "height": 14.25,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket yüksekliği aralıkları düzensiz."
+  ]
+ },
+ {
+  "id": "TW-2204",
+  "name": "TW-2204 105×148.5 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 105,
+   "height": 148.5,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2208",
+  "name": "TW-2208 105×70 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 4,
+   "marginLeft": 0,
+   "marginTop": 8.501944444444444,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 105,
+   "height": 70,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2215",
+  "name": "TW-2215 15 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 11,
+   "rows": 15,
+   "marginLeft": 7.496527777777778,
+   "marginTop": 2.2930555555555556,
+   "gapX": 2.9916666666666636,
+   "gapY": 4.896666666666658
+  },
+  "label": {
+   "width": 15,
+   "height": 15,
+   "shape": "circle"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2216",
+  "name": "TW-2216 105×35 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 8,
+   "marginLeft": 0,
+   "marginTop": 8.501944444444444,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 105,
+   "height": 35,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2218",
+  "name": "TW-2218 70×46 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 6,
+   "marginLeft": 0,
+   "marginTop": 10.495138888888889,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 70,
+   "height": 46,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2222",
+  "name": "TW-2222 105×23 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 105,
+   "height": 23,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2224",
+  "name": "TW-2224 105×23 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 12,
+   "marginLeft": 0,
+   "marginTop": 10.495138888888889,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 105,
+   "height": 23,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2229",
+  "name": "TW-2229 70×29.7 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 10,
+   "marginLeft": 0,
+   "marginTop": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 70,
+   "height": 29.7,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2233",
+  "name": "TW-2233 70×25.4 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 11,
+   "marginLeft": 0,
+   "marginTop": 8.784166666666666,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 70,
+   "height": 25.4,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2237",
+  "name": "TW-2237 37×133 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 5,
+   "rows": 2,
+   "marginLeft": 7.302499999999999,
+   "marginTop": 13.511388888888888,
+   "gapX": 2.599305555555553,
+   "gapY": 4.018888888888881
+  },
+  "label": {
+   "width": 37,
+   "height": 133,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2238",
+  "name": "TW-2238 37×85 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 37,
+   "height": 85,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2240",
+  "name": "TW-2240 48.5×25.4 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 4,
+   "rows": 10,
+   "marginLeft": 7.990416666666666,
+   "marginTop": 21.484166666666663,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 48.5,
+   "height": 25.4,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2248",
+  "name": "TW-2248 52.5×23 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 4,
+   "rows": 12,
+   "marginLeft": 0,
+   "marginTop": 10.495138888888889,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 52.5,
+   "height": 23,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2260",
+  "name": "TW-2260 24×40 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 5,
+   "rows": 12,
+   "marginLeft": 4.991805555555556,
+   "marginTop": 4.497916666666667,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 40,
+   "height": 24,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Sayfadaki ölçü (24×40) Word dosyasının tersi; Word yönü kullanıldı."
+  ]
+ },
+ {
+  "id": "TW-2270",
+  "name": "TW-2270 40×20 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 5,
+   "rows": 14,
+   "marginLeft": 5.009444444444444,
+   "marginTop": 8.501944444444444,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 40,
+   "height": 20,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2272",
+  "name": "TW-2272 35×23.3 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 6,
+   "rows": 12,
+   "marginLeft": 0,
+   "marginTop": 8.995833333333334,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 35,
+   "height": 23.3,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2280",
+  "name": "TW-2280 22×12 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 8,
+   "rows": 20,
+   "marginLeft": 4.709583333333333,
+   "marginTop": 8.501944444444444,
+   "gapX": 3.4881944444444457,
+   "gapY": 1.987638888888883
+  },
+  "label": {
+   "width": 22,
+   "height": 12,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2294",
+  "name": "TW-2294 210×294.86 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginLeft": 0,
+   "marginTop": 2.0990277777777777,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 210,
+   "height": 294.86,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2297",
+  "name": "TW-2297 105×296.8 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 1,
+   "marginLeft": 0,
+   "marginTop": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 105,
+   "height": 296.8,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2302",
+  "name": "TW-2302 210×140 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 2,
+   "marginLeft": 0,
+   "marginTop": 8.484305555555554,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 210,
+   "height": 140,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2303",
+  "name": "TW-2303 105×99 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 3,
+   "marginLeft": 0,
+   "marginTop": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 105,
+   "height": 99,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2304",
+  "name": "TW-2304 105×140 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 2,
+   "marginLeft": 0,
+   "marginTop": 8.484305555555554,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 105,
+   "height": 140,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2308",
+  "name": "TW-2308 95×65 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 4,
+   "marginLeft": 7.496527777777778,
+   "marginTop": 11.994444444444444,
+   "gapX": 4.994861111111106,
+   "gapY": 4.285555555555547
+  },
+  "label": {
+   "width": 95,
+   "height": 65,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2312",
+  "name": "TW-2312 70×70 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 4,
+   "marginLeft": 0,
+   "marginTop": 8.501944444444444,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 70,
+   "height": 70,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2316",
+  "name": "TW-2316 105×36 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 8,
+   "marginLeft": 0,
+   "marginTop": 4.497916666666667,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 105,
+   "height": 36,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2318",
+  "name": "TW-2318 83×30 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 9,
+   "marginLeft": 21.995694444444442,
+   "marginTop": 13.511388888888888,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 83,
+   "height": 30,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2319",
+  "name": "TW-2319 33×19 mm",
+  "sheet": {
+   "width": 209.9909722222222,
+   "height": 298.0443055555555
+  },
+  "grid": {
+   "columns": 6,
+   "rows": 15,
+   "marginLeft": 5.997222222222222,
+   "marginTop": 5.997222222222222,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 33,
+   "height": 19,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2320",
+  "name": "TW-2320 90×25 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 11,
+   "marginLeft": 14.993055555555555,
+   "marginTop": 10.989027777777777,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 90,
+   "height": 25,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2321",
+  "name": "TW-2321 52.5×21.2 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 4,
+   "rows": 14,
+   "marginLeft": 0,
+   "marginTop": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 52.5,
+   "height": 21.2,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2324",
+  "name": "TW-2324 70×35 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 8,
+   "marginLeft": 0,
+   "marginTop": 8.501944444444444,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 70,
+   "height": 35,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2327",
+  "name": "TW-2327 70×30 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 9,
+   "marginLeft": 0,
+   "marginTop": 13.49375,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 70,
+   "height": 30,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2329",
+  "name": "TW-2329 210×32 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 210,
+   "height": 32,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2334",
+  "name": "TW-2334 55×33 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 8,
+   "marginLeft": 22.489583333333332,
+   "marginTop": 5.997222222222222,
+   "gapX": 0,
+   "gapY": 2.9833333333333343
+  },
+  "label": {
+   "width": 55,
+   "height": 33,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2340",
+  "name": "TW-2340 25×45 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 4,
+   "rows": 10,
+   "marginLeft": 10.495138888888889,
+   "marginTop": 10.001249999999999,
+   "gapX": 3.013055555555553,
+   "gapY": 3.0105555555555554
+  },
+  "label": {
+   "width": 45,
+   "height": 25,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Sayfadaki ölçü (25×45) Word dosyasının tersi; Word yönü kullanıldı."
+  ]
+ },
+ {
+  "id": "TW-2348",
+  "name": "TW-2348 35×35 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 6,
+   "rows": 8,
+   "marginLeft": 0,
+   "marginTop": 8.484305555555554,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 35,
+   "height": 35,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2370",
+  "name": "TW-2370 210×70 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 4,
+   "marginLeft": 0,
+   "marginTop": 8.484305555555554,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 210,
+   "height": 70,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2374",
+  "name": "TW-2374 105×74.25 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 105,
+   "height": 74.25,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2380",
+  "name": "TW-2380 105×280 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 1,
+   "marginLeft": 0,
+   "marginTop": 8.484305555555554,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 105,
+   "height": 280,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2404",
+  "name": "TW-2404 210×74.25 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 4,
+   "marginLeft": 0,
+   "marginTop": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 210,
+   "height": 74.25,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2408",
+  "name": "TW-2408 105x72mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 4,
+   "marginLeft": 0,
+   "marginTop": 4.497916666666667,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 105,
+   "height": 72,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2421",
+  "name": "TW-2421 66,5x41mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 7,
+   "marginLeft": 5.3093055555555555,
+   "marginTop": 5.009444444444444,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 66.5,
+   "height": 41,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2425",
+  "name": "TW-2425 42×59,4mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 5,
+   "rows": 5,
+   "marginLeft": 0,
+   "marginTop": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 42,
+   "height": 59.4,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2433",
+  "name": "TW-2433 70×23 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 12,
+   "marginLeft": 0,
+   "marginTop": 10.495138888888889,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 70,
+   "height": 23,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2453",
+  "name": "TW-2453 45×30 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 4,
+   "rows": 9,
+   "marginLeft": 15.010694444444443,
+   "marginTop": 13.511388888888888,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 45,
+   "height": 30,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2472",
+  "name": "TW-2472 35×23.375mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 6,
+   "rows": 12,
+   "marginLeft": 0,
+   "marginTop": 8.995833333333334,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 35,
+   "height": 23.375,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2504",
+  "name": "TW-2504 98×148.5 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 2,
+   "marginLeft": 7.002638888888888,
+   "marginTop": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 98,
+   "height": 148.5,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2506",
+  "name": "TW-2506 79×79 mm Mini Cd",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 3,
+   "marginLeft": 19.80847222222222,
+   "marginTop": 20.002499999999998,
+   "gapX": 12.492916666666673,
+   "gapY": 9.988194444444446
+  },
+  "label": {
+   "width": 79,
+   "height": 79,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2510",
+  "name": "TW-2510 105×56 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 5,
+   "marginLeft": 0,
+   "marginTop": 8.501944444444444,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 105,
+   "height": 56,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2512",
+  "name": "TW-2512 105×46 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 6,
+   "marginLeft": 0,
+   "marginTop": 10.495138888888889,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 105,
+   "height": 46,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2514",
+  "name": "TW-2514 105×38 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 7,
+   "marginLeft": 0,
+   "marginTop": 15.504583333333333,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 105,
+   "height": 38,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2518",
+  "name": "TW-2518 70×45 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 6,
+   "marginLeft": 0,
+   "marginTop": 13.49375,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 70,
+   "height": 45,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2524",
+  "name": "TW-2524 210×24 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 12,
+   "marginLeft": 0,
+   "marginTop": 4.497916666666667,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 210,
+   "height": 24,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2525",
+  "name": "TW-2525 52.5×148 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 52.5,
+   "height": 148,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2533",
+  "name": "TW-2533 64.6×33.8 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 8,
+   "marginLeft": 8.09625,
+   "marginTop": 13.299722222222222,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 64.6,
+   "height": 33.8,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2536",
+  "name": "TW-2536 63×24 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 12,
+   "marginLeft": 10.495138888888889,
+   "marginTop": 4.497916666666667,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 63,
+   "height": 24,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2544",
+  "name": "TW-2544 35×12.4355 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 6,
+   "rows": 24,
+   "marginLeft": 0,
+   "marginTop": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 35,
+   "height": 12.4355,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara kağıt yüksekliğini aşıyor (298.45 mm)."
+  ]
+ },
+ {
+  "id": "TW-2546",
+  "name": "TW-2546 100×46 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 6,
+   "marginLeft": 4.991805555555556,
+   "marginTop": 10.495138888888889,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 100,
+   "height": 46,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2564",
+  "name": "TW-2564 48.5×16.9 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 4,
+   "rows": 16,
+   "marginLeft": 7.990416666666666,
+   "marginTop": 13.299722222222222,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 48.5,
+   "height": 16.9,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2602",
+  "name": "TW-2602 208×146 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 208,
+   "height": 146,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2610",
+  "name": "TW-2610 105×57 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 5,
+   "marginLeft": 0,
+   "marginTop": 5.997222222222222,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 105,
+   "height": 57,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2612",
+  "name": "TW-2612 105×48 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 6,
+   "marginLeft": 0,
+   "marginTop": 4.497916666666667,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 105,
+   "height": 48,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2614",
+  "name": "TW-2614 105×40 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 7,
+   "marginLeft": 0,
+   "marginTop": 8.484305555555554,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 105,
+   "height": 40,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2644",
+  "name": "TW-2644 35×12 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 6,
+   "rows": 24,
+   "marginLeft": 0,
+   "marginTop": 4.497916666666667,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 35,
+   "height": 12,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2712",
+  "name": "TW-2712 105×42 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 105,
+   "height": 42,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-2736",
+  "name": "TW-2736 70×36 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 8,
+   "marginLeft": 0,
+   "marginTop": 4.497916666666667,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 70,
+   "height": 36,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-2772",
+  "name": "TW-2772 70×72 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 4,
+   "marginLeft": 17.497777777777777,
+   "marginTop": 4.497916666666667,
+   "gapX": 34.986666666666665,
+   "gapY": 0
+  },
+  "label": {
+   "width": 70,
+   "height": 72,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-3117",
+  "name": "TW-3117 117 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 2,
+   "marginLeft": 45.508333333333326,
+   "marginTop": 18.997083333333332,
+   "gapX": 0,
+   "gapY": 23.017499999999984
+  },
+  "label": {
+   "width": 117,
+   "height": 117,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Sayfada tek ölçü var, şekil belirsiz: kontrol edin."
+  ]
+ },
+ {
+  "id": "TW-3177",
+  "name": "TW-3177 78×58.4 mm Oval Kart Cd",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 78,
+   "height": 58.4,
+   "shape": "oval"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TW-3178",
+  "name": "TW-3178 83×56 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 5,
+   "marginLeft": 15.010694444444443,
+   "marginTop": 8.501944444444444,
+   "gapX": 14.013888888888886,
+   "gapY": 0
+  },
+  "label": {
+   "width": 83,
+   "height": 56,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-4066",
+  "name": "TW-4066 70×12 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 22,
+   "marginLeft": 0,
+   "marginTop": 16.509999999999998,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 70,
+   "height": 12,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-4097",
+  "name": "TW-4097 97×42.4mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 6,
+   "marginLeft": 8.008055555555554,
+   "marginTop": 21.307777777777776,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 97,
+   "height": 42.4,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-4110",
+  "name": "TW-4110 40×12 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 5,
+   "rows": 22,
+   "marginLeft": 5.009444444444444,
+   "marginTop": 16.509999999999998,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 40,
+   "height": 12,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TW-4574",
+  "name": "TW-4574 15×7 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 14,
+   "rows": 41,
+   "marginLeft": 0,
+   "marginTop": 5.009444444444444,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 15,
+   "height": 7,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "verified"
+ },
+ {
+  "id": "TANEX-64x100",
+  "name": "64×100 mm",
+  "sheet": {
+   "width": 122.02583333333332,
+   "height": 234.01513888888888
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 3,
+   "marginLeft": 11.006666666666666,
+   "marginTop": 5.997222222222222,
+   "gapX": 0,
+   "gapY": 12.005972222222212
+  },
+  "label": {
+   "width": 100,
+   "height": 64,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Sayfadaki ölçü (64×100) Word dosyasının tersi; Word yönü kullanıldı."
+  ]
+ },
+ {
+  "id": "TANEX-10x46",
+  "name": "10×46 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 10,
+   "height": 46,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TANEX-17x25",
+  "name": "17×25 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 17,
+   "height": 25,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ },
+ {
+  "id": "TANEX-20x55-3lu",
+  "name": "20×55 mm 3’lü",
+  "sheet": {
+   "width": 195.03319444444443,
+   "height": 228.1061111111111
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 9,
+   "marginLeft": 11.994444444444444,
+   "marginTop": 2.998611111111111,
+   "gapX": 3.014305555555545,
+   "gapY": 5.011944444444445
+  },
+  "label": {
+   "width": 55,
+   "height": 20,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Sayfadaki ölçü (20×55) Word dosyasının tersi; Word yönü kullanıldı."
+  ]
+ },
+ {
+  "id": "TANEX-22x55-3lu",
+  "name": "22×55 mm 3’lü",
+  "sheet": {
+   "width": 195.03319444444443,
+   "height": 226.60680555555555
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 9,
+   "marginLeft": 11.994444444444444,
+   "marginTop": 1.4993055555555554,
+   "gapX": 3.014305555555545,
+   "gapY": 3.0119444444444454
+  },
+  "label": {
+   "width": 55,
+   "height": 22,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Sayfadaki ölçü (22×55) Word dosyasının tersi; Word yönü kullanıldı."
+  ]
+ },
+ {
+  "id": "TANEX-35x55-3lu",
+  "name": "35×55 mm 3’lü",
+  "sheet": {
+   "width": 193.0576388888889,
+   "height": 230.06402777777774
+  },
+  "grid": {
+   "columns": 3,
+   "rows": 6,
+   "marginLeft": 11.006666666666666,
+   "marginTop": 1.9931944444444443,
+   "gapX": 3.014305555555545,
+   "gapY": 3.0118055555555543
+  },
+  "label": {
+   "width": 55,
+   "height": 35,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Sayfadaki ölçü (35×55) Word dosyasının tersi; Word yönü kullanıldı."
+  ]
+ },
+ {
+  "id": "TANEX-35x77",
+  "name": "35×77 mm",
+  "sheet": {
+   "width": 181.01027777777776,
+   "height": 228.07083333333333
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 6,
+   "marginLeft": 11.994444444444444,
+   "marginTop": 0,
+   "gapX": 3.010000000000005,
+   "gapY": 3.0118055555555543
+  },
+  "label": {
+   "width": 77,
+   "height": 35,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Sayfadaki ölçü (35×77) Word dosyasının tersi; Word yönü kullanıldı."
+  ]
+ },
+ {
+  "id": "TANEX-35x97",
+  "name": "35×97 mm",
+  "sheet": {
+   "width": 217.02888888888887,
+   "height": 230.5931944444444
+  },
+  "grid": {
+   "columns": 2,
+   "rows": 6,
+   "marginLeft": 10.001249999999999,
+   "marginTop": 1.9931944444444443,
+   "gapX": 3.012500000000003,
+   "gapY": 3.0999999999999943
+  },
+  "label": {
+   "width": 97,
+   "height": 35,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Sayfadaki ölçü (35×97) Word dosyasının tersi; Word yönü kullanıldı."
+  ]
+ },
+ {
+  "id": "TANEX-48x100",
+  "name": "48×100 mm",
+  "sheet": {
+   "width": 210,
+   "height": 297
+  },
+  "grid": {
+   "columns": 1,
+   "rows": 1,
+   "marginTop": 0,
+   "marginLeft": 0,
+   "gapX": 0,
+   "gapY": 0
+  },
+  "label": {
+   "width": 48,
+   "height": 100,
+   "shape": "rect"
+  },
+  "source": "tanex",
+  "status": "check",
+  "notes": [
+   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+  ]
+ }
+]
