@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { fillWouldReplace, parseLines, previewListFill, type ListFillOptions } from "../core/listFill";
 import { searchSymbols } from "../library/symbols/search";
+import { isMultiColor } from "../library/symbols/svg";
 import type { RenderDeps } from "../render/pdf";
 import { currentGrid, useAppState, type Store } from "./store";
 
@@ -25,15 +26,25 @@ export function ListFillDialog({ store, deps, capacity, label, onClose }: Props)
   const grid = currentGrid(state);
   const hasSymbol = !!grid && state.project.designs[grid.designId]?.elements.some((e) => e.kind === "symbol");
   const lines = useMemo(() => parseLines(text), [text]);
+  const isColored = (id: string) => {
+    if (id.startsWith("color:") || id.startsWith("upload:")) return true;
+    const symbol = deps.symbols(id);
+    return !!symbol && isMultiColor(symbol.icon);
+  };
 
   const options: Omit<ListFillOptions, "newId"> = {
     cellCount: capacity,
     label,
     ...(wantSuggest && hasSymbol
-      ? { suggest: (line: string, sample: string) => searchSymbols(line, 1, sample.startsWith("color:") ? deps.colorSymbols : undefined)[0]?.id ?? null }
+      ? { suggest: (line: string, sample: string) => searchSymbols(line, 1, isColored(sample) ? deps.colorSymbols : undefined)[0]?.id ?? null }
       : {}),
   };
-  const report = lines.length ? previewListFill(state.project, state.pageIndex, lines, { ...options, newId: () => "onizleme" }) : null;
+  const report = useMemo(
+    () => (lines.length ? previewListFill(state.project, state.pageIndex, lines, { ...options, newId: () => "onizleme" }) : null),
+    // `options` is rebuilt each render from exactly these inputs.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [lines, wantSuggest, hasSymbol, state.project, state.pageIndex, capacity, deps],
+  );
 
   function fill() {
     if (fillWouldReplace(state.project) && !confirming) {

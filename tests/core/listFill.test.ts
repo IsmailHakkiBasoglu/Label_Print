@@ -94,7 +94,7 @@ describe("applyListFill", () => {
     base.designs.ayri = { elements: [textEl] };
     grid(base).content[0] = { values: {}, designId: "ayri" };
     const { project: p } = applyListFill(base, 0, ["A"], options());
-    expect(grid(p).content[0]).toEqual({ values: { t: "A", s: "sym-A" }, designId: "ayri" });
+    expect(grid(p).content[0]).toEqual({ values: { t: "A" }, designId: "ayri" });
   });
 
   it("girdi projesini değiştirmez; önizleme aynı raporu verir", () => {

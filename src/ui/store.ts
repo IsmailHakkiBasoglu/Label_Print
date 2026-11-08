@@ -16,7 +16,9 @@ import type { Rect } from "../core/geometry";
 import { applyListFill, type ListFillOptions } from "../core/listFill";
 import { safeRead, safeWrite, type StorageLike } from "../core/storage";
 import type { Template } from "../core/templates";
+import type { FrameLabel } from "../library/frames";
 import { applyPattern as buildPattern } from "../library/textPatterns";
+import { frameMargin } from "../render/layout";
 
 export const PROJECT_KEY = "labelprint.project.v2";
 export const LEGACY_PROJECT_KEY = "labelprint.project.v1";
@@ -79,10 +81,18 @@ function patternMapping(before: DesignElement[], after: DesignElement[]): Map<st
   return mapping;
 }
 
-function rebuildPattern(patternId: string, label: { width: number; height: number }, before: DesignElement[]): DesignElement[] {
+function rebuildPattern(patternId: string, label: { width: number; height: number }, before: DesignElement[], margin = 0): DesignElement[] {
   const texts = before.filter((e): e is TextElement => e.kind === "text").map((e) => e.text);
   const symbol = before.find((e) => e.kind === "symbol");
-  return buildPattern(patternId, label, texts.length ? texts : SAMPLE_TEXTS, symbol?.kind === "symbol" ? symbol.symbolId : undefined);
+  return buildPattern(patternId, label, texts.length ? texts : SAMPLE_TEXTS, symbol?.kind === "symbol" ? symbol.symbolId : undefined, margin);
+}
+
+const MARGIN_SLACK_MM = 0.01;
+
+/** Horizontal and vertical distance from the edge that keeps a box clear of the frame, also at its corners on round labels. */
+function safeInsets(label: FrameLabel, margin: number): [number, number] {
+  if (label.shape !== "circle" && label.shape !== "oval") return [margin, margin];
+  return [label.width / 2 - (label.width / 2 - margin) / Math.SQRT2, label.height / 2 - (label.height / 2 - margin) / Math.SQRT2];
 }
 
 /** A pattern rebuilds the elements with new ids; cell values follow them by kind and order. */
@@ -198,11 +208,23 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
       commit(
         (project, design) => {
           const before = design.elements;
-          design.elements = rebuildPattern(patternId, label, before);
+          const margin = frameMargin(design, { shape: "rect", ...label });
+          design.elements = rebuildPattern(patternId, label, before, margin > 0 ? margin + MARGIN_SLACK_MM : 0);
           remapValues(project, design, before);
         },
         { selectedElementId: null },
       );
+    },
+    /** Shrinks the elements proportionally into the area the ornamental frame leaves free. */
+    fitContentToFrame(label: FrameLabel) {
+      if (isCellLocked(state)) return;
+      commit((_, design) => {
+        const margin = frameMargin(design, label);
+        if (margin <= 0) return;
+        const [left, top] = safeInsets(label, margin).map((n) => n + MARGIN_SLACK_MM);
+        const [sx, sy] = [(label.width - 2 * left) / label.width, (label.height - 2 * top) / label.height];
+        for (const el of design.elements) Object.assign(el, { x: left + el.x * sx, y: top + el.y * sy, width: el.width * sx, height: el.height * sy });
+      });
     },
     /** How many filled-in cell values a pattern has no place for. */
     patternLoss(patternId: string, label: { width: number; height: number }): number {
@@ -221,20 +243,23 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
         design.frameOptions = frameOptions;
       });
     },
-    setTemplate(template: Template) {
+    /** Passing the old template's capacity keeps a partial selection, such as a half-used sheet. */
+    setTemplate(template: Template, previousCapacity?: number) {
       const capacity = template.grid.columns * template.grid.rows;
       commit((project) => {
-        const used = Array.from({ length: capacity }, (_, i) => i);
+        const all = Array.from({ length: capacity }, (_, i) => i);
         const orphaned: string[] = [];
         const shared = gridZones(project)[0]?.designId ?? "d1";
         for (const page of project.pages) {
           page.sheet = { ...template.sheet };
           const zone = page.zones.find((z): z is GridZone => z.kind === "grid");
           if (!zone) {
-            page.zones.unshift({ kind: "grid", templateId: template.id, cells: { used: [...used] }, designId: shared, content: {} });
+            page.zones.unshift({ kind: "grid", templateId: template.id, cells: { used: [...all] }, designId: shared, content: {} });
             continue;
           }
-          Object.assign(zone, { templateId: template.id, cells: { used: [...used] } });
+          const partial = previousCapacity !== undefined && zone.cells.used.length !== previousCapacity;
+          Object.assign(zone, { templateId: template.id, cells: { used: partial ? zone.cells.used.filter((c) => c < capacity) : [...all] } });
+          if (zone.listBase) zone.listBase = zone.listBase.filter((c) => c < capacity);
           for (const key of Object.keys(zone.content).map(Number).filter((k) => k >= capacity)) {
             const designId = zone.content[key].designId;
             if (designId) orphaned.push(designId);
@@ -325,8 +350,16 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
         const entry = zone?.content[cell];
         if (!zone || !entry?.designId) return;
         const designId = entry.designId;
-        const shared = new Set(project.designs[zone.designId].elements.map((e) => e.id));
-        entry.values = Object.fromEntries(Object.entries(entry.values).filter(([id]) => shared.has(id)));
+        const sharedElements = project.designs[zone.designId].elements;
+        const shared = new Set(sharedElements.map((e) => e.id));
+        // The shared design may have been rebuilt since the cell left it, leaving new ids.
+        const byOrder = patternMapping(project.designs[designId]?.elements ?? [], sharedElements);
+        entry.values = Object.fromEntries(
+          Object.entries(entry.values).flatMap(([id, value]) => {
+            const target = shared.has(id) ? id : byOrder.get(id);
+            return target ? [[target, value]] : [];
+          }),
+        );
         delete entry.designId;
         if (Object.keys(entry.values).length === 0) delete zone.content[cell];
         pruneDesigns(project, [designId]);
@@ -351,7 +384,13 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
       commit((project) => void project.pages[state.pageIndex].zones.push({ kind: "free", ...rect, design: { elements: [] } }));
     },
     removeZone(index: number) {
-      commit((project) => void project.pages[state.pageIndex].zones.splice(index, 1), { active: null, selectedElementId: null });
+      commit(
+        (project) => {
+          const [removed] = project.pages[state.pageIndex].zones.splice(index, 1);
+          if (removed?.kind === "grid") pruneDesigns(project, Object.values(removed.content).flatMap((e) => e.designId ?? []));
+        },
+        { active: null, selectedElementId: null },
+      );
     },
     load(project: LabelProject) {
       past = [...past.slice(-HISTORY_LIMIT + 1), state.project];

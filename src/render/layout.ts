@@ -65,6 +65,19 @@ function touchesBand(el: Rect, label: FrameLabel, band: number): boolean {
   return el.x < band || el.y < band || el.x + el.width > label.width - band || el.y + el.height > label.height - band;
 }
 
+/** Distance from the label edge that an ornamental frame occupies; 0 for line frames and none. */
+export function frameMargin(design: LabelDesign, label: FrameLabel): number {
+  if (!design.frameId) return 0;
+  const options = design.frameOptions ?? DEFAULT_FRAME;
+  const { bandMm } = frameLayout(design.frameId, label, options);
+  return bandMm > 0 ? options.insetMm + bandMm : 0;
+}
+
+export function designTouchesBand(design: LabelDesign, label: FrameLabel): boolean {
+  const margin = frameMargin(design, label);
+  return margin > 0 && design.elements.some((el) => touchesBand(el, label, margin));
+}
+
 type ImageContext = { images: LabelProject["images"]; errors: string[] };
 
 function designOps(design: LabelDesign, box: Rect, label: FrameLabel, deps: LayoutDeps, warnings: string[], cache: FitCache, ctx: ImageContext): RenderOp[] {
@@ -138,15 +151,27 @@ function inside(r: Rect, sheet: Page["sheet"], margin = EDGE_MM): boolean {
   return r.x >= -margin && r.y >= -margin && r.x + r.width <= sheet.width + margin && r.y + r.height <= sheet.height + margin;
 }
 
-export function layoutProject(project: LabelProject, deps: LayoutDeps, opts: { guides: boolean }): LayoutResult {
+const FIT_CACHE_LIMIT = 5000;
+const fitCaches = new WeakMap<FontTools, FitCache>();
+
+function fitCacheFor(tools: FontTools): FitCache {
+  const cache = fitCaches.get(tools) ?? new Map();
+  if (cache.size >= FIT_CACHE_LIMIT) cache.clear();
+  fitCaches.set(tools, cache);
+  return cache;
+}
+
+/** `onlyPage` lays out a single page for the live preview; `pages` then holds just that page. */
+export function layoutProject(project: LabelProject, deps: LayoutDeps, opts: { guides: boolean; onlyPage?: number }): LayoutResult {
   const warnings: string[] = [];
   const errors: string[] = [];
-  const cache: FitCache = new Map();
+  const cache = fitCacheFor(deps.tools);
   const ctx: ImageContext = { images: project.images, errors };
   const offset = project.printOffset;
   const moved = (r: Rect): Rect => ({ ...r, x: r.x + offset.x, y: r.y + offset.y });
 
-  const pages = project.pages.map((page) => {
+  const sourcePages = opts.onlyPage === undefined ? project.pages : project.pages.slice(opts.onlyPage, opts.onlyPage + 1);
+  const pages = sourcePages.map((page) => {
     const ops: RenderOp[] = [];
     const zoneAreas = page.zones.map((z) => zoneRects(z, deps));
     zoneAreas.forEach((a, i) =>

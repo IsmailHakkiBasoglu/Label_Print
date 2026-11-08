@@ -45,11 +45,15 @@ export function applyListFill(source: LabelProject, pageIndex: number, lines: st
   let noSymbol = 0;
   const write = (target: GridZone, cell: number, line: string) => {
     const entry = (target.content[cell] ??= { values: {} });
-    entry.values[textId] = line;
-    if (!symbol || !options.suggest) return;
-    const match = options.suggest(line, symbol.symbolId);
+    // A detached cell has its own elements, which may carry other ids than the shared ones.
+    const own = entry.designId ? project.designs[entry.designId] : undefined;
+    const ownText = own ? own.elements.find((e) => e.kind === "text")?.id : textId;
+    const ownSymbol = own ? own.elements.find((e): e is SymbolElement => e.kind === "symbol") : symbol;
+    if (ownText) entry.values[ownText] = line;
+    if (!ownSymbol || !options.suggest) return;
+    const match = options.suggest(line, ownSymbol.symbolId);
     if (!match) noSymbol++;
-    entry.values[symbol.id] = match ?? "";
+    entry.values[ownSymbol.id] = match ?? "";
   };
 
   const firstCells = [...(zone.listBase ?? zone.cells.used)].sort((a, b) => a - b);

@@ -63,12 +63,13 @@ type Props = {
   onCellClick?: (index: number) => void;
   selectedCell?: number;
   cellMarks?: Record<number, "value" | "detached">;
+  onBackgroundClick?: () => void;
 };
 
-export function SheetPreview({ page, cells = [], usedCells = [], onCellClick, selectedCell, cellMarks = {} }: Props) {
+export function SheetPreview({ page, cells = [], usedCells = [], onCellClick, selectedCell, cellMarks = {}, onBackgroundClick }: Props) {
   return (
     <svg className="sheet" viewBox={`0 0 ${page.sheet.width} ${page.sheet.height}`} role="img" aria-label="Yaprak önizlemesi">
-      <rect x={0} y={0} width={page.sheet.width} height={page.sheet.height} fill="#ffffff" />
+      <rect className="sheet-bg" x={0} y={0} width={page.sheet.width} height={page.sheet.height} fill="#ffffff" onClick={onBackgroundClick} />
       <OpsView ops={page.ops} />
       {cells.map((c, i) => (
         <rect

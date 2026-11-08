@@ -53,8 +53,9 @@ export function fitText(
 
 const round = (n: number) => Math.floor(n * 1000) / 1000;
 
-export function applyPattern(id: string, label: { width: number; height: number }, texts: string[], symbolId?: string): DesignElement[] {
-  const pad = Math.max(1, Math.min(label.width, label.height) * 0.08);
+/** `margin` keeps the layout clear of an ornamental frame's band. */
+export function applyPattern(id: string, label: { width: number; height: number }, texts: string[], symbolId?: string, margin = 0): DesignElement[] {
+  const pad = Math.max(1, Math.min(label.width, label.height) * 0.08, margin);
   const [W, H] = [label.width - 2 * pad, label.height - 2 * pad];
   let index = 0;
   const text = (x: number, y: number, width: number, height: number, fontId: FontId, align: TextElement["align"]): TextElement => {

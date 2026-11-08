@@ -55,12 +55,12 @@ export function App() {
 
   const deps = useMemo<RenderDeps | null>(() => {
     if (!fontBytes) return null;
-    const symbols = [...customSymbols, ...catalog, ...colorSymbols];
+    const symbols = new Map([...colorSymbols, ...catalog, ...customSymbols].map((s) => [s.id, s]));
     return {
       colorSymbols,
       images,
       templates: (id) => templates.find((t) => t.id === id),
-      symbols: (id) => symbols.find((s) => s.id === id),
+      symbols: (id) => symbols.get(id),
       tools: createFontTools(fontBytes),
       fontBytes,
     };

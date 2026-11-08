@@ -64,7 +64,7 @@ export function jpegOrientation(bytes: Uint8Array): number {
   return 1;
 }
 
-async function canEmbed(bytes: Uint8Array, mime: Mime): Promise<boolean> {
+export async function canEmbed(bytes: Uint8Array, mime: Mime): Promise<boolean> {
   try {
     const doc = await PDFDocument.create();
     await (mime === "image/png" ? doc.embedPng(bytes) : doc.embedJpg(bytes));

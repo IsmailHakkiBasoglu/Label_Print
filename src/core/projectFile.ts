@@ -1,6 +1,6 @@
 import { gridZones } from "./cells";
-import { parseProject, serialize, type LabelProject } from "./document";
-import type { ImageStore } from "./imageStore";
+import { parseProject, serialize, type ImageMeta, type LabelProject } from "./document";
+import { canEmbed, MAX_IMAGE_BYTES, sha256Hex, sniffImage, type ImageStore } from "./imageStore";
 import type { StorageLike } from "./storage";
 import { mergeCustomSymbols } from "../library/symbols/custom";
 import type { SymbolEntry } from "../library/symbols/search";
@@ -22,14 +22,26 @@ function usedSymbolIds(project: LabelProject): Set<string> {
 
 /** The saved file carries its pictures, so it can be moved to another computer. */
 export async function exportProject(project: LabelProject, deps: { images?: ImageStore; customSymbols: SymbolEntry[] }): Promise<string> {
+  const used = usedSymbolIds(project);
+  const images = Object.fromEntries(Object.entries(project.images).filter(([id]) => used.has(`upload:${id}`)));
   const imageData: Record<string, string> = {};
-  for (const id of Object.keys(project.images)) {
+  for (const id of Object.keys(images)) {
     const bytes = await deps.images?.get(id);
     if (bytes) imageData[id] = toBase64(bytes);
   }
-  const used = usedSymbolIds(project);
   const symbolData = deps.customSymbols.filter((s) => used.has(s.id));
-  return JSON.stringify({ ...JSON.parse(serialize(project)), imageData, symbolData }, null, 2);
+  return JSON.stringify({ ...JSON.parse(serialize(project)), images, imageData, symbolData }, null, 2);
+}
+
+/** A project file is untrusted: the bytes must match their id and be a picture the PDF can embed. */
+async function decodeImage(id: string, data: string, mime: ImageMeta["mime"]): Promise<Uint8Array | null> {
+  try {
+    const bytes = fromBase64(data);
+    if (bytes.length > MAX_IMAGE_BYTES || sniffImage(bytes) !== mime || (await sha256Hex(bytes)) !== id) return null;
+    return (await canEmbed(bytes, mime)) ? bytes : null;
+  } catch {
+    return null;
+  }
 }
 
 export type ImportResult = { ok: true; project: LabelProject; warnings: string[] } | { ok: false; error: string };
@@ -51,8 +63,13 @@ export async function importProject(text: string, deps: { images?: ImageStore; s
       if (!(await deps.images?.get(id))) warnings.push(`"${meta.name}" görseli dosyada yok; yeniden yükleyin.`);
       continue;
     }
+    const bytes = await decodeImage(id, imageData[id], meta.mime);
+    if (!bytes) {
+      warnings.push(`"${meta.name}" görseli dosyada bozuk; yeniden yükleyin.`);
+      continue;
+    }
     try {
-      await deps.images?.put(id, fromBase64(imageData[id]));
+      await deps.images?.put(id, bytes);
     } catch {
       warnings.push(`"${meta.name}" görseli tarayıcıya kaydedilemedi.`);
     }

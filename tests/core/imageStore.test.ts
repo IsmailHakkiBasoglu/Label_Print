@@ -59,10 +59,14 @@ describe("taşınabilir dosya", () => {
 
   it("görseli ve kullanılan özel SVG'yi taşır", async () => {
     const images = createMemoryImageStore();
-    await images.put("abc", PNG);
+    const hash = await sha256Hex(PNG);
+    await images.put(hash, PNG);
     const project = newProject(tmpl("TW-2021"));
-    project.images.abc = meta;
-    project.designs.d1.elements = [{ kind: "symbol", id: "s", x: 0, y: 0, width: 5, height: 5, symbolId: "custom-1", color: "#000000" }];
+    project.images[hash] = meta;
+    project.designs.d1.elements = [
+      { kind: "symbol", id: "s", x: 0, y: 0, width: 5, height: 5, symbolId: "custom-1", color: "#000000" },
+      { kind: "symbol", id: "u", x: 0, y: 0, width: 5, height: 5, symbolId: `upload:${hash}`, color: "#000000" },
+    ];
     const custom = [
       { id: "custom-1", category: "Benim", tags: ["x"], icon: { viewBox: [0, 0, 1, 1] as [number, number, number, number], paths: [{ d: "M0 0", fill: true, strokeWidth: 0 }] } },
       { id: "custom-2", category: "Benim", tags: ["y"], icon: { viewBox: [0, 0, 1, 1] as [number, number, number, number], paths: [{ d: "M0 0", fill: true, strokeWidth: 0 }] } },
@@ -75,7 +79,7 @@ describe("taşınabilir dosya", () => {
     const result = await importProject(file, { images: target, storage });
     if (!result.ok) throw new Error(result.error);
     expect(result.warnings).toEqual([]);
-    expect(await target.get("abc")).toEqual(PNG);
+    expect(await target.get(hash)).toEqual(PNG);
     expect(loadCustomSymbols(storage).map((s) => s.id)).toEqual(["custom-1"]);
     expect(result.project).not.toHaveProperty("imageData");
     expect(result.project).not.toHaveProperty("symbolData");

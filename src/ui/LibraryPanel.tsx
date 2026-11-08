@@ -10,6 +10,7 @@ import { catalog, searchSymbols, type SymbolEntry } from "../library/symbols/sea
 import { isMultiColor } from "../library/symbols/svg";
 import { PATTERNS } from "../library/textPatterns";
 import type { RenderDeps } from "../render/pdf";
+import { designTouchesBand } from "../render/layout";
 import { ImageUrlContext, OpsView } from "../render/preview";
 import { IconView } from "./IconView";
 import { activeLabel } from "./LabelEditor";
@@ -63,7 +64,7 @@ export function LibraryPanel({ store, deps, templates, customSymbols, onLibraryC
           </button>
         ))}
       </nav>
-      {tab === "Şablon" && <TemplatesTab store={store} templates={templates} onLibraryChanged={onLibraryChanged} />}
+      {tab === "Şablon" && <TemplatesTab store={store} deps={deps} templates={templates} onLibraryChanged={onLibraryChanged} />}
       {tab === "Çerçeve" && <FramesTab store={store} deps={deps} />}
       {tab === "Desen" && (
         <div className="list">
@@ -82,7 +83,7 @@ export function LibraryPanel({ store, deps, templates, customSymbols, onLibraryC
   );
 }
 
-function TemplatesTab({ store, templates, onLibraryChanged }: Pick<Props, "store" | "templates" | "onLibraryChanged">) {
+function TemplatesTab({ store, deps, templates, onLibraryChanged }: Pick<Props, "store" | "deps" | "templates" | "onLibraryChanged">) {
   const state = useAppState(store);
   const [building, setBuilding] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -90,7 +91,10 @@ function TemplatesTab({ store, templates, onLibraryChanged }: Pick<Props, "store
 
   function choose(template: Template) {
     const lost = cellsLostBy(state.project, template.grid.columns * template.grid.rows);
-    if (lost === 0 || window.confirm(`Bu şablona sığmayan ${lost} etiketin içeriği silinecek. Devam edilsin mi?`)) store.setTemplate(template);
+    const previous = zone ? deps.templates(zone.templateId) : undefined;
+    if (lost === 0 || window.confirm(`Bu şablona sığmayan ${lost} etiketin içeriği silinecek. Devam edilsin mi?`)) {
+      store.setTemplate(template, previous ? previous.grid.columns * previous.grid.rows : undefined);
+    }
   }
 
   async function importFile(event: ChangeEvent<HTMLInputElement>) {
@@ -150,6 +154,7 @@ function FramesTab({ store, deps }: { store: Store; deps: RenderDeps }) {
   return (
     <div className="list">
       {locked && <p className="notice">{LOCKED_HINT}</p>}
+      {!locked && designTouchesBand(design, label) && <button onClick={() => store.fitContentToFrame(label)}>İçeriği çerçevenin içine al</button>}
       <button disabled={locked} className={design.frameId ? "row" : "row selected"} onClick={() => store.setFrame(undefined, undefined)}>
         Çerçevesiz
       </button>

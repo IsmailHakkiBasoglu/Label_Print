@@ -11,7 +11,7 @@ export function SheetView({ store, deps }: { store: Store; deps: RenderDeps }) {
   const [selecting, setSelecting] = useState(false);
   const [startMode, setStartMode] = useState(false);
   const [filling, setFilling] = useState(false);
-  const layout = useMemo(() => layoutProject(state.project, deps, { guides: true }), [state.project, deps]);
+  const layout = useMemo(() => layoutProject(state.project, deps, { guides: true, onlyPage: state.pageIndex }), [state.project, state.pageIndex, deps]);
   const zone = currentGrid(state);
   const template = zone ? deps.templates(zone.templateId) : undefined;
   const cells = template ? labelRects(template) : [];
@@ -74,7 +74,8 @@ export function SheetView({ store, deps }: { store: Store; deps: RenderDeps }) {
         </button>
       </div>
       <SheetPreview
-        page={layout.pages[state.pageIndex]}
+        page={layout.pages[0]}
+        onBackgroundClick={() => !selecting && store.setScope({ kind: "all" })}
         cells={cells}
         usedCells={used}
         onCellClick={clickCell}
