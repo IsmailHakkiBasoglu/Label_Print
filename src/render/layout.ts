@@ -143,7 +143,7 @@ export function layoutProject(project: LabelProject, deps: LayoutDeps, opts: { g
           errors.push(`${index + 1}. etiket sayfa dışına taşıyor; yazıcı düzeltmesini azaltın.`);
           continue;
         }
-        const design = project.designs[zone.designIds[index % zone.designIds.length]];
+        const design = project.designs[zone.designId];
         if (!design) {
           errors.push("Etiket tasarımı bulunamadı.");
           continue;

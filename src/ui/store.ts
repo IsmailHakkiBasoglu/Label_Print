@@ -14,7 +14,8 @@ import { safeRead, safeWrite, type StorageLike } from "../core/storage";
 import type { Template } from "../core/templates";
 import { applyPattern as buildPattern } from "../library/textPatterns";
 
-export const PROJECT_KEY = "labelprint.project.v1";
+export const PROJECT_KEY = "labelprint.project.v2";
+export const LEGACY_PROJECT_KEY = "labelprint.project.v1";
 const HISTORY_LIMIT = 50;
 const SAMPLE_TEXTS = ["Başlık", "Alt başlık", "Bilgi"];
 
@@ -34,13 +35,13 @@ export function activeDesign(state: AppState): LabelDesign {
     if (zone?.kind === "free") return zone.design;
   }
   const grid = state.project.pages[0].zones.find((z) => z.kind === "grid");
-  return state.project.designs[grid?.kind === "grid" ? grid.designIds[0] : "d1"] ?? { elements: [] };
+  return state.project.designs[grid?.kind === "grid" ? grid.designId : "d1"] ?? { elements: [] };
 }
 
 export type Store = ReturnType<typeof createStore>;
 
 export function createStore(defaultTemplate: Template, storage: StorageLike) {
-  const saved = safeRead(storage, PROJECT_KEY);
+  const saved = safeRead(storage, PROJECT_KEY) ?? safeRead(storage, LEGACY_PROJECT_KEY);
   const restored = saved ? parseProject(saved) : null;
   let state: AppState = {
     project: restored?.ok ? restored.project : newProject(defaultTemplate),
@@ -143,7 +144,7 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
             const zone = page.zones[index];
             if (zone.kind === "grid") Object.assign(zone, { templateId: template.id, cells: { used } });
           } else {
-            page.zones.unshift({ kind: "grid", templateId: template.id, cells: { used }, designIds: ["d1"] });
+            page.zones.unshift({ kind: "grid", templateId: template.id, cells: { used }, designId: "d1", content: {} });
             project.designs.d1 ??= { elements: [] };
           }
         },

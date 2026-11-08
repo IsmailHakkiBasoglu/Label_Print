@@ -46,7 +46,7 @@ describe("parseProject rejects malformed structure", () => {
   const cases: [string, (p: any) => void][] = [
     ["no pages", (p) => (p.pages = [])],
     ["null zone", (p) => (p.pages[0].zones = [null])],
-    ["no designIds", (p) => delete p.pages[0].zones[0].designIds],
+    ["no designId", (p) => delete p.pages[0].zones[0].designId],
     ["no cells", (p) => delete p.pages[0].zones[0].cells],
     ["design without elements", (p) => delete p.designs.d1.elements],
     ["free zone without design", (p) => (p.pages[0].zones = [{ kind: "free", x: 0, y: 0, width: 1, height: 1 }])],

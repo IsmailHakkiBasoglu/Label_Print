@@ -12,7 +12,46 @@ const template: Template = {
   status: "verified",
 };
 
+const v2 = (content: unknown) => {
+  const project: any = newProject(template);
+  project.pages[0].zones[0].content = content;
+  return project;
+};
+
+const v1 = (designIds: string[], used = [0, 1, 2]) => ({
+  version: 1,
+  pages: [{ sheet: { width: 210, height: 297 }, zones: [{ kind: "grid", templateId: "T", cells: { used }, designIds }] }],
+  designs: Object.fromEntries(designIds.map((id) => [id, { elements: [] }])),
+  printOffset: { x: 0, y: 0 },
+});
+
+describe("sürüm 1 dosyaları", () => {
+  it("tek tasarımı ortak tasarıma çevirir", () => {
+    const result = parseProject(JSON.stringify(v1(["d1"])));
+    if (!result.ok) throw new Error(result.error);
+    expect(result.project.version).toBe(2);
+    expect(result.project.pages[0].zones[0]).toMatchObject({ designId: "d1", content: {} });
+    expect(result.project.pages[0].zones[0]).not.toHaveProperty("designIds");
+    expect(result.project.images).toEqual({});
+  });
+
+  it("döngüsel tasarımları ayrılmış hücreye çevirir", () => {
+    const result = parseProject(JSON.stringify(v1(["a", "b"])));
+    if (!result.ok) throw new Error(result.error);
+    expect(result.project.pages[0].zones[0]).toMatchObject({ designId: "a", content: { 1: { values: {}, designId: "b" } } });
+    const zone: any = result.project.pages[0].zones[0];
+    expect(Object.keys(zone.content)).toEqual(["1"]);
+  });
+});
+
 describe("newProject", () => {
+  it("creates a version 2 project with one shared design", () => {
+    const project = newProject(template);
+    expect(project.version).toBe(2);
+    expect(project.pages[0].zones[0]).toMatchObject({ designId: "d1", content: {} });
+    expect(project.images).toEqual({});
+  });
+
   it("uses every label by default", () => {
     const zone = newProject(template).pages[0].zones[0];
     expect(zone.kind === "grid" && zone.cells.used).toEqual([0, 1, 2, 3, 4, 5]);
@@ -27,8 +66,11 @@ describe("serialize / parseProject", () => {
 
   it.each([
     ["broken json", "{"],
-    ["newer version", JSON.stringify({ ...newProject(template), version: 2 })],
+    ["newer version", JSON.stringify({ ...newProject(template), version: 3 })],
     ["missing pages", JSON.stringify({ version: 1, designs: {}, printOffset: { x: 0, y: 0 } })],
+    ["bad cell values", JSON.stringify(v2({ x: { values: 3 } }))],
+    ["bad cell index", JSON.stringify(v2({ "-1": { values: {} } }))],
+    ["non-text cell value", JSON.stringify(v2({ 0: { values: { t: 5 } } }))],
     ["bad offset", JSON.stringify({ ...newProject(template), printOffset: { x: "a", y: 0 } })],
   ])("rejects %s with a Turkish message", (_, text) => {
     const result = parseProject(text);

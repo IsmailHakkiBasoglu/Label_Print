@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { activeDesign, createStore, PROJECT_KEY } from "../../src/ui/store";
+import { activeDesign, createStore, LEGACY_PROJECT_KEY, PROJECT_KEY } from "../../src/ui/store";
 import { memoryStorage, tmpl } from "./helpers/deps";
 
 const make = (storage = memoryStorage()) => createStore(tmpl("TW-2021"), storage);
@@ -59,6 +59,20 @@ describe("store", () => {
     const storage = memoryStorage();
     make(storage).addText();
     expect(make(storage).getState().project.designs.d1.elements).toHaveLength(1);
+  });
+
+  it("eski anahtardaki projeyi açar, yeni anahtara yazar", () => {
+    const old = JSON.stringify({
+      version: 1,
+      pages: [{ sheet: { width: 210, height: 297 }, zones: [{ kind: "grid", templateId: "TW-2021", cells: { used: [0] }, designIds: ["d1"] }] }],
+      designs: { d1: { elements: [{ kind: "text", id: "t", x: 0, y: 0, width: 10, height: 10, text: "Eski", fontId: "sans", sizePt: 12, align: "left", color: "#000000" }] } },
+      printOffset: { x: 0, y: 0 },
+    });
+    const storage = memoryStorage({ [LEGACY_PROJECT_KEY]: old });
+    const s = make(storage);
+    expect(activeDesign(s.getState()).elements[0]).toMatchObject({ text: "Eski" });
+    s.addText();
+    expect(storage.getItem(PROJECT_KEY)).toContain('"version": 2');
   });
 
   it("starts empty when saved data is corrupt", () => {
