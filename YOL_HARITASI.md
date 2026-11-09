@@ -6,7 +6,7 @@
 - [ ] Köşe yarıçaplarını şablonlara eklemek (Tanex verisinde yok).
 
 ## Fikirler
-- [ ] Excel/CSV'den toplu etiket üretimi (şu an liste yapıştırma var)
+- [x] Excel/CSV'den toplu etiket üretimi (sütun eşleme ile)
 - [ ] Barkod ve QR
 - [ ] Yüklenen SVG'lerde gradyan ve dönüşüm desteği
 - [ ] Tek tıkla açılan masaüstü paketi

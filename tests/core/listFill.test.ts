@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { newProject, type GridZone, type LabelProject, type SymbolElement, type TextElement } from "../../src/core/document";
-import { applyListFill, parseLines, previewListFill } from "../../src/core/listFill";
+import { applyListFill, applyTableFill, parseLines, previewListFill, rowsFromTable } from "../../src/core/listFill";
 import type { Template } from "../../src/core/templates";
 
 const template: Template = {
@@ -104,5 +104,44 @@ describe("applyListFill", () => {
     const { report } = applyListFill(base, 0, lines, options());
     expect(JSON.stringify(base)).toBe(copy);
     expect(previewListFill(base, 0, lines, options())).toEqual(report);
+  });
+});
+
+describe("applyTableFill ve rowsFromTable", () => {
+  const second: TextElement = { ...textEl, id: "t2", text: "Fiyat" };
+  const table = { columns: ["Ad", "Fiyat", "Not"], rows: [["Çay", "12,50", "x"], ["Kahve", "", "y"], ["", "", "z"]] };
+
+  it("eşlenen sütunları sırasıyla yazı öğelerine çevirir, boş satırı atlar", () => {
+    expect(rowsFromTable(table, [0, 1], 0)).toEqual([
+      { texts: ["Çay", "12,50"], key: "Çay" },
+      { texts: ["Kahve", ""], key: "Kahve" },
+    ]);
+  });
+
+  it("ortak bırakılan alan null olur", () => {
+    expect(rowsFromTable(table, [0, null], null)).toEqual([{ texts: ["Çay", null], key: "" }, { texts: ["Kahve", null], key: "" }]);
+  });
+
+  it("her sütunu kendi alanına yazar; boş hücre alanı gizler; ortak alana dokunmaz", () => {
+    const rows = [{ texts: ["Çay", "12,50"], key: "Çay" }, { texts: ["Kahve", ""], key: "Kahve" }, { texts: ["Su", null], key: "Su" }];
+    const { project: p, report } = applyTableFill(project([textEl, second, symbolEl]), 0, rows, options());
+    expect(grid(p).content[0].values).toEqual({ t: "Çay", t2: "12,50", s: "sym-Çay" });
+    expect(grid(p).content[1].values).toEqual({ t: "Kahve", t2: "", s: "sym-Kahve" });
+    expect(grid(p).content[2].values).toEqual({ t: "Su", s: "sym-Su" });
+    expect(report.filled).toBe(3);
+  });
+
+  it("öneri sütunu boşsa görseli boş bırakır ama eşleşmedi saymaz", () => {
+    const { project: p, report } = applyTableFill(project(), 0, [{ texts: ["Çay"], key: "" }], options());
+    expect(grid(p).content[0].values).toEqual({ t: "Çay", s: "" });
+    expect(report.noSymbol).toBe(0);
+  });
+
+  it("ayrılmış hücrede alanları kendi yazı sırasına göre eşler", () => {
+    const base = project([textEl, second]);
+    base.designs.ayri = { elements: [{ ...textEl, id: "a1" }, { ...second, id: "a2" }] };
+    grid(base).content[0] = { values: {}, designId: "ayri" };
+    const { project: p } = applyTableFill(base, 0, [{ texts: ["Çay", "12"], key: "Çay" }], options());
+    expect(grid(p).content[0].values).toEqual({ a1: "Çay", a2: "12" });
   });
 });

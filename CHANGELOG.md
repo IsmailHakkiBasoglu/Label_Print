@@ -3,6 +3,7 @@
 ## [Yayınlanmamış]
 
 ### Eklendi
+- Excel (.xlsx) ve CSV'den doldurma: sütunlar yazı alanlarına eşlenir, sayfa seçimi, başlık satırı, önizleme; Türkçe Windows kodlu CSV ve Excel tarihleri tanınır.
 - Hücre başına yazı ve görsel, listeden doldurma, hücre ayırma, çok sayfalı belge.
 - 24 süslü çerçeve; desenler süsün içinde kurulur, "İçeriği çerçevenin içine al" ile mevcut içerik sığdırılır.
 - 351 renkli görsel; PNG, JPG, SVG yükleme ve görselleri içinde taşıyan proje dosyası.

@@ -103,3 +103,15 @@ main { flex: 1; min-height: 0; display: grid; grid-template-columns: 300px minma
   main > .panel:last-child { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--line); }
   .workspace { grid-template-columns: 1fr; }
 }
+.list-fill { max-height: calc(100vh - 120px); overflow: auto; }
+.list-fill .file-pick input { display: block; margin-top: 4px; max-width: 100%; }
+.list-fill .file-chip { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; }
+.list-fill .file-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.list-fill .mapping { border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; display: flex; flex-direction: column; gap: 6px; margin: 0; }
+.list-fill .mapping legend { font-weight: 600; padding: 0 4px; }
+.list-fill .mapping-row { display: grid; grid-template-columns: 1fr 120px; gap: 6px; align-items: center; }
+.list-fill .mapping-row label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.list-fill .mapping-row select { width: 100%; }
+.list-fill .fill-preview { border-collapse: collapse; font-size: 12px; width: 100%; table-layout: fixed; }
+.list-fill .fill-preview td { border: 1px solid var(--line); padding: 2px 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.list-fill .fill-preview td.shared { color: var(--muted, #888); font-style: italic; }

@@ -5,7 +5,7 @@ Hazır etiket kağıtlarına basılacak etiketleri görerek tasarlayıp **ölç�
 - Tanex A4 şablonlarının 159'u hazır gelir; ölçüleri şüpheli olanlar "Kontrol et" rozetiyle ve nedeniyle gösterilir.
 - Kendi şablonunu tanımlama, şablonu JSON olarak içe aktarma.
 - Yaprakta yalnızca seçili etiketlere basma, yarım kalmış yaprağa "Buradan başlat", kağıdın bir bölümüne serbest içerik.
-- Her etikete farklı isim ve görsel: listeyi yapıştır, hücreler sırayla dolsun, uygun görsel kendiliğinden gelsin. İstenen hücre ortak tasarımdan ayrılabilir, liste taşarsa yeni sayfa açılır.
+- Her etikete farklı isim ve görsel: listeyi yapıştır, hücreler sırayla dolsun, uygun görsel kendiliğinden gelsin. Excel (.xlsx) veya CSV dosyasından da alınır: her sütun etiketteki bir yazı alanına eşlenir (ör. ad, tarih, fiyat). İstenen hücre ortak tasarımdan ayrılabilir, liste taşarsa yeni sayfa açılır.
 - 6 düz ve 24 süslü çerçeve; motifler gerilmeden her etiket ölçüsüne oturur. Hazır yazı desenleri, otomatik metin sığdırma.
 - 228 tek renk sembol ve 351 renkli görsel, Türkçe arama: "Mısır" yazınca mısır koçanı önerilir.
 - Kendi PNG, JPG veya SVG görselini ekleme; kaydedilen proje dosyası görselleri de içinde taşır.

@@ -13,7 +13,7 @@ import {
   type TextElement,
 } from "../core/document";
 import type { Rect } from "../core/geometry";
-import { applyListFill, type ListFillOptions } from "../core/listFill";
+import { applyTableFill, type FillRow, type ListFillOptions } from "../core/listFill";
 import { safeRead, safeWrite, type StorageLike } from "../core/storage";
 import type { Template } from "../core/templates";
 import type { FrameLabel } from "../library/frames";
@@ -366,7 +366,10 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
       });
     },
     fillFromList(lines: string[], options: Omit<ListFillOptions, "newId">) {
-      const result = applyListFill(state.project, state.pageIndex, lines, { ...options, newId: () => newId("t") });
+      return this.fillFromTable(lines.map((line) => ({ texts: [line], key: line })), options);
+    },
+    fillFromTable(rows: FillRow[], options: Omit<ListFillOptions, "newId">) {
+      const result = applyTableFill(state.project, state.pageIndex, rows, { ...options, newId: () => newId("t") });
       commit((project) => void Object.assign(project, result.project), { pageIndex: result.pageIndex, ...leaveCell });
       return result.report;
     },
