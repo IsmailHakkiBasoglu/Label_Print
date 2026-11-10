@@ -1,8 +1,10 @@
-import type { CellEntry, DesignElement, FontId } from "../core/document";
+import { encodeCode } from "../core/codes";
+import type { CellEntry, CodeElement, CodeFormat, DesignElement, FontId } from "../core/document";
 import { searchSymbols, type SymbolEntry } from "../library/symbols/search";
 import { isMultiColor } from "../library/symbols/svg";
 import type { RenderDeps } from "../render/pdf";
 import { IconView } from "./IconView";
+import { activeLabel } from "./LabelEditor";
 import { activeDesign, currentGrid, useAppState, type Store } from "./store";
 
 const FONTS: [FontId, string][] = [
@@ -11,6 +13,22 @@ const FONTS: [FontId, string][] = [
   ["serif", "Tırnaklı"],
   ["serif-bold", "Tırnaklı kalın"],
 ];
+
+const CODE_FORMATS: [CodeFormat, string][] = [
+  ["qr", "QR"],
+  ["code128", "Code 128"],
+  ["ean13", "EAN-13"],
+];
+
+function CodeError({ element, value }: { element: CodeElement; value: string }) {
+  const result = encodeCode(element.format, value);
+  if (!result || !("error" in result)) return null;
+  return (
+    <p className="notice" role="alert">
+      {result.error}
+    </p>
+  );
+}
 
 function NumberField({ label, value, onChange }: { label: string; value: number; onChange: (n: number) => void }) {
   return (
@@ -36,10 +54,17 @@ function CellFields({ store, deps, cell, entry }: { store: Store; deps: RenderDe
     <>
       {activeDesign(state).elements.map((element) => {
         const value = entry?.values[element.id];
-        if (element.kind === "code") return null;
         return (
           <div key={element.id} className="cell-field">
-            {element.kind === "text" ? (
+            {element.kind === "code" ? (
+              <>
+                <label>
+                  Kod içeriği
+                  <input value={value ?? element.value} onChange={(e) => store.setCellValue(cell, element.id, e.target.value)} />
+                </label>
+                <CodeError element={element} value={value ?? element.value} />
+              </>
+            ) : element.kind === "text" ? (
               <>
                 <label>
                   Metin
@@ -70,6 +95,7 @@ export function PropertiesPanel({ store, deps }: { store: Store; deps: RenderDep
   const entry = cell !== null ? currentGrid(state)?.content[cell] : undefined;
   const locked = cell !== null && !entry?.designId;
   const cellText = element?.kind === "text" && cell !== null ? entry?.values[element.id] : undefined;
+  const cellCode = element?.kind === "code" && cell !== null ? entry?.values[element.id] : undefined;
   const hasOwnColors = (id: string) => {
     const entrySymbol = deps.symbols(id);
     return entrySymbol ? isMultiColor(entrySymbol.icon) : id.startsWith("upload:");
@@ -85,6 +111,9 @@ export function PropertiesPanel({ store, deps }: { store: Store; deps: RenderDep
       )}
       <button disabled={locked} onClick={() => store.addText()}>
         + Yazı ekle
+      </button>
+      <button disabled={locked} onClick={() => store.addCode(activeLabel(store, deps))}>
+        + Kod ekle
       </button>
       {locked && (
         <>
@@ -125,6 +154,33 @@ export function PropertiesPanel({ store, deps }: { store: Store; deps: RenderDep
                   <option value="right">Sağa</option>
                 </select>
               </label>
+            </>
+          )}
+          {element.kind === "code" && (
+            <>
+              <label>
+                Kod türü
+                <select value={element.format} onChange={(e) => update({ format: e.target.value as CodeFormat })}>
+                  {CODE_FORMATS.map(([id, name]) => (
+                    <option key={id} value={id}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                İçerik
+                <input
+                  value={cellCode ?? element.value}
+                  onChange={(e) => (cell !== null ? store.setCellValue(cell, element.id, e.target.value) : update({ value: e.target.value }))}
+                />
+              </label>
+              <CodeError element={element} value={cellCode ?? element.value} />
+              {element.format !== "qr" && (
+                <label className="inline">
+                  <input type="checkbox" checked={element.showText} onChange={(e) => update({ showText: e.target.checked })} /> Altına yazı
+                </label>
+              )}
             </>
           )}
           {!(element.kind === "symbol" && hasOwnColors(element.symbolId)) && (
