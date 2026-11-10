@@ -123,3 +123,41 @@ describe("dosyadan doldurma", () => {
     await waitFor(() => expect(screen.getByRole("status").textContent).toMatch(/^2 etiket/));
   });
 });
+
+describe("kod sütunu", () => {
+  function openWithCode() {
+    const s = createStore(tmpl("TW-2021"), memoryStorage());
+    s.addText();
+    s.addCode({ width: 63.5, height: 38.1 });
+    const [text, code] = activeDesign(s.getState()).elements;
+    s.updateElement(code.id, { format: "ean13" } as never);
+    render(<SheetView store={s} deps={deps} />);
+    fireEvent.click(screen.getByRole("button", { name: "Listeden doldur" }));
+    return { s, textId: text.id, codeId: code.id };
+  }
+
+  it("kod alanı başta ortak kalır, sütun seçilince dolar", () => {
+    const { s, textId, codeId } = openWithCode();
+    paste("Çay\t5901234123457\nKahve\t400638133393");
+    const select = screen.getByLabelText(/1\. kod alanı · EAN-13/) as HTMLSelectElement;
+    expect(select.value).toBe("ortak");
+    fireEvent.change(select, { target: { value: "1" } });
+    fireEvent.click(screen.getByRole("button", { name: "Doldur" }));
+    expect(grid(s).content[0].values).toEqual({ [textId]: "Çay", [codeId]: "5901234123457" });
+    expect(grid(s).content[1].values[codeId]).toBe("400638133393");
+  });
+
+  it("kodlanamayan satırları durum satırında söyler", () => {
+    openWithCode();
+    paste("Çay\t5901234123457\nKahve\t5901234123458");
+    choose(/1\. kod alanı/, "1");
+    expect(screen.getByRole("status").textContent).toMatch(/1 satırın kodu üretilemedi \(ör\. 2\. satır: .*kontrol hanesi/);
+  });
+
+  it("önizlemede kod sütunu görünür", () => {
+    openWithCode();
+    paste("Çay\t5901234123457");
+    choose(/1\. kod alanı/, "1");
+    expect(screen.getByRole("table", { name: "Önizleme" }).textContent).toContain("5901234123457");
+  });
+});

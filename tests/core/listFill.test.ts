@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { newProject, type GridZone, type LabelProject, type SymbolElement, type TextElement } from "../../src/core/document";
+import { newProject, type CodeElement, type GridZone, type LabelProject, type SymbolElement, type TextElement } from "../../src/core/document";
 import { applyListFill, applyTableFill, parseLines, previewListFill, rowsFromTable } from "../../src/core/listFill";
 import type { Template } from "../../src/core/templates";
 
@@ -11,7 +11,7 @@ const template: Template = {
 const textEl: TextElement = { kind: "text", id: "t", x: 0, y: 0, width: 40, height: 10, text: "Ad", fontId: "sans", sizePt: 12, align: "left", color: "#000000" };
 const symbolEl: SymbolElement = { kind: "symbol", id: "s", x: 0, y: 10, width: 10, height: 10, symbolId: "corn", color: "#000000" };
 
-function project(elements: (TextElement | SymbolElement)[] = [textEl, symbolEl], used?: number[]): LabelProject {
+function project(elements: (TextElement | SymbolElement | CodeElement)[] = [textEl, symbolEl], used?: number[]): LabelProject {
   const p = newProject(template);
   p.designs.d1.elements = elements;
   if (used) (p.pages[0].zones[0] as GridZone).cells.used = used;
@@ -113,13 +113,13 @@ describe("applyTableFill ve rowsFromTable", () => {
 
   it("eşlenen sütunları sırasıyla yazı öğelerine çevirir, boş satırı atlar", () => {
     expect(rowsFromTable(table, [0, 1], 0)).toEqual([
-      { texts: ["Çay", "12,50"], key: "Çay" },
-      { texts: ["Kahve", ""], key: "Kahve" },
+      { texts: ["Çay", "12,50"], codes: [], key: "Çay" },
+      { texts: ["Kahve", ""], codes: [], key: "Kahve" },
     ]);
   });
 
   it("ortak bırakılan alan null olur", () => {
-    expect(rowsFromTable(table, [0, null], null)).toEqual([{ texts: ["Çay", null], key: "" }, { texts: ["Kahve", null], key: "" }]);
+    expect(rowsFromTable(table, [0, null], null)).toEqual([{ texts: ["Çay", null], codes: [], key: "" }, { texts: ["Kahve", null], codes: [], key: "" }]);
   });
 
   it("her sütunu kendi alanına yazar; boş hücre alanı gizler; ortak alana dokunmaz", () => {
@@ -143,5 +143,40 @@ describe("applyTableFill ve rowsFromTable", () => {
     grid(base).content[0] = { values: {}, designId: "ayri" };
     const { project: p } = applyTableFill(base, 0, [{ texts: ["Çay", "12"], key: "Çay" }], options());
     expect(grid(p).content[0].values).toEqual({ a1: "Çay", a2: "12" });
+  });
+});
+
+describe("kod sütunları", () => {
+  const codeEl: CodeElement = { kind: "code", id: "k", x: 0, y: 20, width: 10, height: 10, format: "ean13", value: "", showText: false, color: "#000000" };
+  const table = { columns: ["Ad", "Kod"], rows: [["Çay", "5901234123457"], ["", "400638133393"], ["", ""]] };
+
+  it("yalnız kodu dolu satır da etiket olur", () =>
+    expect(rowsFromTable(table, [0], null, [1])).toEqual([
+      { texts: ["Çay"], codes: ["5901234123457"], key: "" },
+      { texts: [""], codes: ["400638133393"], key: "" },
+    ]));
+
+  it("kod değerleri kod öğelerine sırayla yazılır; ayrılmış hücre kendi kimliğini kullanır", () => {
+    const base = project([textEl, codeEl]);
+    base.designs.ayri = { elements: [{ ...textEl, id: "a1" }, { ...codeEl, id: "ak" }] };
+    grid(base).content[1] = { values: {}, designId: "ayri" };
+    const rows = [{ texts: ["Çay"], codes: ["5901234123457"], key: "" }, { texts: ["Su"], codes: ["400638133393"], key: "" }];
+    const { project: p } = applyTableFill(base, 0, rows, options());
+    expect(grid(p).content[0].values).toEqual({ t: "Çay", k: "5901234123457" });
+    expect(grid(p).content[1].values).toEqual({ a1: "Su", ak: "400638133393" });
+  });
+
+  it("kodlanamayan satır doldurmayı durdurmaz, sayılır", () => {
+    const rows = ["5901234123457", "5901234123458", "12"].map((c) => ({ texts: ["x"], codes: [c], key: "" }));
+    const { project: p, report } = applyTableFill(project([textEl, codeEl]), 0, rows, options());
+    expect(report).toMatchObject({ filled: 3, badCodes: 2, firstBadCode: { row: 2 } });
+    expect(report.firstBadCode!.error).toMatch(/kontrol hanesi/);
+    expect(grid(p).content[1].values.k).toBe("5901234123458");
+  });
+
+  it("ortak bırakılan kod alanına dokunmaz", () => {
+    const { project: p, report } = applyTableFill(project([textEl, codeEl]), 0, [{ texts: ["x"], codes: [null], key: "" }], options());
+    expect(grid(p).content[0].values).toEqual({ t: "x" });
+    expect(report.badCodes).toBe(0);
   });
 });

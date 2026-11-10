@@ -1,5 +1,5 @@
 import { useId, useMemo, useState, type ReactNode } from "react";
-import type { TextElement } from "../core/document";
+import type { CodeElement, CodeFormat, TextElement } from "../core/document";
 import { fillWouldReplace, previewTableFill, rowsFromTable, type ListFillOptions } from "../core/listFill";
 import { parsePasted, readTableFile, TableImportError, toTable, type TableFile } from "../core/tableImport";
 import { searchSymbols } from "../library/symbols/search";
@@ -10,6 +10,7 @@ import { currentGrid, useAppState, type Store } from "./store";
 type Props = { store: Store; deps: RenderDeps; capacity: number; label: { width: number; height: number }; onClose: () => void };
 const SHARED = "ortak";
 const PREVIEW_ROWS = 3;
+const FORMAT_NAMES: Record<CodeFormat, string> = { qr: "QR", code128: "Code 128", ean13: "EAN-13" };
 
 function describe(r: ReturnType<typeof previewTableFill>): string {
   return [
@@ -17,6 +18,7 @@ function describe(r: ReturnType<typeof previewTableFill>): string {
     r.pagesAdded > 0 ? `${r.pagesAdded} yeni sayfa açılacak` : "",
     r.unusedCells > 0 ? `${r.unusedCells} etiket boş kalacak` : "",
     r.noSymbol > 0 ? `${r.noSymbol} satır için görsel bulunamadı` : "",
+    r.firstBadCode ? `${r.badCodes} satırın kodu üretilemedi (ör. ${r.firstBadCode.row}. satır: ${r.firstBadCode.error})` : "",
   ]
     .filter(Boolean)
     .join(" · ");
@@ -60,12 +62,15 @@ export function ListFillDialog({ store, deps, capacity, label, onClose }: Props)
   // Field index → column index, or null for "keep shared". Missing entries use the default (same position).
   const [textMap, setTextMap] = useState<Record<number, number | null>>({});
   const [keyMap, setKeyMap] = useState<number | null>(null);
+  // Code field index → column index; codes stay shared until a column is chosen.
+  const [codeMap, setCodeMap] = useState<Record<number, number>>({});
   const [confirming, setConfirming] = useState(false);
 
   const grid = currentGrid(state);
   const design = grid ? state.project.designs[grid.designId] : undefined;
   const textElements = (design?.elements ?? []).filter((e): e is TextElement => e.kind === "text");
   const hasSymbol = !!design?.elements.some((e) => e.kind === "symbol");
+  const codeElements = (design?.elements ?? []).filter((e): e is CodeElement => e.kind === "code");
 
   const table = useMemo(() => toTable(file ? (file.data.sheets[sheetIndex]?.rows ?? []) : parsePasted(text), header), [file, sheetIndex, text, header]);
   const columnCount = table.columns.length;
@@ -76,13 +81,14 @@ export function ListFillDialog({ store, deps, capacity, label, onClose }: Props)
     if (chosen !== undefined && chosen < columnCount) return chosen;
     return i < columnCount ? i : null;
   });
+  const codeColumns = codeElements.map((_, i) => (codeMap[i] !== undefined && codeMap[i] < columnCount ? codeMap[i] : null));
   const suggesting = wantSuggest && hasSymbol;
   const keyColumn = suggesting ? (keyMap !== null && keyMap < columnCount ? keyMap : 0) : null;
   const rows = useMemo(
-    () => rowsFromTable(table, textColumns, keyColumn),
-    // `textColumns` is derived each render from exactly these inputs.
+    () => rowsFromTable(table, textColumns, keyColumn, codeColumns),
+    // `textColumns` and `codeColumns` are derived each render from exactly these inputs.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [table, JSON.stringify(textColumns), keyColumn],
+    [table, JSON.stringify(textColumns), JSON.stringify(codeColumns), keyColumn],
   );
 
   const isColored = (id: string) => {
@@ -102,7 +108,7 @@ export function ListFillDialog({ store, deps, capacity, label, onClose }: Props)
     [rows, suggesting, state.project, state.pageIndex, capacity, deps],
   );
 
-  const used = new Set([...textColumns, keyColumn].filter((c): c is number => c !== null));
+  const used = new Set([...textColumns, ...codeColumns, keyColumn].filter((c): c is number => c !== null));
   const unused = columnCount - used.size;
   const showMapping = columnCount > 1 || !!file || header;
 
@@ -121,6 +127,7 @@ export function ListFillDialog({ store, deps, capacity, label, onClose }: Props)
       setHeader(true);
       setTextMap({});
       setKeyMap(null);
+      setCodeMap({});
       setError(null);
     } catch (e) {
       setError(e instanceof TableImportError ? e.message : "Dosya okunamadı.");
@@ -133,6 +140,7 @@ export function ListFillDialog({ store, deps, capacity, label, onClose }: Props)
     setHeader(false);
     setTextMap({});
     setKeyMap(null);
+    setCodeMap({});
     changed();
   }
 
@@ -193,6 +201,7 @@ export function ListFillDialog({ store, deps, capacity, label, onClose }: Props)
             setSheetIndex(Number(v));
             setTextMap({});
             setKeyMap(null);
+            setCodeMap({});
             changed();
           }}
         >
@@ -236,6 +245,23 @@ export function ListFillDialog({ store, deps, capacity, label, onClose }: Props)
               {columnOptions}
             </Choice>
           ))}
+          {codeElements.map((code, i) => (
+            <Choice
+              key={code.id}
+              label={`${i + 1}. kod alanı · ${FORMAT_NAMES[code.format]}`}
+              value={codeColumns[i] === null ? SHARED : String(codeColumns[i])}
+              onChange={(v) => {
+                const next = { ...codeMap };
+                if (v === SHARED) delete next[i];
+                else next[i] = Number(v);
+                setCodeMap(next);
+                changed();
+              }}
+            >
+              <option value={SHARED}>Ortak kalsın</option>
+              {columnOptions}
+            </Choice>
+          ))}
           {suggesting && (
             <Choice
               label="Öneri sütunu (görsel)"
@@ -262,7 +288,7 @@ export function ListFillDialog({ store, deps, capacity, label, onClose }: Props)
           <tbody>
             {rows.slice(0, PREVIEW_ROWS).map((row, r) => (
               <tr key={r}>
-                {row.texts.map((value, i) => (
+                {[...row.texts, ...(row.codes ?? [])].map((value, i) => (
                   <td key={i} className={value === null ? "shared" : ""}>
                     {value === null ? "(ortak)" : value || "—"}
                   </td>
