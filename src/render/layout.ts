@@ -1,5 +1,6 @@
 import { resolveCellDesign } from "../core/cells";
-import type { FontId, LabelDesign, LabelProject, Page, TextElement, Zone } from "../core/document";
+import { encodeCode } from "../core/codes";
+import type { CodeElement, FontId, LabelDesign, LabelProject, Page, TextElement, Zone } from "../core/document";
 import { labelRects, type Rect } from "../core/geometry";
 import type { Template } from "../core/templates";
 import { frameLayout, type FrameLabel } from "../library/frames";
@@ -57,6 +58,75 @@ function textOps(el: TextElement, origin: { x: number; y: number }, deps: Layout
   });
 }
 
+/** Smallest module a typical reader still resolves: a barcode bar, and a QR square. */
+const MIN_BAR_MM = 0.25;
+const MIN_QR_MM = 0.4;
+const CODE_TEXT_SHARE = 0.25;
+const CODE_TEXT_MAX_MM = 4;
+const LIGHT_LUMINANCE = 0.5;
+const round = (n: number) => Number(n.toFixed(4));
+
+/** Rectangles for the dark modules, runs on a row merged into one; coordinates are in mm from the code's top-left module. */
+export function rectsPath(rows: boolean[][], module: { w: number; h: number }): string {
+  let d = "";
+  rows.forEach((row, y) => {
+    for (let x = 0; x < row.length; x++) {
+      if (!row[x]) continue;
+      const start = x;
+      while (row[x + 1]) x++;
+      const w = round((x - start + 1) * module.w);
+      d += `M${round(start * module.w)} ${round(y * module.h)}h${w}v${round(module.h)}h${-w}Z`;
+    }
+  });
+  return d;
+}
+
+/** sRGB relative luminance of a #rrggbb colour. */
+function luminance(hex: string): number {
+  const channels = (/^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(hex) ?? ["", "00", "00", "00"]).slice(1).map((c) => parseInt(c, 16) / 255);
+  const [r, g, b] = channels.map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/** A code scaled into its box with its quiet zone; barcodes may carry their value as text underneath. */
+function codeOps(el: CodeElement, origin: { x: number; y: number }, deps: LayoutDeps, warnings: string[], cache: FitCache): RenderOp[] {
+  const result = encodeCode(el.format, el.value);
+  if (!result) return [];
+  const name = `"${el.value.slice(0, 30)}" kodu`;
+  if ("error" in result) {
+    warnings.push(`${name}: ${result.error}`);
+    return [];
+  }
+  if (luminance(el.color) > LIGHT_LUMINANCE) warnings.push("Kod rengi çok açık; okuyucular koyu renk ister.");
+  const columns = result.modules[0].length;
+  const ops: RenderOp[] = [];
+  let module: { w: number; h: number };
+  let x: number;
+  let y: number;
+  if (el.format === "qr") {
+    const side = Math.min(el.width, el.height) / (columns + 2 * result.quiet);
+    module = { w: side, h: side };
+    x = origin.x + el.x + (el.width - columns * side) / 2;
+    y = origin.y + el.y + (el.height - columns * side) / 2;
+    if (side < MIN_QR_MM) warnings.push(`${name} bu boyutta okunmayabilir; büyütün.`);
+  } else {
+    const textHeight = el.showText && result.text ? Math.min(el.height * CODE_TEXT_SHARE, CODE_TEXT_MAX_MM) : 0;
+    const bar = el.width / (columns + 2 * result.quiet);
+    module = { w: bar, h: el.height - textHeight };
+    x = origin.x + el.x + result.quiet * bar;
+    y = origin.y + el.y;
+    if (bar < MIN_BAR_MM) warnings.push(`${name} bu boyutta okunmayabilir; büyütün.`);
+    if (textHeight > 0) {
+      const label: TextElement = {
+        kind: "text", id: el.id, x: el.x, y: el.y + module.h, width: el.width, height: textHeight,
+        text: result.text!, fontId: "sans", sizePt: textHeight / MM_PER_PT / LINE_HEIGHT, align: "center", color: el.color,
+      };
+      ops.push(...textOps(label, origin, deps, warnings, cache));
+    }
+  }
+  return [{ kind: "path", d: rectsPath(result.modules, module), x, y, scale: 1, fill: el.color }, ...ops];
+}
+
 function touchesBand(el: Rect, label: FrameLabel, band: number): boolean {
   if (label.shape === "circle" || label.shape === "oval") {
     const [a, b] = [label.width / 2 - band, label.height / 2 - band];
@@ -94,7 +164,10 @@ function designOps(design: LabelDesign, box: Rect, label: FrameLabel, deps: Layo
       ops.push(...textOps(el, box, deps, warnings, cache));
       continue;
     }
-    if (el.kind === "code") continue;
+    if (el.kind === "code") {
+      ops.push(...codeOps(el, box, deps, warnings, cache));
+      continue;
+    }
     if (el.symbolId.startsWith(UPLOAD_PREFIX)) {
       const imageId = el.symbolId.slice(UPLOAD_PREFIX.length);
       const meta = Object.hasOwn(ctx.images, imageId) ? ctx.images[imageId] : undefined;
