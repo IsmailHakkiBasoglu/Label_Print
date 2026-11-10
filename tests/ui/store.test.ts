@@ -251,6 +251,8 @@ describe("kod öğesi", () => {
     expect(code.x).toBeCloseTo((63.5 - side) / 2);
     expect(code.y).toBeCloseTo((38.1 - side) / 2);
     expect(s.getState().selectedElementId).toBe(code.id);
+    // The properties panel shows these numbers as typed: no floating-point tails.
+    for (const n of [code.x, code.y, code.width, code.height]) expect(Number(n.toFixed(2))).toBe(n);
   });
 
   it("desen kod öğesini ve hücre değerini korur", () => {

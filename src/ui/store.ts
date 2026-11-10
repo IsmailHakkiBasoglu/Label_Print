@@ -181,8 +181,9 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
     /** A QR code centred on the label, a square of 60 % of its short side. */
     addCode(label: { width: number; height: number }) {
       const id = newId("k");
-      const side = Math.min(label.width, label.height) * 0.6;
-      const element: CodeElement = { kind: "code", id, x: (label.width - side) / 2, y: (label.height - side) / 2, width: side, height: side, format: "qr", value: "Örnek", showText: true, color: "#000000" };
+      const mm = (n: number) => Number(n.toFixed(2));
+      const side = mm(Math.min(label.width, label.height) * 0.6);
+      const element: CodeElement = { kind: "code", id, x: mm((label.width - side) / 2), y: mm((label.height - side) / 2), width: side, height: side, format: "qr", value: "Örnek", showText: true, color: "#000000" };
       commit((_, design) => design.elements.push(element), { selectedElementId: id });
     },
     addImage(id: string, meta: ImageMeta): boolean {

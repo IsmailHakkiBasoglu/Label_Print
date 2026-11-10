@@ -9,6 +9,7 @@ Hazır etiket kağıtlarına basılacak etiketleri görerek tasarlayıp **ölç�
 - 6 düz ve 24 süslü çerçeve; motifler gerilmeden her etiket ölçüsüne oturur. Hazır yazı desenleri, otomatik metin sığdırma.
 - 228 tek renk sembol ve 351 renkli görsel, Türkçe arama: "Mısır" yazınca mısır koçanı önerilir.
 - Kendi PNG, JPG veya SVG görselini ekleme; kaydedilen proje dosyası görselleri de içinde taşır.
+- QR, Code 128 ve EAN-13 kodları; içerik ortak olabilir ya da listeden/Excel sütunundan her etikete ayrı gelir. Ayrıntı aşağıda.
 - Cetvelli kalibrasyon sayfası ve yazıcı kayması düzeltmesi.
 
 ## Çalıştırma
@@ -28,6 +29,16 @@ Terminalde yazan yerel adresi tarayıcıda aç.
 ## Yazdırırken
 
 PDF'i **Gerçek boyut / %100** ölçekle yazdır. "Sayfaya sığdır" seçeneği ölçüleri bozar. İlk kullanımda Kalibrasyon PDF'ini basıp cetvelleri ölçmen, kayma varsa Yazıcı düzeltmesi alanlarına girmen önerilir.
+
+## Barkod ve QR
+
+Özellikler panelinde **+ Kod ekle** ile etikete kod eklenir; türü, içeriği ve rengi oradan değiştirilir.
+
+- **QR:** web adresi, tarif, not; Türkçe harfler sorunsuz.
+- **Code 128:** stok veya raf kodu; harf, rakam ve işaret alır, en fazla 80 karakter. Ş, ğ, ı gibi Türkçe harfleri kodlayamaz; bunlar için QR kullan.
+- **EAN-13:** 13 haneli ürün barkodu. 12 hane yazarsan son kontrol hanesi eklenir, 13 hane yazarsan denetlenir. Gerçek ürün numarası GS1'den alınır.
+
+Kod okunamayacak kadar küçükse, rengi çok açıksa veya içeriği hatalıysa PDF uyarısında söylenir; hatalı kod basılmaz. Toplu baskıdan önce bir etiketi basıp telefonla veya okuyucuyla okut.
 
 ## Geliştirme
 

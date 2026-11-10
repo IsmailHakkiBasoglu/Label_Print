@@ -7,7 +7,7 @@
 
 ## Fikirler
 - [x] Excel/CSV'den toplu etiket üretimi (sütun eşleme ile)
-- [ ] Barkod ve QR
+- [x] Barkod ve QR (QR, Code 128, EAN-13)
 - [ ] Yüklenen SVG'lerde gradyan ve dönüşüm desteği
 - [ ] Tek tıkla açılan masaüstü paketi
 - [ ] PDF boyutunu küçültmek (yazı tipleri şu an tam gömülüyor; pdf-lib'in alt kümeleme hatası nedeniyle)
