@@ -78,4 +78,69 @@ describe("parseDocumentXml", () => {
   it("reports when no column matches the label", () => {
     expect(parseDocumentXml(doc({ top: 0, left: 0, cols: [tw(50)], rows: [tw(30)] }), { width: 70, height: 30 })).toHaveProperty("error");
   });
+
+  it("adds no notes and keeps the label for an exact match", () => {
+    const r = ok(parseDocumentXml(doc({ top: 0, left: 0, cols: [tw(70)], rows: [tw(30)] }), { width: 70, height: 30 }));
+    expect(r.notes).toEqual([]);
+    expect(r.label).toEqual({ width: 70, height: 30 });
+  });
 });
+
+describe("parseDocumentXml with Word cells near the label size", () => {
+  it("centres the label in a slightly larger cell (TW-2048)", () => {
+    const r = ok(parseDocumentXml(doc({ top: 0, left: 567, cols: Array(6).fill(tw(33)), rows: Array(8).fill(tw(32)) }), { width: 32, height: 32 }));
+    expect(r.grid.columns).toBe(6);
+    expect(r.grid.rows).toBe(8);
+    expect(r.grid.marginLeft).toBeCloseTo(10.5, 1);
+    expect(r.grid.gapX).toBeCloseTo(1, 1);
+    expect(r.grid.gapY).toBe(0);
+    expect(r.label).toEqual({ width: 32, height: 32 });
+    expect(r.notes.join(" ")).toMatch(/Etiket genişliği: Word hücresi 33\.00 mm, etiket 32 mm/);
+  });
+
+  it("keeps spacer rows in the pitch (TW-2030)", () => {
+    const r = ok(parseDocumentXml(doc({ top: 0, left: 0, cols: Array(5).fill(tw(40.5)), rows: alternate(44.49, 3, 6) }), { width: 38, height: 44 }));
+    expect(r.grid.rows).toBe(6);
+    expect(r.grid.gapY).toBeCloseTo(3.49, 1);
+    expect(r.grid.marginTop).toBeCloseTo(0.245, 1);
+    expect(r.grid.gapX).toBeCloseTo(2.5, 1);
+  });
+
+  it("packs labels edge to edge around the Word block when cells are smaller (TW-3177)", () => {
+    const r = ok(parseDocumentXml(doc({ top: tw(12.25), left: 0, cols: [tw(78)], rows: Array(5).fill(tw(54.49)) }), { width: 78, height: 58.4 }));
+    expect(r.grid.rows).toBe(5);
+    expect(r.grid.gapY).toBe(0);
+    expect(r.grid.marginTop).toBeCloseTo(12.25 + (5 * 54.49) / 2 - (5 * 58.4) / 2, 1);
+    expect(r.notes.join(" ")).toMatch(/bitişik/);
+  });
+
+  it("uses the Word size when the nominal labels cannot fit the sheet (TW-2054)", () => {
+    const r = ok(parseDocumentXml(doc({ top: 0, left: 0, cols: Array(6).fill(tw(35)), rows: Array(9).fill(tw(32.97)) }), { width: 35, height: 33.6 }));
+    expect(r.grid.rows).toBe(9);
+    expect(r.label.height).toBeCloseTo(32.97, 1);
+    expect(r.label.width).toBe(35);
+    expect(r.notes.join(" ")).toMatch(/sığmıyor/);
+  });
+
+  it("still refuses cells far from the label size", () => {
+    expect(parseDocumentXml(doc({ top: 0, left: 0, cols: [tw(60)], rows: [tw(30)] }), { width: 50, height: 30 })).toHaveProperty("error");
+  });
+
+  it("still refuses an irregular spacing", () => {
+    const rows = [14.25, 14.25, 27.01, 14.25, 14.25].map(tw);
+    expect(parseDocumentXml(doc({ top: 0, left: 0, cols: [tw(37)], rows }), { width: 37, height: 14.25 })).toHaveProperty("error");
+  });
+
+  it("shrinks Word-sized labels that overflow the sheet by a hair (TW-2059)", () => {
+    const r = ok(parseDocumentXml(doc({ top: 0, left: 0, cols: [tw(42)], rows: Array(5).fill(tw(59.41)) }), { width: 42, height: 59.69 }));
+    expect(r.grid.marginTop + 5 * r.label.height).toBeLessThanOrEqual(297.0001);
+    expect(r.label.height).toBeCloseTo(59.4, 2);
+  });
+
+  it("moves an exactly matched grid back onto the sheet (TW-2544)", () => {
+    const r = ok(parseDocumentXml(doc({ top: tw(0.5), left: 0, cols: [tw(35)], rows: Array(24).fill(tw(12.36)) }), { width: 35, height: 12.4355 }));
+    expect(r.grid.marginTop + 24 * r.label.height).toBeLessThanOrEqual(297.0001);
+    expect(r.notes.join(" ")).toMatch(/sayfaya sığ/);
+  });
+});
+

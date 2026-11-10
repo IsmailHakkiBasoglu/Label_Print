@@ -124,10 +124,13 @@ describe("catalog plausibility", () => {
 
 describe("parseDocumentXml edge rows", () => {
   const tw = (mm: number) => Math.round((mm * 1440) / 25.4);
-  it("reports an end row close to label size", () => {
+  it("accepts an end row close to label size but notes it", () => {
     const rows = [39.99, 5.8, 39.99, 5.8, 40.5].map((h) => `<w:tr><w:trPr><w:trHeight w:val="${tw(h)}"/></w:trPr></w:tr>`).join("");
     const xml = `<w:tbl><w:tblPr></w:tblPr><w:tblGrid><w:gridCol w:w="${tw(40)}"/></w:tblGrid>${rows}</w:tbl><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="0" w:left="0"/>`;
-    expect(parseDocumentXml(xml, { width: 40, height: 40 })).toHaveProperty("error");
+    const result = parseDocumentXml(xml, { width: 40, height: 40 });
+    if ("error" in result) throw new Error(result.error);
+    expect(result.grid.rows).toBe(3);
+    expect(result.notes.length).toBeGreaterThan(0);
   });
 });
 

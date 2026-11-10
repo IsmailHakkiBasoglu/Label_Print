@@ -34,19 +34,21 @@ async function convert(row: TanexRow): Promise<Template> {
   if (size.singleDimension) notes.push("Sayfada tek ölçü var, şekil belirsiz: kontrol edin.");
   const label = { width: size.width, height: size.height, shape: size.shape };
   const fallback = { sheet: A4, grid: { columns: 1, rows: 1, marginTop: 0, marginLeft: 0, gapX: 0, gapY: 0 } };
-  let layout = fallback;
+  let layout: { sheet: Template["sheet"]; grid: Template["grid"] } = fallback;
   let parsedGrid = false;
   try {
     if (row.url.toLowerCase().endsWith(".doc")) throw new Error("Eski .doc biçimi okunamıyor; ızgarayı elle girin.");
     const xml = strFromU8(unzipSync(await cached(row.url))["word/document.xml"]);
-    let parsed = parseDocumentXml(xml, label);
-    if ("error" in parsed) {
-      const swapped = parseDocumentXml(xml, { width: label.height, height: label.width });
-      if ("error" in swapped) throw new Error(parsed.error);
-      notes.push(`Sayfadaki ölçü (${size.width}×${size.height}) Word dosyasının tersi; Word yönü kullanıldı.`);
-      [label.width, label.height] = [label.height, label.width];
-      parsed = swapped;
-    }
+    const straight = parseDocumentXml(xml, label);
+    const swapped = parseDocumentXml(xml, { width: label.height, height: label.width });
+    // Prefer the orientation Word matches exactly; an approximate match in one direction should not hide an exact one in the other.
+    const useSwapped = !("error" in swapped) && ("error" in straight || (straight.notes.length > 0 && swapped.notes.length === 0));
+    const parsed = useSwapped ? swapped : straight;
+    if ("error" in parsed) throw new Error(parsed.error);
+    if (useSwapped) notes.push(`Sayfadaki ölçü (${size.width}×${size.height}) Word dosyasının tersi; Word yönü kullanıldı.`);
+    label.width = parsed.label.width;
+    label.height = parsed.label.height;
+    notes.push(...parsed.notes);
     layout = parsed;
     parsedGrid = true;
   } catch (error) {

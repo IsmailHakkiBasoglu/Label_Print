@@ -2,6 +2,9 @@
 
 ## [Yayınlanmamış]
 
+### Düzeltildi
+- Word hücresi etiketten birkaç mm farklı olan 25 Tanex şablonu artık tek etiket yerine tam ızgarayla geliyor; sayfadan taşan 2 şablon sığdırıldı. Hepsi "Kontrol et" notuyla.
+
 ### Eklendi
 - Excel (.xlsx) ve CSV'den doldurma: sütunlar yazı alanlarına eşlenir, sayfa seçimi, başlık satırı, önizleme; Türkçe Windows kodlu CSV ve Excel tarihleri tanınır.
 - Hücre başına yazı ve görsel, listeden doldurma, hücre ayırma, çok sayfalı belge.

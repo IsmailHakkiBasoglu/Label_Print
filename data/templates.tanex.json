@@ -505,12 +505,12 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
-   "marginLeft": 0,
-   "gapX": 0,
-   "gapY": 0
+   "columns": 5,
+   "rows": 6,
+   "marginLeft": 6.241249999999998,
+   "marginTop": 7.739166666666665,
+   "gapX": 2.498888888888885,
+   "gapY": 3.4838888888888846
   },
   "label": {
    "width": 38,
@@ -520,7 +520,9 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket genişliği: Word hücresi 40.50 mm, etiket 38 mm; etiket hücrenin ortasına yerleştirildi.",
+   "Etiket yüksekliği: Word hücresi 44.49 mm, etiket 44 mm; etiket hücrenin ortasına yerleştirildi.",
+   "Yatay boşluklar dengesiz (sol 6.24, sağ 3.76 mm)."
   ]
  },
  {
@@ -764,11 +766,11 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
-   "marginLeft": 0,
-   "gapX": 0,
+   "columns": 6,
+   "rows": 8,
+   "marginLeft": 7.009930555555553,
+   "marginTop": 20.496388888888887,
+   "gapX": 1.0023611111111066,
    "gapY": 0
   },
   "label": {
@@ -779,7 +781,8 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket genişliği: Word hücresi 33.00 mm, etiket 32 mm; etiket hücrenin ortasına yerleştirildi.",
+   "Yatay boşluklar dengesiz (sol 7.01, sağ 5.98 mm)."
   ]
  },
  {
@@ -836,22 +839,22 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
+   "columns": 6,
+   "rows": 9,
    "marginLeft": 0,
+   "marginTop": 0,
    "gapX": 0,
    "gapY": 0
   },
   "label": {
    "width": 35,
-   "height": 33.6,
+   "height": 32.967083333333335,
    "shape": "rect"
   },
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket yüksekliği: 9 etiket 33.6 mm ile sayfaya sığmıyor; Word ölçüsü (32.97 mm) kullanıldı."
   ]
  },
  {
@@ -862,12 +865,12 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
-   "marginLeft": 0,
-   "gapX": 0,
-   "gapY": 0
+   "columns": 5,
+   "rows": 11,
+   "marginLeft": 9.08722222222222,
+   "marginTop": 10.630694444444444,
+   "gapX": 2.1936111111111103,
+   "gapY": 1.2941666666666656
   },
   "label": {
    "width": 37,
@@ -877,7 +880,9 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket genişliği: Word hücresi 39.19 mm, etiket 37 mm; etiket hücrenin ortasına yerleştirildi.",
+   "Etiket yüksekliği: Word hücresi 25.29 mm, etiket 24 mm; etiket hücrenin ortasına yerleştirildi.",
+   "Yatay boşluklar dengesiz (sol 9.09, sağ 7.14 mm)."
   ]
  },
  {
@@ -888,22 +893,23 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
+   "columns": 5,
+   "rows": 5,
    "marginLeft": 0,
+   "marginTop": 0,
    "gapX": 0,
    "gapY": 0
   },
   "label": {
    "width": 42,
-   "height": 59.69,
+   "height": 59.4,
    "shape": "rect"
   },
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket yüksekliği: 5 etiket 59.69 mm ile sayfaya sığmıyor; Word ölçüsü (59.41 mm) kullanıldı.",
+   "Etiket yüksekliği: sayfaya sığması için etiket 59.41 mm yerine 59.40 mm alındı."
   ]
  },
  {
@@ -940,11 +946,11 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
-   "marginLeft": 0,
-   "gapX": 0,
+   "columns": 5,
+   "rows": 13,
+   "marginLeft": 4.938888888888887,
+   "marginTop": 10.689166666666667,
+   "gapX": 2.6105555555555497,
    "gapY": 0
   },
   "label": {
@@ -955,7 +961,7 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket genişliği: Word hücresi 37.99 mm, etiket 38.1 mm; etiket hücrenin ortasına yerleştirildi."
   ]
  },
  {
@@ -966,11 +972,11 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
-   "marginLeft": 0,
-   "gapX": 0,
+   "columns": 3,
+   "rows": 6,
+   "marginLeft": 3.47993055555555,
+   "marginTop": 9.983611111111111,
+   "gapX": 1.9856944444444338,
    "gapY": 0
   },
   "label": {
@@ -981,7 +987,8 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket genişliği: Word hücresi 68.99 mm, etiket 67 mm; etiket hücrenin ortasına yerleştirildi.",
+   "Yatay boşluklar dengesiz (sol 3.48, sağ 1.55 mm)."
   ]
  },
  {
@@ -1015,22 +1022,22 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
+   "columns": 8,
+   "rows": 9,
    "marginLeft": 0,
+   "marginTop": 0,
    "gapX": 0,
    "gapY": 0
   },
   "label": {
    "width": 26.25,
-   "height": 33.16,
+   "height": 32.967083333333335,
    "shape": "rect"
   },
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket yüksekliği: 9 etiket 33.16 mm ile sayfaya sığmıyor; Word ölçüsü (32.97 mm) kullanıldı."
   ]
  },
  {
@@ -1087,11 +1094,11 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
-   "marginLeft": 0,
-   "gapX": 0,
+   "columns": 4,
+   "rows": 32,
+   "marginLeft": 14.542013888888885,
+   "marginTop": 12.488333333333333,
+   "gapX": 2.2905555555555566,
    "gapY": 0
   },
   "label": {
@@ -1102,7 +1109,8 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket genişliği: Word hücresi 42.99 mm, etiket 43.5 mm; etiket hücrenin ortasına yerleştirildi.",
+   "Altta bir satır daha sığıyor; Word dosyası eksik olabilir."
   ]
  },
  {
@@ -1161,8 +1169,8 @@
   "grid": {
    "columns": 1,
    "rows": 1,
-   "marginTop": 0,
    "marginLeft": 0,
+   "marginTop": 0,
    "gapX": 0,
    "gapY": 0
   },
@@ -1174,7 +1182,8 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket yüksekliği: Word hücresi 148.03 mm, etiket 148.5 mm; etiket hücrenin ortasına yerleştirildi.",
+   "Altta bir satır daha sığıyor; Word dosyası eksik olabilir."
   ]
  },
  {
@@ -1185,10 +1194,10 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
+   "columns": 2,
+   "rows": 8,
    "marginLeft": 0,
+   "marginTop": 0,
    "gapX": 0,
    "gapY": 0
   },
@@ -1200,7 +1209,7 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket yüksekliği: Word hücreleri (36.99 mm) etiketten (37.125 mm) küçük; etiketler bitişik dizildi."
   ]
  },
  {
@@ -1211,10 +1220,10 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
+   "columns": 3,
+   "rows": 2,
    "marginLeft": 0,
+   "marginTop": 0,
    "gapX": 0,
    "gapY": 0
   },
@@ -1226,7 +1235,7 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket yüksekliği: Word hücreleri (148.40 mm) etiketten (148.5 mm) küçük; etiketler bitişik dizildi."
   ]
  },
  {
@@ -1381,12 +1390,12 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
-   "marginLeft": 0,
-   "gapX": 0,
-   "gapY": 0
+   "columns": 3,
+   "rows": 6,
+   "marginLeft": 12.488333333333333,
+   "marginTop": 11.54347222222222,
+   "gapX": 4.888333333333328,
+   "gapY": 3.0844444444444363
   },
   "label": {
    "width": 58.4,
@@ -1396,7 +1405,7 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket yüksekliği: Word hücresi 42.30 mm, etiket 43.2 mm; etiket hücrenin ortasına yerleştirildi."
   ]
  },
  {
@@ -1492,7 +1501,7 @@
   "status": "check",
   "notes": [
    "Sayfada tek ölçü var, şekil belirsiz: kontrol edin.",
-   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+   "Izgara okunamadı: Tablo konumu sayfaya bağlı değil."
   ]
  },
  {
@@ -1572,12 +1581,12 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
-   "marginLeft": 0,
-   "gapX": 0,
-   "gapY": 0
+   "columns": 4,
+   "rows": 6,
+   "marginLeft": 15.998472222222222,
+   "marginTop": 13.998958333333329,
+   "gapX": 5.984583333333326,
+   "gapY": 5.7905555555555495
   },
   "label": {
    "width": 40,
@@ -1587,7 +1596,7 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket yüksekliği: tablonun kenarında etiket ölçüsüne uymayan bir satır/sütun var."
+   "Etiket yüksekliği: Word hücresi 39.99 mm, etiket 40 mm; etiket hücrenin ortasına yerleştirildi."
   ]
  },
  {
@@ -1644,12 +1653,12 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
-   "marginLeft": 0,
-   "gapX": 0,
-   "gapY": 0
+   "columns": 4,
+   "rows": 5,
+   "marginLeft": 1.987499999999999,
+   "marginTop": 9.401527777777776,
+   "gapX": 1.9994444444444426,
+   "gapY": 7.00888888888889
   },
   "label": {
    "width": 50,
@@ -1660,7 +1669,7 @@
   "status": "check",
   "notes": [
    "Sayfada tek ölçü var, şekil belirsiz: kontrol edin.",
-   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket genişliği: Word hücresi 52.00 mm, etiket 50 mm; etiket hücrenin ortasına yerleştirildi."
   ]
  },
  {
@@ -1671,22 +1680,22 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
+   "columns": 6,
+   "rows": 7,
    "marginLeft": 0,
+   "marginTop": 0,
    "gapX": 0,
    "gapY": 0
   },
   "label": {
    "width": 35,
-   "height": 42.64,
+   "height": 41.998194444444444,
    "shape": "rect"
   },
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket yüksekliği: 7 etiket 42.64 mm ile sayfaya sığmıyor; Word ölçüsü (42.00 mm) kullanıldı."
   ]
  },
  {
@@ -1793,21 +1802,21 @@
   },
   "grid": {
    "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
+   "rows": 18,
    "marginLeft": 0,
+   "marginTop": 0,
    "gapX": 0,
    "gapY": 0
   },
   "label": {
    "width": 210,
-   "height": 16.9,
+   "height": 16.474722222222223,
    "shape": "rect"
   },
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket yüksekliği: 18 etiket 16.9 mm ile sayfaya sığmıyor; Word ölçüsü (16.47 mm) kullanıldı."
   ]
  },
  {
@@ -1867,10 +1876,10 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
+   "columns": 2,
+   "rows": 2,
    "marginLeft": 0,
+   "marginTop": 0,
    "gapX": 0,
    "gapY": 0
   },
@@ -1882,7 +1891,7 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket yüksekliği: Word hücreleri (148.03 mm) etiketten (148.5 mm) küçük; etiketler bitişik dizildi."
   ]
  },
  {
@@ -1985,12 +1994,12 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
+   "columns": 2,
+   "rows": 11,
    "marginLeft": 0,
+   "marginTop": 9.684305555555554,
    "gapX": 0,
-   "gapY": 0
+   "gapY": 2.3999999999999986
   },
   "label": {
    "width": 105,
@@ -2000,7 +2009,7 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket yüksekliği: Word hücresi 25.40 mm, etiket 23 mm; etiket hücrenin ortasına yerleştirildi."
   ]
  },
  {
@@ -2103,12 +2112,12 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
-   "marginLeft": 0,
-   "gapX": 0,
-   "gapY": 0
+   "columns": 5,
+   "rows": 3,
+   "marginLeft": 9.484097222222218,
+   "marginTop": 12.99986111111111,
+   "gapX": 1.9995833333333266,
+   "gapY": 7.992222222222225
   },
   "label": {
    "width": 37,
@@ -2118,7 +2127,8 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket genişliği: Word hücresi 39.00 mm, etiket 37 mm; etiket hücrenin ortasına yerleştirildi.",
+   "Yatay boşluklar dengesiz (sol 9.48, sağ 7.52 mm)."
   ]
  },
  {
@@ -2596,11 +2606,11 @@
   },
   "grid": {
    "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
+   "rows": 9,
    "marginLeft": 0,
+   "marginTop": 0.49236111111111214,
    "gapX": 0,
-   "gapY": 0
+   "gapY": 0.9847222222222243
   },
   "label": {
    "width": 210,
@@ -2610,7 +2620,7 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket yüksekliği: Word hücresi 32.98 mm, etiket 32 mm; etiket hücrenin ortasına yerleştirildi."
   ]
  },
  {
@@ -2716,10 +2726,10 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
+   "columns": 2,
+   "rows": 4,
    "marginLeft": 0,
+   "marginTop": 0,
    "gapX": 0,
    "gapY": 0
   },
@@ -2731,7 +2741,7 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket yüksekliği: Word hücreleri (74.00 mm) etiketten (74.25 mm) küçük; etiketler bitişik dizildi."
   ]
  },
  {
@@ -3087,12 +3097,12 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
+   "columns": 4,
+   "rows": 2,
    "marginLeft": 0,
+   "marginTop": 0.1979861111111063,
    "gapX": 0,
-   "gapY": 0
+   "gapY": 0.3959722222222126
   },
   "label": {
    "width": 52.5,
@@ -3102,7 +3112,7 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket yüksekliği: Word hücresi 148.40 mm, etiket 148 mm; etiket hücrenin ortasına yerleştirildi."
   ]
  },
  {
@@ -3168,13 +3178,13 @@
   },
   "label": {
    "width": 35,
-   "height": 12.4355,
+   "height": 12.375,
    "shape": "rect"
   },
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara kağıt yüksekliğini aşıyor (298.45 mm)."
+   "Etiket yüksekliği: sayfaya sığması için etiket 12.44 mm yerine 12.38 mm alındı."
   ]
  },
  {
@@ -3232,11 +3242,11 @@
   },
   "grid": {
    "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
-   "marginLeft": 0,
+   "rows": 2,
+   "marginLeft": 0.9877777777777776,
+   "marginTop": 2.988333333333333,
    "gapX": 0,
-   "gapY": 0
+   "gapY": 1.9902777777777771
   },
   "label": {
    "width": 208,
@@ -3246,7 +3256,7 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket yüksekliği: Word hücresi 147.99 mm, etiket 146 mm; etiket hücrenin ortasına yerleştirildi."
   ]
  },
  {
@@ -3349,12 +3359,12 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
+   "columns": 2,
+   "rows": 7,
    "marginLeft": 0,
+   "marginTop": 0.19312499999999844,
    "gapX": 0,
-   "gapY": 0
+   "gapY": 0.3862499999999969
   },
   "label": {
    "width": 105,
@@ -3364,7 +3374,7 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket yüksekliği: Word hücresi 42.39 mm, etiket 42 mm; etiket hücrenin ortasına yerleştirildi."
   ]
  },
  {
@@ -3448,11 +3458,11 @@
    "height": 297
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
-   "marginLeft": 0,
-   "gapX": 0,
+   "columns": 2,
+   "rows": 5,
+   "marginLeft": 19.490972222222222,
+   "marginTop": 2.404791666666654,
+   "gapX": 15.009861111111093,
    "gapY": 0
   },
   "label": {
@@ -3463,7 +3473,7 @@
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket yüksekliği ölçüsü Word tablosunda bulunamadı."
+   "Etiket yüksekliği: Word hücreleri (54.49 mm) etiketten (58.4 mm) küçük; etiketler bitişik dizildi."
   ]
  },
  {
@@ -3644,26 +3654,30 @@
   "id": "TANEX-17x25",
   "name": "17×25 mm",
   "sheet": {
-   "width": 210,
-   "height": 297
+   "width": 181.02791666666664,
+   "height": 228.97041666666664
   },
   "grid": {
-   "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
-   "marginLeft": 0,
-   "gapX": 0,
-   "gapY": 0
+   "columns": 6,
+   "rows": 12,
+   "marginLeft": 11.497708333333334,
+   "marginTop": 2.003958333333333,
+   "gapX": 2.00513888888889,
+   "gapY": 1.9970833333333324
   },
   "label": {
-   "width": 17,
-   "height": 25,
+   "width": 25,
+   "height": 17,
    "shape": "rect"
   },
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+   "Sayfadaki ölçü (17×25) Word dosyasının tersi; Word yönü kullanıldı.",
+   "Etiket genişliği: Word hücresi 27.01 mm, etiket 25 mm; etiket hücrenin ortasına yerleştirildi.",
+   "Etiket yüksekliği: Word hücresi 19.00 mm, etiket 17 mm; etiket hücrenin ortasına yerleştirildi.",
+   "Word sayfası A4 değil (181.03×228.97 mm).",
+   "Yatay boşluklar dengesiz (sol 11.50, sağ 9.50 mm)."
   ]
  },
  {
@@ -3805,26 +3819,29 @@
   "id": "TANEX-48x100",
   "name": "48×100 mm",
   "sheet": {
-   "width": 210,
-   "height": 297
+   "width": 125.4125,
+   "height": 204.18777777777774
   },
   "grid": {
    "columns": 1,
-   "rows": 1,
-   "marginTop": 0,
-   "marginLeft": 0,
-   "gapX": 0,
-   "gapY": 0
+   "rows": 4,
+   "marginLeft": 13.499999999999996,
+   "marginTop": 0.9877777777777776,
+   "gapX": 1.5999999999999943,
+   "gapY": 2.8000000000000114
   },
   "label": {
-   "width": 48,
-   "height": 100,
+   "width": 100,
+   "height": 48,
    "shape": "rect"
   },
   "source": "tanex",
   "status": "check",
   "notes": [
-   "Izgara okunamadı: Etiket genişliği ölçüsü Word tablosunda bulunamadı."
+   "Sayfadaki ölçü (48×100) Word dosyasının tersi; Word yönü kullanıldı.",
+   "Etiket genişliği: Word hücresi 101.60 mm, etiket 100 mm; etiket hücrenin ortasına yerleştirildi.",
+   "Word sayfası A4 değil (125.41×204.19 mm).",
+   "Yatay boşluklar dengesiz (sol 13.50, sağ 11.91 mm)."
   ]
  }
 ]
