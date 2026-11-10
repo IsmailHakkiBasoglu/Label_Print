@@ -78,3 +78,14 @@ describe("serialize / parseProject", () => {
     if (!result.ok) expect(result.error).toMatch(/dosya|sürüm/i);
   });
 });
+
+describe("kod öğesi", () => {
+  const withCode = (extra: Record<string, unknown> = {}) => {
+    const project: any = newProject(template);
+    project.designs.d1.elements = [{ kind: "code", id: "k", x: 1, y: 1, width: 20, height: 20, format: "qr", value: "Mısır", showText: false, color: "#000000", ...extra }];
+    return JSON.stringify(project);
+  };
+  it("kod öğesini kabul eder", () => expect(parseProject(withCode()).ok).toBe(true));
+  it("bilinmeyen kod türünü reddeder", () => expect(parseProject(withCode({ format: "pdf417" })).ok).toBe(false));
+  it("hatalı showText'i reddeder", () => expect(parseProject(withCode({ showText: "evet" })).ok).toBe(false));
+});

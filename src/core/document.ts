@@ -27,7 +27,25 @@ export type SymbolElement = {
   color: string;
 };
 
-export type DesignElement = TextElement | SymbolElement;
+export type CodeFormat = "qr" | "code128" | "ean13";
+
+/** A QR code or barcode; `value` is what it encodes, `showText` prints the value under a barcode. */
+export type CodeElement = {
+  kind: "code";
+  id: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  format: CodeFormat;
+  value: string;
+  showText: boolean;
+  color: string;
+};
+
+export const CODE_FORMATS: CodeFormat[] = ["qr", "code128", "ean13"];
+
+export type DesignElement = TextElement | SymbolElement | CodeElement;
 export type FrameOptions = { strokeMm: number; insetMm: number; color: string };
 export type LabelDesign = { frameId?: string; frameOptions?: FrameOptions; elements: DesignElement[] };
 export type CellSelection = { used: number[] };
@@ -63,6 +81,7 @@ const isSafeId = (v: unknown): v is string => typeof v === "string" && !["__prot
 function isElement(e: any): boolean {
   if (!isBox(e) || !isSafeId(e.id) || typeof e.color !== "string") return false;
   if (e.kind === "symbol") return typeof e.symbolId === "string";
+  if (e.kind === "code") return CODE_FORMATS.includes(e.format) && typeof e.value === "string" && typeof e.showText === "boolean";
   return e.kind === "text" && typeof e.text === "string" && FONT_IDS.includes(e.fontId) && isNumber(e.sizePt) && e.sizePt > 0 && ["left", "center", "right"].includes(e.align);
 }
 

@@ -36,6 +36,7 @@ function CellFields({ store, deps, cell, entry }: { store: Store; deps: RenderDe
     <>
       {activeDesign(state).elements.map((element) => {
         const value = entry?.values[element.id];
+        if (element.kind === "code") return null;
         return (
           <div key={element.id} className="cell-field">
             {element.kind === "text" ? (

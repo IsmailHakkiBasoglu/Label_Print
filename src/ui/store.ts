@@ -1,9 +1,10 @@
 import { useSyncExternalStore } from "react";
-import { gridZones, pruneDesigns, resolveCellDesign } from "../core/cells";
+import { gridZones, pruneDesigns, resolveCellDesign, withValue } from "../core/cells";
 import {
   newProject,
   parseProject,
   serialize,
+  type CodeElement,
   type DesignElement,
   type FrameOptions,
   type GridZone,
@@ -78,13 +79,16 @@ function patternMapping(before: DesignElement[], after: DesignElement[]): Map<st
     const next = after.filter((e) => e.kind === kind);
     before.filter((e) => e.kind === kind).forEach((e, i) => next[i] && mapping.set(e.id, next[i].id));
   }
+  // Patterns keep code elements as they are, so their ids and cell values stay.
+  for (const e of after) if (e.kind === "code") mapping.set(e.id, e.id);
   return mapping;
 }
 
 function rebuildPattern(patternId: string, label: { width: number; height: number }, before: DesignElement[], margin = 0): DesignElement[] {
   const texts = before.filter((e): e is TextElement => e.kind === "text").map((e) => e.text);
   const symbol = before.find((e) => e.kind === "symbol");
-  return buildPattern(patternId, label, texts.length ? texts : SAMPLE_TEXTS, symbol?.kind === "symbol" ? symbol.symbolId : undefined, margin);
+  const codes = before.filter((e) => e.kind === "code");
+  return [...buildPattern(patternId, label, texts.length ? texts : SAMPLE_TEXTS, symbol?.kind === "symbol" ? symbol.symbolId : undefined, margin), ...codes];
 }
 
 const MARGIN_SLACK_MM = 0.01;
@@ -173,6 +177,13 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
     addSymbol(symbolId: string) {
       const id = newId("s");
       commit((_, design) => design.elements.push({ kind: "symbol", id, x: 2, y: 2, width: 12, height: 12, symbolId, color: "#000000" }), { selectedElementId: id });
+    },
+    /** A QR code centred on the label, a square of 60 % of its short side. */
+    addCode(label: { width: number; height: number }) {
+      const id = newId("k");
+      const side = Math.min(label.width, label.height) * 0.6;
+      const element: CodeElement = { kind: "code", id, x: (label.width - side) / 2, y: (label.height - side) / 2, width: side, height: side, format: "qr", value: "Örnek", showText: true, color: "#000000" };
+      commit((_, design) => design.elements.push(element), { selectedElementId: id });
     },
     addImage(id: string, meta: ImageMeta): boolean {
       commit((project) => void (project.images[id] = meta));
@@ -337,8 +348,7 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
         const copy: LabelDesign = structuredClone(project.designs[zone.designId]);
         copy.elements = copy.elements.map((e) => {
           const value = entry.values[e.id];
-          if (!value) return e;
-          return e.kind === "text" ? { ...e, text: value } : { ...e, symbolId: value };
+          return value ? withValue(e, value) : e;
         });
         project.designs[designId] = copy;
         entry.designId = designId;

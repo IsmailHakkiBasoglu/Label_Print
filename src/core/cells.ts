@@ -3,7 +3,14 @@ import type { DesignElement, GridZone, LabelDesign, LabelProject } from "./docum
 function applyValue(element: DesignElement, value: string | undefined): DesignElement | null {
   if (value === undefined) return element;
   if (value === "") return null;
-  return element.kind === "text" ? { ...element, text: value } : { ...element, symbolId: value };
+  return withValue(element, value);
+}
+
+/** The element showing `value` instead of its own text, picture or code content. */
+export function withValue(element: DesignElement, value: string): DesignElement {
+  if (element.kind === "text") return { ...element, text: value };
+  if (element.kind === "code") return { ...element, value };
+  return { ...element, symbolId: value };
 }
 
 /** The design one cell prints: its own or the shared one, with the cell's values applied. Empty values hide their element. */

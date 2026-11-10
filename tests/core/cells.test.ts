@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { resolveCellDesign } from "../../src/core/cells";
-import type { CellEntry, GridZone, LabelDesign, SymbolElement, TextElement } from "../../src/core/document";
+import type { CellEntry, CodeElement, GridZone, LabelDesign, SymbolElement, TextElement } from "../../src/core/document";
 
 const textEl: TextElement = { kind: "text", id: "t", x: 0, y: 0, width: 10, height: 5, text: "Ortak", fontId: "sans", sizePt: 12, align: "left", color: "#000000" };
 const symbolEl: SymbolElement = { kind: "symbol", id: "s", x: 0, y: 5, width: 5, height: 5, symbolId: "corn", color: "#000000" };
@@ -26,4 +26,14 @@ describe("resolveCellDesign", () => {
     expect(textEl.text).toBe("Ortak");
   });
   it("olmayan tasarımda undefined döner", () => expect(resolveCellDesign({ ...zone({}), designId: "yok" }, 0, designs)).toBeUndefined());
+});
+
+describe("kod öğesi hücre değeri", () => {
+  const code: CodeElement = { kind: "code", id: "k", x: 0, y: 0, width: 10, height: 10, format: "qr", value: "Ortak", showText: false, color: "#000000" };
+  const z: GridZone = { kind: "grid", templateId: "T", cells: { used: [0] }, designId: "c", content: {} };
+  const ds: Record<string, LabelDesign> = { c: { elements: [code] } };
+  it("hücre değeri kodun içeriğini değiştirir, boş değer gizler", () => {
+    expect((resolveCellDesign({ ...z, content: { 0: { values: { k: "A1" } } } }, 0, ds)!.elements[0] as CodeElement).value).toBe("A1");
+    expect(resolveCellDesign({ ...z, content: { 0: { values: { k: "" } } } }, 0, ds)!.elements).toEqual([]);
+  });
 });

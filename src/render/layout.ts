@@ -94,6 +94,7 @@ function designOps(design: LabelDesign, box: Rect, label: FrameLabel, deps: Layo
       ops.push(...textOps(el, box, deps, warnings, cache));
       continue;
     }
+    if (el.kind === "code") continue;
     if (el.symbolId.startsWith(UPLOAD_PREFIX)) {
       const imageId = el.symbolId.slice(UPLOAD_PREFIX.length);
       const meta = Object.hasOwn(ctx.images, imageId) ? ctx.images[imageId] : undefined;

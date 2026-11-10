@@ -16,7 +16,9 @@ const fromBase64 = (text: string) => Uint8Array.from(atob(text), (c) => c.charCo
 function usedSymbolIds(project: LabelProject): Set<string> {
   const designs = [...Object.values(project.designs), ...project.pages.flatMap((p) => p.zones.flatMap((z) => (z.kind === "free" ? [z.design] : [])))];
   const fromDesigns = designs.flatMap((d) => d.elements.flatMap((e) => (e.kind === "symbol" ? [e.symbolId] : [])));
-  const fromCells = gridZones(project).flatMap((z) => Object.values(z.content).flatMap((c) => Object.values(c.values)));
+  // Only a picture element's cell values name pictures; text and code values are plain content.
+  const symbolElementIds = new Set(designs.flatMap((d) => d.elements.flatMap((e) => (e.kind === "symbol" ? [e.id] : []))));
+  const fromCells = gridZones(project).flatMap((z) => Object.values(z.content).flatMap((c) => Object.entries(c.values).flatMap(([id, v]) => (symbolElementIds.has(id) ? [v] : []))));
   return new Set([...fromDesigns, ...fromCells]);
 }
 

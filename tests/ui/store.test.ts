@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { GridZone } from "../../src/core/document";
+import type { CodeElement, GridZone } from "../../src/core/document";
 import { activeDesign, createStore, editingDesign, LEGACY_PROJECT_KEY, PROJECT_KEY } from "../../src/ui/store";
 import { memoryStorage, tmpl } from "./helpers/deps";
 
@@ -229,5 +229,44 @@ describe("store", () => {
       },
     };
     expect(() => make(failing).addText()).not.toThrow();
+  });
+});
+
+describe("kod öğesi", () => {
+  const LABEL = { width: 63.5, height: 38.1 };
+  function withCode() {
+    const s = make();
+    s.addText();
+    s.addCode(LABEL);
+    const code = activeDesign(s.getState()).elements.find((e): e is CodeElement => e.kind === "code")!;
+    return { s, code };
+  }
+
+  it("addCode etiketin ortasına QR ekler ve seçer", () => {
+    const { s, code } = withCode();
+    const side = 38.1 * 0.6;
+    expect(code).toMatchObject({ format: "qr", value: "Örnek", showText: true, color: "#000000" });
+    expect(code.width).toBeCloseTo(side);
+    expect(code.height).toBeCloseTo(side);
+    expect(code.x).toBeCloseTo((63.5 - side) / 2);
+    expect(code.y).toBeCloseTo((38.1 - side) / 2);
+    expect(s.getState().selectedElementId).toBe(code.id);
+  });
+
+  it("desen kod öğesini ve hücre değerini korur", () => {
+    const { s, code } = withCode();
+    s.setCellValue(0, code.id, "A1");
+    expect(s.patternLoss("title", LABEL)).toBe(0);
+    s.applyPattern("title", LABEL);
+    expect(s.getState().project.designs.d1.elements.find((e) => e.id === code.id)).toMatchObject({ kind: "code", x: code.x });
+    expect(gridAt(s).content[0].values[code.id]).toBe("A1");
+  });
+
+  it("hücre ayırınca kod değeri tasarıma geçer", () => {
+    const { s, code } = withCode();
+    s.setCellValue(0, code.id, "A1");
+    s.detachCell(0);
+    const own = s.getState().project.designs[gridAt(s).content[0].designId!];
+    expect(own.elements.find((e) => e.id === code.id)).toMatchObject({ value: "A1" });
   });
 });

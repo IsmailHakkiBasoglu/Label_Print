@@ -1,3 +1,4 @@
+import type { GridZone } from "../../src/core/document";
 import { describe, expect, it } from "vitest";
 import { newProject } from "../../src/core/document";
 import { createMemoryImageStore, imageSize, ingestImage, sha256Hex, sniffImage, MAX_IMAGE_BYTES, MAX_SVG_BYTES } from "../../src/core/imageStore";
@@ -56,6 +57,15 @@ describe("ingestImage", () => {
 
 describe("taşınabilir dosya", () => {
   const meta = { name: "logo.png", mime: "image/png" as const, widthPx: 1, heightPx: 1 };
+
+  it("kod ve yazı içeriği görsel sayılmaz", async () => {
+    const project = newProject(tmpl("TW-2021"));
+    project.designs.d1.elements = [{ kind: "code", id: "k", x: 0, y: 0, width: 5, height: 5, format: "qr", value: "custom-1", showText: false, color: "#000000" }];
+    (project.pages[0].zones[0] as GridZone).content = { 0: { values: { k: "custom-1" } } };
+    const custom = [{ id: "custom-1", category: "Benim", tags: ["x"], icon: { viewBox: [0, 0, 1, 1] as [number, number, number, number], paths: [{ d: "M0 0", fill: true, strokeWidth: 0 }] } }];
+    const file = await exportProject(project, { customSymbols: custom });
+    expect(JSON.parse(file).symbolData).toEqual([]);
+  });
 
   it("görseli ve kullanılan özel SVG'yi taşır", async () => {
     const images = createMemoryImageStore();
