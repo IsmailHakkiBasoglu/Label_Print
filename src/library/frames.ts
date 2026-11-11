@@ -45,6 +45,11 @@ function outline(label: FrameLabel, inset: number): string {
   return rectPath(inset, inset, w, h);
 }
 
+/** The label's own outline, `inset` inside its edge: the area a background colour fills. */
+export function backgroundPath(label: FrameLabel, inset: number): string {
+  return outline(label, inset);
+}
+
 export type FrameLayout = { ops: PathOp[]; bandMm: number; fellBack: boolean };
 
 /** Share of the label height the colour band covers, from the inset down. */

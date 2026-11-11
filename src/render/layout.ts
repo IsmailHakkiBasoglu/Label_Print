@@ -3,7 +3,7 @@ import { encodeCode } from "../core/codes";
 import type { CodeElement, FontId, LabelDesign, LabelProject, Page, TextElement, Zone } from "../core/document";
 import { labelRects, type Rect } from "../core/geometry";
 import type { Template } from "../core/templates";
-import { frameLayout, type FrameLabel } from "../library/frames";
+import { backgroundPath, frameLayout, type FrameLabel } from "../library/frames";
 import type { SymbolEntry } from "../library/symbols/search";
 import { fitText, type FitResult } from "../library/textPatterns";
 import type { FontTools } from "./fonts";
@@ -152,6 +152,9 @@ type ImageContext = { images: LabelProject["images"]; errors: string[] };
 
 function designOps(design: LabelDesign, box: Rect, label: FrameLabel, deps: LayoutDeps, warnings: string[], cache: FitCache, ctx: ImageContext): RenderOp[] {
   const ops: RenderOp[] = [];
+  // The background goes first, inside the inset: a shifted print leaves a white rim rather than colouring the next label.
+  const background = design.frameOptions?.background;
+  if (background) ops.push({ kind: "path", d: backgroundPath(label, design.frameOptions!.insetMm), x: box.x, y: box.y, scale: 1, fill: background });
   if (design.frameId) {
     const options = design.frameOptions ?? DEFAULT_FRAME;
     const frame = frameLayout(design.frameId, label, options);
