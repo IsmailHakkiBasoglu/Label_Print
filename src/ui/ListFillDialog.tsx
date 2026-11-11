@@ -63,7 +63,7 @@ export function ListFillDialog({ store, deps, capacity, label, onClose }: Props)
   const [textMap, setTextMap] = useState<Record<number, number | null>>({});
   const [keyMap, setKeyMap] = useState<number | null>(null);
   // Code field index → column index; codes stay shared until a column is chosen.
-  const [codeMap, setCodeMap] = useState<Record<number, number>>({});
+  const [codeMap, setCodeMap] = useState<Record<number, number | null>>({});
   const [confirming, setConfirming] = useState(false);
 
   const grid = currentGrid(state);
@@ -74,14 +74,19 @@ export function ListFillDialog({ store, deps, capacity, label, onClose }: Props)
 
   const table = useMemo(() => toTable(file ? (file.data.sheets[sheetIndex]?.rows ?? []) : parsePasted(text), header), [file, sheetIndex, text, header]);
   const columnCount = table.columns.length;
-  const fieldCount = Math.max(textElements.length, 1);
+  const codeOnly = textElements.length === 0 && codeElements.length > 0;
+  const fieldCount = codeOnly ? 0 : Math.max(textElements.length, 1);
   const textColumns = Array.from({ length: fieldCount }, (_, i) => {
     const chosen = textMap[i];
     if (chosen === null) return null;
     if (chosen !== undefined && chosen < columnCount) return chosen;
     return i < columnCount ? i : null;
   });
-  const codeColumns = codeElements.map((_, i) => (codeMap[i] !== undefined && codeMap[i] < columnCount ? codeMap[i] : null));
+  // Codes stay shared unless chosen; with no text field the columns go to the codes in order.
+  const codeColumns = codeElements.map((_, i) => {
+    if (codeMap[i] !== undefined) return codeMap[i] !== null && codeMap[i] < columnCount ? codeMap[i] : null;
+    return codeOnly && i < columnCount ? i : null;
+  });
   const suggesting = wantSuggest && hasSymbol;
   const keyColumn = suggesting ? (keyMap !== null && keyMap < columnCount ? keyMap : 0) : null;
   const rows = useMemo(
@@ -110,7 +115,7 @@ export function ListFillDialog({ store, deps, capacity, label, onClose }: Props)
 
   const used = new Set([...textColumns, ...codeColumns, keyColumn].filter((c): c is number => c !== null));
   const unused = columnCount - used.size;
-  const showMapping = columnCount > 1 || !!file || header;
+  const showMapping = columnCount > 1 || !!file || header || codeElements.length > 0;
 
   function changed() {
     setConfirming(false);
@@ -251,10 +256,7 @@ export function ListFillDialog({ store, deps, capacity, label, onClose }: Props)
               label={`${i + 1}. kod alanı · ${FORMAT_NAMES[code.format]}`}
               value={codeColumns[i] === null ? SHARED : String(codeColumns[i])}
               onChange={(v) => {
-                const next = { ...codeMap };
-                if (v === SHARED) delete next[i];
-                else next[i] = Number(v);
-                setCodeMap(next);
+                setCodeMap({ ...codeMap, [i]: v === SHARED ? null : Number(v) });
                 changed();
               }}
             >

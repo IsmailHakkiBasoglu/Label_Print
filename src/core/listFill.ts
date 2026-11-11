@@ -61,7 +61,8 @@ export function applyTableFill(source: LabelProject, pageIndex: number, rows: Fi
   pruneDesigns(project, dropped.flatMap((p) => p.zones.flatMap((z) => (z.kind === "grid" ? Object.values(z.content).flatMap((e) => e.designId ?? []) : []))));
 
   const design = project.designs[zone.designId];
-  if (!design.elements.some((e) => e.kind === "text")) design.elements.push(centeredText(options.newId(), options.label));
+  // A design with only codes takes the list into its codes; anything else needs a text to show the list.
+  if (!design.elements.some((e) => e.kind === "text" || e.kind === "code")) design.elements.push(centeredText(options.newId(), options.label));
   const textIds = (elements: typeof design.elements) => elements.filter((e) => e.kind === "text").map((e) => e.id);
   const sharedTexts = textIds(design.elements);
   const symbol = design.elements.find((e): e is SymbolElement => e.kind === "symbol");

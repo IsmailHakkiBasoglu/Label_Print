@@ -80,6 +80,12 @@ describe("readTableFile xlsx", () => {
     expect(table.sheets[1].rows).toEqual([]);
   });
 
+  it("13 haneli barkod sayısını tam ve baştaki sıfırlarıyla okur", async () => {
+    const styles = `<styleSheet><numFmts><numFmt numFmtId="170" formatCode="0000000000000"/></numFmts><cellXfs><xf numFmtId="0"/><xf numFmtId="170"/></cellXfs></styleSheet>`;
+    const file = xlsx({ A: '<row r="1"><c r="A1"><v>8690504012345</v></c><c r="B1" s="1"><v>123456789012</v></c><c r="C1"><v>1086375557997</v></c></row>' }, { styles });
+    expect((await readTableFile("a.xlsx", file)).sheets[0].rows).toEqual([["8690504012345", "0123456789012", "1086375557997"]]);
+  });
+
   it("1904 tarih sistemini hesaba katar", async () => {
     const file = xlsx({ A: '<row r="1"><c r="A1" s="1"><v>0</v></c></row>' }, { styles: STYLES, date1904: true });
     expect((await readTableFile("a.xlsx", file)).sheets[0].rows).toEqual([["01.01.1904"]]);

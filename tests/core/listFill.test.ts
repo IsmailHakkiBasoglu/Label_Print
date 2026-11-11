@@ -174,6 +174,12 @@ describe("kod sütunları", () => {
     expect(grid(p).content[1].values.k).toBe("5901234123458");
   });
 
+  it("yalnız kod içeren tasarıma yazı öğesi eklemez", () => {
+    const { project: p } = applyTableFill(project([codeEl]), 0, [{ texts: [], codes: ["400638133393"], key: "" }], options());
+    expect(p.designs.d1.elements.map((e) => e.kind)).toEqual(["code"]);
+    expect(grid(p).content[0].values).toEqual({ k: "400638133393" });
+  });
+
   it("ortak bırakılan kod alanına dokunmaz", () => {
     const { project: p, report } = applyTableFill(project([textEl, codeEl]), 0, [{ texts: ["x"], codes: [null], key: "" }], options());
     expect(grid(p).content[0].values).toEqual({ t: "x" });

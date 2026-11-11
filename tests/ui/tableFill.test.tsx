@@ -154,6 +154,27 @@ describe("kod sütunu", () => {
     expect(screen.getByRole("status").textContent).toMatch(/1 satırın kodu üretilemedi \(ör\. 2\. satır: .*kontrol hanesi/);
   });
 
+  it("tek sütunlu listede de kod sütunu seçilebilir", () => {
+    const { s, textId, codeId } = openWithCode();
+    paste("400638133393\n5901234123457");
+    choose(/1\. kod alanı/, "0");
+    fireEvent.click(screen.getByRole("button", { name: "Doldur" }));
+    expect(grid(s).content[1].values).toEqual({ [textId]: "5901234123457", [codeId]: "5901234123457" });
+  });
+
+  it("yalnız QR içeren tasarımda liste koda gider, yazı eklenmez", () => {
+    const s = createStore(tmpl("TW-2021"), memoryStorage());
+    s.addCode({ width: 63.5, height: 38.1 });
+    const codeId = activeDesign(s.getState()).elements[0].id;
+    render(<SheetView store={s} deps={deps} />);
+    fireEvent.click(screen.getByRole("button", { name: "Listeden doldur" }));
+    paste("RAF-1\nRAF-2");
+    expect((screen.getByLabelText(/1\. kod alanı · QR/) as HTMLSelectElement).value).toBe("0");
+    fireEvent.click(screen.getByRole("button", { name: "Doldur" }));
+    expect(activeDesign(s.getState()).elements).toHaveLength(1);
+    expect(grid(s).content[1].values).toEqual({ [codeId]: "RAF-2" });
+  });
+
   it("önizlemede kod sütunu görünür", () => {
     openWithCode();
     paste("Çay\t5901234123457");

@@ -98,6 +98,8 @@ const richText = (node: Node): string => (node.t !== undefined ? text(node.t) : 
 const DATE_IDS = new Set([14, 15, 16, 17, 22, 27, 28, 29, 30, 31, 34, 35, 36, 50, 51, 52, 53, 54, 57, 58]);
 const TIME_IDS = new Set([18, 19, 20, 21, 32, 33, 45, 46, 47, 55, 56]);
 type NumberKind = "date" | "time" | "number";
+/** `pad`: a zero mask such as "0000000000000" keeps leading zeros (barcodes, postcodes). */
+type NumberFormat = { kind: NumberKind; pad: number };
 
 function formatKind(id: number, code: string | undefined): NumberKind {
   if (DATE_IDS.has(id)) return "date";
@@ -110,9 +112,11 @@ function formatKind(id: number, code: string | undefined): NumberKind {
 }
 
 const pad = (n: number) => String(n).padStart(2, "0");
-function formatNumber(raw: string, kind: NumberKind, date1904: boolean): string {
+function formatNumber(raw: string, { kind, pad: zeros }: NumberFormat, date1904: boolean): string {
   const value = Number(raw);
   if (!Number.isFinite(value)) return raw;
+  // Whole numbers keep every digit: a 13-digit barcode must not be rounded to 12 significant digits.
+  if (kind === "number" && Number.isSafeInteger(value)) return String(value).padStart(zeros, "0");
   if (kind === "date") {
     const d = new Date(Date.UTC(1899, 11, 30) + (Math.floor(value) + (date1904 ? 1462 : 0)) * 86_400_000);
     return `${pad(d.getUTCDate())}.${pad(d.getUTCMonth() + 1)}.${d.getUTCFullYear()}`;
@@ -147,9 +151,10 @@ function readXlsx(bytes: Uint8Array): TableFile {
   const shared = list(asNode(xml("xl/sharedStrings.xml")?.sst).si).map(richText);
   const styles = asNode(xml("xl/styles.xml")?.styleSheet);
   const codes = new Map(list(asNode(styles.numFmts).numFmt).map((f) => [Number(f["@_numFmtId"]), String(f["@_formatCode"])]));
-  const kinds = list(asNode(styles.cellXfs).xf).map((xf) => {
+  const formats = list(asNode(styles.cellXfs).xf).map((xf): NumberFormat => {
     const id = Number(xf["@_numFmtId"] ?? 0);
-    return formatKind(id, codes.get(id));
+    const code = codes.get(id);
+    return { kind: formatKind(id, code), pad: code && /^0+$/.test(code) ? code.length : 0 };
   });
 
   const sheets = list(asNode(workbook.sheets).sheet).map((sheet): TableSheet => {
@@ -169,7 +174,7 @@ function readXlsx(bytes: Uint8Array): TableFile {
           : c["@_t"] === "str" ? v
           : c["@_t"] === "b" ? (v === "1" ? "DOĞRU" : "YANLIŞ")
           : c["@_t"] === "e" || v === "" ? ""
-          : formatNumber(v, kinds[Number(c["@_s"] ?? 0)] ?? "number", date1904);
+          : formatNumber(v, formats[Number(c["@_s"] ?? 0)] ?? { kind: "number", pad: 0 }, date1904);
         while (cells.length < column) cells.push("");
         cells[column] = value;
       });
