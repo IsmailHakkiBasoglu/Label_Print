@@ -48,7 +48,7 @@ describe("çerçeve kütüphanesi", () => {
   });
 
   it("v1 çerçeveleri aynen durur", () => {
-    expect(FRAMES.map((f) => f.id)).toEqual(["single", "double", "dashed", "rounded", "corner-ornament", "shape"]);
+    expect(FRAMES.slice(0, 6).map((f) => f.id)).toEqual(["single", "double", "dashed", "rounded", "corner-ornament", "shape"]);
     expect(frameLayout("double", label(50, 30), opts)).toMatchObject({ bandMm: 0, fellBack: false });
     expect(frameLayout("double", label(50, 30), opts).ops).toEqual(frameOps("double", label(50, 30), opts));
   });
