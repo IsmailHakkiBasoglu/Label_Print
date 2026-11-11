@@ -54,7 +54,8 @@ export type FrameLayout = { ops: PathOp[]; bandMm: number; fellBack: boolean };
 
 /** Share of the label height the colour band covers, from the inset down. */
 export const BAND_RATIO_TOP = 0.26;
-const BAND_MIN_SHORT_SIDE_MM = 12;
+/** Below this short side the band falls back to a thin line. */
+export const BAND_MIN_SHORT_SIDE_MM = 12;
 const DIVIDER_GAP_MM = 0.6;
 const DIVIDER_WIDTH = 0.3;
 const DIVIDER_HEIGHT_MM = 0.5;

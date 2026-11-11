@@ -166,7 +166,7 @@ function FramesTab({ store, deps }: { store: Store; deps: RenderDeps }) {
     <div className="list">
       {locked && <p className="notice">{LOCKED_HINT}</p>}
       {!locked && designTouchesBand(design, label) && <button onClick={() => store.fitContentToFrame(label)}>İçeriği çerçevenin içine al</button>}
-      <button disabled={locked} className={design.frameId ? "row" : "row selected"} onClick={() => store.setFrame(undefined, undefined)}>
+      <button disabled={locked} className={design.frameId ? "row" : "row selected"} onClick={() => store.setFrame(undefined, design.frameOptions?.background ? design.frameOptions : undefined)}>
         Çerçevesiz
       </button>
       <label>

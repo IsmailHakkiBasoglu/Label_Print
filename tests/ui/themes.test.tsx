@@ -81,3 +81,14 @@ describe("çerçeve renk alanları", () => {
     expect(design(s).frameOptions?.background).toBe("#E2C79C");
   });
 });
+
+describe("çerçevesiz zemin", () => {
+  it("Çerçevesiz seçilince zemin rengi kalır", () => {
+    const { s } = open("Tema");
+    fireEvent.click(screen.getByRole("button", { name: /Kraft · kahve/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Çerçeve" }));
+    fireEvent.click(screen.getByRole("button", { name: "Çerçevesiz" }));
+    expect(design(s).frameId).toBeUndefined();
+    expect(design(s).frameOptions?.background).toBe("#E2C79C");
+  });
+});

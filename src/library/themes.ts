@@ -1,6 +1,6 @@
 import type { DesignElement, FontId, FrameOptions, LabelDesign, TextElement } from "../core/document";
 import { frameMargin } from "../render/layout";
-import type { FrameLabel } from "./frames";
+import { BAND_MIN_SHORT_SIDE_MM, BAND_RATIO_TOP, type FrameLabel } from "./frames";
 import { applyPattern } from "./textPatterns";
 
 export type TextStyle = { fontId: FontId; color: string; sizePt: number };
@@ -60,9 +60,33 @@ function inscribed(patternId: Theme["patternId"], label: FrameLabel, texts: stri
   return applyPattern(patternId, inner, texts, symbolId).map((e) => ({ ...e, x: Number((e.x + left).toFixed(4)), y: Number((e.y + top).toFixed(4)) }));
 }
 
+const BAND_INSET_MM = 1;
+const GROUP_SIDE_GAP_MM = 0.5;
+
+/**
+ * The band layout fitted to a round label: title and subtitle share the rectangle inscribed in the label below the band,
+ * and the group name sits in the lower part of the band cap, no wider than the cap at its top edge.
+ */
+function roundBand([title, subtitle, group, ...rest]: DesignElement[], label: FrameLabel): DesignElement[] {
+  const [cx, cy, a, b] = [label.width / 2, label.height / 2, label.width / 2 - BAND_INSET_MM, label.height / 2 - BAND_INSET_MM];
+  const [left, right, bottom] = [cx - a / Math.SQRT2, cx + a / Math.SQRT2, cy + b / Math.SQRT2];
+  const r = (n: number) => Number(n.toFixed(4));
+  const room = bottom - title.y;
+  const across = { x: r(left), width: r(right - left) };
+  const bandHeight = (label.height - 2 * BAND_INSET_MM) * BAND_RATIO_TOP;
+  const groupTop = BAND_INSET_MM + bandHeight * 0.45;
+  const half = a * Math.sqrt(Math.max(0, 1 - ((groupTop - cy) / b) ** 2)) - GROUP_SIDE_GAP_MM;
+  return [
+    { ...title, ...across, height: r(room * 0.6) },
+    { ...subtitle, ...across, y: r(title.y + room * 0.6), height: r(room * 0.4) },
+    { ...group, x: r(cx - half), width: r(2 * half), y: r(groupTop), height: r(bandHeight * 0.45) },
+    ...rest,
+  ];
+}
+
 /**
  * The design with the theme applied: its frame and colours, its layout filled with the label's texts in order
- * (or the theme's samples when there are none), each text styled, and codes kept as they are.
+ * (the theme's samples fill the places the label has no text for), each text styled, and codes and pictures kept as they are.
  */
 export function themedDesign(theme: Theme, design: LabelDesign, label: FrameLabel): LabelDesign {
   const frameOptions: FrameOptions = { ...FRAME_DEFAULTS, ...theme.frameOptions };
@@ -70,7 +94,7 @@ export function themedDesign(theme: Theme, design: LabelDesign, label: FrameLabe
   const margin = frameMargin(framed, label);
   const own = design.elements.filter((e): e is TextElement => e.kind === "text").map((e) => e.text);
   const symbol = design.elements.find((e) => e.kind === "symbol");
-  const texts = own.length ? own : theme.samples;
+  const texts = [...own, ...theme.samples.slice(own.length)];
   const symbolId = symbol?.kind === "symbol" ? symbol.symbolId : undefined;
   const inset = margin > 0 ? margin + MARGIN_SLACK_MM : 0;
   const round = label.shape === "circle" || label.shape === "oval";
@@ -78,8 +102,17 @@ export function themedDesign(theme: Theme, design: LabelDesign, label: FrameLabe
   const laid =
     round && theme.patternId === "title-sub"
       ? inscribed(theme.patternId, label, texts, symbolId, inset)
-      : applyPattern(theme.patternId, label, texts, symbolId, inset);
+      : round
+        ? roundBand(applyPattern(theme.patternId, label, texts, symbolId, inset), label)
+        : applyPattern(theme.patternId, label, texts, symbolId, inset);
+  // A band too small to draw becomes a thin line: a white group name would vanish, so it takes the main colour.
+  const bandFellBack = theme.frameId === "band" && Math.min(label.width, label.height) < BAND_MIN_SHORT_SIDE_MM;
   let index = 0;
-  const styled = laid.map((e): DesignElement => (e.kind === "text" ? { ...e, ...theme.texts[index++] } : e));
-  return { ...framed, elements: [...styled, ...design.elements.filter((e) => e.kind === "code")] };
+  const styled = laid
+    .filter((e) => e.kind === "text")
+    .map((e): DesignElement => {
+      const style = theme.texts[index++];
+      return { ...e, ...style, ...(bandFellBack && style.color === "#ffffff" ? { color: frameOptions.color } : {}) };
+    });
+  return { ...framed, elements: [...styled, ...design.elements.filter((e) => e.kind === "code" || e.kind === "symbol")] };
 }

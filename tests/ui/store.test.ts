@@ -307,6 +307,17 @@ describe("tema uygulama", () => {
     expect(activeDesign(s.getState()).frameOptions?.background).toBe("#E2C79C");
   });
 
+  it("görsel ve hücredeki görsel değeri korunur, kayıp sayılmaz", () => {
+    const s = make();
+    s.addSymbol("corn");
+    const symbolId = activeDesign(s.getState()).elements[0].id;
+    s.setCellValue(1, symbolId, "wheat");
+    expect(s.themeLoss("bahce-kirmizi", LABEL)).toBe(0);
+    s.applyTheme("bahce-kirmizi", LABEL);
+    expect(activeDesign(s.getState()).elements.find((e) => e.id === symbolId)?.kind).toBe("symbol");
+    expect(gridAt(s).content[1].values[symbolId]).toBe("wheat");
+  });
+
   it("tek geri alma önceki hale döner", () => {
     const s = make();
     s.addText();

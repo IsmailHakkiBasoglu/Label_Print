@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { TextElement } from "../../src/core/document";
+import type { SymbolElement, TextElement } from "../../src/core/document";
 import { FRAMES } from "../../src/library/frames";
 import { ORNAMENTS } from "../../src/library/ornaments/frames.data";
 import { applyPattern } from "../../src/library/textPatterns";
@@ -77,4 +77,38 @@ describe("yuvarlak etiketlerde tema", () => {
       }
     });
   }
+});
+
+describe("inceleme düzeltmeleri", () => {
+  const text = (id: string, t: string): TextElement => ({ kind: "text", id, x: 0, y: 0, width: 10, height: 5, text: t, fontId: "sans", sizePt: 12, align: "left", color: "#000000" });
+  const symbol: SymbolElement = { kind: "symbol", id: "s", x: 2, y: 2, width: 10, height: 10, symbolId: "corn", color: "#000000" };
+  const modern = THEMES.find((t) => t.id === "modern-yesil")!;
+
+  it("görsel öğe korunur", () => {
+    const design = themedDesign(THEMES[0], { elements: [symbol, text("t", "Mısır")] }, LABEL);
+    expect(design.elements.find((e) => e.id === "s")).toEqual(symbol);
+  });
+
+  it("iki yazılı etikette bant boş kalmaz, eksik yer örnek metinle dolar", () => {
+    const texts = themedDesign(modern, { elements: [text("a", "Pirinç"), text("b", "baldo")] }, LABEL).elements.filter((e): e is TextElement => e.kind === "text");
+    expect(texts.map((t) => t.text)).toEqual(["Pirinç", "baldo", modern.samples[2]]);
+  });
+
+  for (const label of [{ width: 40, height: 40, shape: "circle" as const }, { width: 50, height: 50, shape: "circle" as const }, { width: 60, height: 40, shape: "oval" as const }]) {
+    it(`${label.shape} ${label.width}: bant temalarında yazı kutuları etiketin içinde`, () => {
+      for (const theme of THEMES.filter((t) => t.patternId === "band-title")) {
+        const design = themedDesign(theme, { elements: [] }, label);
+        const [a, b] = [label.width / 2 - 1, label.height / 2 - 1];
+        for (const e of design.elements)
+          for (const [x, y] of [[e.x, e.y], [e.x + e.width, e.y], [e.x, e.y + e.height], [e.x + e.width, e.y + e.height]])
+            expect(((x - label.width / 2) / a) ** 2 + ((y - label.height / 2) / b) ** 2, `${theme.id} ${e.id}`).toBeLessThanOrEqual(1.0001);
+      }
+    });
+  }
+
+  it("küçük etikette bant çizgiye düşünce grup adı ana renkte görünür", () => {
+    const small = { width: 30, height: 10, shape: "rect" as const };
+    const group = themedDesign(modern, { elements: [] }, small).elements.filter((e): e is TextElement => e.kind === "text")[2];
+    expect(group.color).toBe(modern.frameOptions.color);
+  });
 });
