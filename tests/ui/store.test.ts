@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { CodeElement, GridZone } from "../../src/core/document";
+import type { CodeElement, GridZone, TextElement } from "../../src/core/document";
 import { activeDesign, createStore, editingDesign, LEGACY_PROJECT_KEY, PROJECT_KEY } from "../../src/ui/store";
 import { memoryStorage, tmpl } from "./helpers/deps";
 
@@ -270,5 +270,64 @@ describe("kod öğesi", () => {
     s.detachCell(0);
     const own = s.getState().project.designs[gridAt(s).content[0].designId!];
     expect(own.elements.find((e) => e.id === code.id)).toMatchObject({ value: "A1" });
+  });
+});
+
+describe("tema uygulama", () => {
+  const LABEL = { width: 63.5, height: 38.1, shape: "rect" as const };
+  const texts = (s: ReturnType<typeof make>) => activeDesign(s.getState()).elements.filter((e): e is TextElement => e.kind === "text");
+
+  it("çerçeveyi ve yazı stillerini uygular", () => {
+    const s = make();
+    s.applyTheme("bahce-kirmizi", LABEL);
+    const design = activeDesign(s.getState());
+    expect(design.frameId).toBe("o-berry-vine");
+    expect(design.frameOptions?.accent).toBe("#C0322B");
+    expect(texts(s)[0]).toMatchObject({ fontId: "serif-bold", color: "#27500A" });
+  });
+
+  it("mevcut yazılar ve hücre değerleri korunur", () => {
+    const s = make();
+    s.addText();
+    const id = activeDesign(s.getState()).elements[0].id;
+    s.updateElement(id, { text: "Mercimek" });
+    s.setCellValue(2, id, "Nohut");
+    s.applyTheme("kir-pembe", LABEL);
+    expect(texts(s)[0].text).toBe("Mercimek");
+    expect(gridAt(s).content[2].values[texts(s)[0].id]).toBe("Nohut");
+  });
+
+  it("yazısız tasarıma örnek metin koyar, kodu korur", () => {
+    const s = make();
+    s.addCode(LABEL);
+    const codeId = activeDesign(s.getState()).elements[0].id;
+    s.applyTheme("kraft-kahve", LABEL);
+    expect(activeDesign(s.getState()).elements.find((e) => e.id === codeId)?.kind).toBe("code");
+    expect(texts(s).map((t) => t.text).every(Boolean)).toBe(true);
+    expect(activeDesign(s.getState()).frameOptions?.background).toBe("#E2C79C");
+  });
+
+  it("tek geri alma önceki hale döner", () => {
+    const s = make();
+    s.addText();
+    const before = structuredClone(activeDesign(s.getState()));
+    s.applyTheme("modern-yesil", LABEL);
+    s.undo();
+    expect(activeDesign(s.getState())).toEqual(before);
+  });
+
+  it("kilitli hücrede bir şey yapmaz", () => {
+    const s = make();
+    s.setScope({ kind: "cell", cell: 0 });
+    s.applyTheme("bahce-kirmizi", LABEL);
+    expect(s.getState().project.designs.d1.frameId).toBeUndefined();
+  });
+
+  it("bant temasından iki yazılı temaya geçerken grup adı kaybı sayılır", () => {
+    const s = make();
+    s.applyTheme("modern-yesil", LABEL);
+    s.setCellValue(0, texts(s)[2].id, "BAKLİYAT");
+    expect(s.themeLoss("bahce-kirmizi", LABEL)).toBe(1);
+    expect(s.themeLoss("modern-bordo", LABEL)).toBe(0);
   });
 });

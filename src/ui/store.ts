@@ -20,6 +20,7 @@ import type { Template } from "../core/templates";
 import type { FrameLabel } from "../library/frames";
 import { applyPattern as buildPattern } from "../library/textPatterns";
 import { frameMargin } from "../render/layout";
+import { THEMES, themedDesign } from "../library/themes";
 
 export const PROJECT_KEY = "labelprint.project.v2";
 export const LEGACY_PROJECT_KEY = "labelprint.project.v1";
@@ -108,6 +109,17 @@ function remapValues(project: LabelProject, design: LabelDesign, before: DesignE
       entry.values = Object.fromEntries(Object.entries(entry.values).flatMap(([id, value]) => (mapping.has(id) ? [[mapping.get(id)!, value]] : [])));
     }
   }
+}
+
+/** Filled-in cell values of the active design that no element of `next` takes over. */
+function lostValues(state: AppState, next: DesignElement[]): number {
+  const design = activeDesign(state);
+  const mapping = patternMapping(design.elements, next);
+  const ids = new Set(design.elements.map((e) => e.id));
+  return gridZones(state.project)
+    .flatMap((zone) => Object.values(zone.content).filter((entry) => state.project.designs[entry.designId ?? zone.designId] === design))
+    .flatMap((entry) => Object.entries(entry.values))
+    .filter(([id, value]) => value !== "" && ids.has(id) && !mapping.has(id)).length;
 }
 
 export type Store = ReturnType<typeof createStore>;
@@ -238,15 +250,27 @@ export function createStore(defaultTemplate: Template, storage: StorageLike) {
         for (const el of design.elements) Object.assign(el, { x: left + el.x * sx, y: top + el.y * sy, width: el.width * sx, height: el.height * sy });
       });
     },
+    /** Frame, colours, layout and text styles of a theme in one undoable step; texts and cell values carry over. */
+    applyTheme(themeId: string, label: FrameLabel) {
+      const theme = THEMES.find((t) => t.id === themeId);
+      if (!theme || isCellLocked(state)) return;
+      commit(
+        (project, design) => {
+          const before = design.elements;
+          Object.assign(design, themedDesign(theme, design, label));
+          remapValues(project, design, before);
+        },
+        { selectedElementId: null },
+      );
+    },
+    /** How many filled-in cell values a theme has no place for. */
+    themeLoss(themeId: string, label: FrameLabel): number {
+      const theme = THEMES.find((t) => t.id === themeId);
+      return theme ? lostValues(state, themedDesign(theme, activeDesign(state), label).elements) : 0;
+    },
     /** How many filled-in cell values a pattern has no place for. */
     patternLoss(patternId: string, label: { width: number; height: number }): number {
-      const design = activeDesign(state);
-      const mapping = patternMapping(design.elements, rebuildPattern(patternId, label, design.elements));
-      const ids = new Set(design.elements.map((e) => e.id));
-      return gridZones(state.project)
-        .flatMap((zone) => Object.values(zone.content).filter((entry) => state.project.designs[entry.designId ?? zone.designId] === design))
-        .flatMap((entry) => Object.entries(entry.values))
-        .filter(([id, value]) => value !== "" && ids.has(id) && !mapping.has(id)).length;
+      return lostValues(state, rebuildPattern(patternId, label, activeDesign(state).elements));
     },
     setFrame(frameId: string | undefined, frameOptions?: FrameOptions) {
       if (isCellLocked(state)) return;

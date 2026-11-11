@@ -1,5 +1,6 @@
 import type { DesignElement, FontId, SymbolElement, TextElement } from "../core/document";
 import type { FontMeasure } from "../render/fonts";
+import { BAND_RATIO_TOP } from "./frames";
 
 export const MIN_TEXT_PT = 4;
 const MAX_TEXT_PT = 200;
@@ -86,6 +87,16 @@ export function applyPattern(id: string, label: { width: number; height: number 
   });
 
   const gap = pad / 2;
+  if (id === "band-title") {
+    // Laid out for the colour band frame at its 1 mm inset: title and subtitle below the band, a group name inside it.
+    const bandHeight = (label.height - 2) * BAND_RATIO_TOP;
+    const top = 1 + bandHeight + 1.1 + gap - pad;
+    const room = H - top;
+    const title = text(0, top, W, room * 0.6, "sans", "center");
+    const subtitle = text(0, top + room * 0.6, W, room * 0.4, "sans", "center");
+    const group = text(0, 1 + bandHeight * 0.15 - pad, W, bandHeight * 0.7, "sans", "center");
+    return [title, subtitle, { ...group, color: "#ffffff" }];
+  }
   if (id === "title-sub") {
     return [text(0, 0, W, H * 0.62, "sans-bold", "center"), text(0, H * 0.62 + gap, W, H * 0.38 - gap, "sans", "center")];
   }
