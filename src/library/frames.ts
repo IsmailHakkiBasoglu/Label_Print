@@ -11,6 +11,7 @@ export const FRAMES = [
   { id: "rounded", name: "Yuvarlak köşe" },
   { id: "corner-ornament", name: "Köşe süslemeli" },
   { id: "shape", name: "Oval" },
+  { id: "band", name: "Renk bandı" },
 ] as const;
 
 export type FrameLabel = { width: number; height: number; shape: Shape; cornerRadius?: number };
@@ -46,8 +47,52 @@ function outline(label: FrameLabel, inset: number): string {
 
 export type FrameLayout = { ops: PathOp[]; bandMm: number; fellBack: boolean };
 
+/** Share of the label height the colour band covers, from the inset down. */
+export const BAND_RATIO_TOP = 0.26;
+const BAND_MIN_SHORT_SIDE_MM = 12;
+const DIVIDER_GAP_MM = 0.6;
+const DIVIDER_WIDTH = 0.3;
+const DIVIDER_HEIGHT_MM = 0.5;
+
+/** The filled top band, following the label: straight, with rounded top corners, or the cap of an ellipse above a horizontal chord. */
+export function bandPath(label: FrameLabel, inset: number, ratio: number): string {
+  const [w, h] = [label.width - 2 * inset, label.height - 2 * inset];
+  const bottom = round(inset + h * ratio);
+  if (label.shape === "circle" || label.shape === "oval") {
+    const [a, b, cx, cy] = [w / 2, h / 2, label.width / 2, label.height / 2];
+    const half = a * Math.sqrt(Math.max(0, 1 - ((bottom - cy) / b) ** 2));
+    return `M${round(cx - half)} ${bottom}A${round(a)} ${round(b)} 0 0 1 ${round(cx + half)} ${bottom}Z`;
+  }
+  const right = round(inset + w);
+  if (label.shape === "rounded") {
+    const r = round(Math.min(Math.max((label.cornerRadius ?? 2) - inset, 0.5), h * ratio, w / 2));
+    return `M${round(inset + r)} ${round(inset)}H${round(right - r)}A${r} ${r} 0 0 1 ${right} ${round(inset + r)}V${bottom}H${round(inset)}V${round(inset + r)}A${r} ${r} 0 0 1 ${round(inset + r)} ${round(inset)}Z`;
+  }
+  return `M${round(inset)} ${round(inset)}H${right}V${bottom}H${round(inset)}Z`;
+}
+
+function bandLayout(label: FrameLabel, opts: FrameOptions): FrameLayout {
+  const inset = opts.insetMm;
+  if (Math.min(label.width, label.height) < BAND_MIN_SHORT_SIDE_MM) {
+    const line: PathOp = { kind: "path", d: `M${round(inset)} ${round(inset)}H${round(label.width - inset)}`, x: 0, y: 0, scale: 1, stroke: { color: opts.color, widthMm: opts.strokeMm } };
+    return { ops: [line], bandMm: 0, fellBack: true };
+  }
+  const bottom = inset + (label.height - 2 * inset) * BAND_RATIO_TOP;
+  const width = label.width * DIVIDER_WIDTH;
+  const divider = `M${round((label.width - width) / 2)} ${round(bottom + DIVIDER_GAP_MM)}H${round((label.width + width) / 2)}V${round(bottom + DIVIDER_GAP_MM + DIVIDER_HEIGHT_MM)}H${round((label.width - width) / 2)}Z`;
+  return {
+    ops: [
+      { kind: "path", d: bandPath(label, inset, BAND_RATIO_TOP), x: 0, y: 0, scale: 1, fill: opts.color },
+      { kind: "path", d: divider, x: 0, y: 0, scale: 1, fill: opts.accent ?? opts.color },
+    ],
+    bandMm: 0,
+    fellBack: false,
+  };
+}
+
 /** Ornaments report their band so that content near it can be flagged; on tiny labels they fall back to a single line. */
 export function frameLayout(id: string, label: FrameLabel, opts: FrameOptions): FrameLayout {
+  if (id === "band") return bandLayout(label, opts);
   const ornament = ORNAMENTS.find((o) => o.id === id);
   if (!ornament) return { ops: lineFrame(id, label, opts), bandMm: 0, fellBack: false };
   const result = ornamentLayout(ornament, label, opts);
