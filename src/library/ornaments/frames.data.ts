@@ -1,4 +1,4 @@
-import type { OrnamentFrame, OrnamentPart } from "./layout";
+import type { OrnamentFrame, OrnamentPart, OrnamentPath } from "./layout";
 
 const KAPPA = 0.5523;
 const n = (v: number) => String(Math.round(v * 1000) / 1000);
@@ -51,8 +51,25 @@ function rail(at: number, thickness: number): string {
   return poly([at, at], [end, at], [end, inner], [inner, inner], [inner, end], [at, end]);
 }
 
-const edge = (width: number, ...d: string[]): OrnamentPart => ({ size: [width, 10], d });
-const corner = (...d: string[]): OrnamentPart => ({ size: [12, 12], d });
+const edge = (width: number, ...d: OrnamentPath[]): OrnamentPart => ({ size: [width, 10], d });
+const corner = (...d: OrnamentPath[]): OrnamentPart => ({ size: [12, 12], d });
+/** Marks a path to take the accent colour. */
+const accent = (d: string): OrnamentPath => ({ d, role: "accent" });
+
+/** Five round petals around a centre. */
+const petals = (cx: number, cy: number, distance: number, r: number) =>
+  [0, 1, 2, 3, 4].map((i) => circle(cx + distance * Math.cos(-Math.PI / 2 + (i * 2 * Math.PI) / 5), cy + distance * Math.sin(-Math.PI / 2 + (i * 2 * Math.PI) / 5), r)).join("");
+
+/** A wheat ear along the corner diagonal: a thin stem with grain pairs and a grain at the tip. */
+function wheatEar(from: number, to: number): string {
+  const grains: string[] = [poly([from - 0.25, from + 0.25], [to - 0.25, to + 0.25], [to + 0.25, to - 0.25], [from + 0.25, from - 0.25])];
+  for (const t of [0.35, 0.55, 0.75]) {
+    const c = from + (to - from) * t;
+    grains.push(leaf(c, c, c + 2.2, c - 0.2, 0.7), leaf(c, c, c - 0.2, c + 2.2, 0.7));
+  }
+  grains.push(leaf(to - 1.6, to - 1.6, to + 0.6, to + 0.6, 0.8));
+  return grains.join("");
+}
 const BAND_RATIO = 0.14;
 
 const cornerDot = (r = 3) => corner(rail(1, 0.9), circle(7, 7, r));
@@ -67,9 +84,30 @@ const cornerCurl = () => corner(leaf(1, 1, 11, 2.5, 1.6), leaf(1, 1, 2.5, 11, 1.
 
 const frame = (id: string, name: string, category: string, c: OrnamentPart, e: OrnamentPart): OrnamentFrame => ({ id: `o-${id}`, name, category, corner: c, edge: e, bandRatio: BAND_RATIO });
 
-export const ORNAMENT_CATEGORIES = ["klasik", "bitkisel", "kurdele", "geometrik", "mutfak", "vintage"] as const;
+export const ORNAMENT_CATEGORIES = ["renkli", "klasik", "bitkisel", "kurdele", "geometrik", "mutfak", "vintage"] as const;
 
 export const ORNAMENTS: OrnamentFrame[] = [
+  frame(
+    "berry-vine",
+    "Meyveli dal",
+    "renkli",
+    corner(leaf(1, 1, 11, 4, 2.2), leaf(1, 1, 4, 11, 2.2), accent(circle(7.6, 7.6, 1.6) + circle(9.9, 6.6, 1.2) + circle(6.6, 9.9, 1.2))),
+    edge(14, box(0, 4.6, 14, 0.7), leaf(1, 5, 6, 1.2, 1.5), leaf(8, 5, 13, 8.8, 1.5), accent(circle(7.4, 2.9, 1.3) + circle(9.3, 2.2, 1.1) + circle(9, 4, 0.95))),
+  ),
+  frame(
+    "meadow",
+    "Kır çiçekleri",
+    "renkli",
+    corner(leaf(1, 11, 3.5, 6.5, 1), leaf(11, 1, 6.5, 3.5, 1), accent(petals(6.5, 6.5, 2.6, 1.7)), circle(6.5, 6.5, 1.3)),
+    edge(12, leaf(0.5, 7, 3.8, 9.3, 0.9), leaf(11.5, 7, 8.2, 9.3, 0.9), accent(petals(6, 4.6, 2.2, 1.35)), circle(6, 4.6, 1)),
+  ),
+  frame(
+    "wheat-double",
+    "Başaklı çift çizgi",
+    "renkli",
+    corner(rail(0.8, 0.8), rail(2.8, 0.5), accent(wheatEar(4.6, 11.2))),
+    edge(8, box(0, 0.8, 8, 0.8), box(0, 2.8, 8, 0.5)),
+  ),
   frame("pearl", "İnci dizisi", "klasik", cornerDot(), edge(7, circle(3.5, 4.5, 2.6))),
   frame("beads", "Boncuk ve baklava", "klasik", cornerDiamond(), edge(12, circle(3, 4.5, 1.6), diamond(9, 4.5, 2.2, 3.6))),
   frame(
@@ -118,3 +156,9 @@ export const ORNAMENTS: OrnamentFrame[] = [
   frame("lace", "Dantel", "vintage", cornerRing(), edge(10, "M0 1L10 1C10 10 0 10 0 1Z" + circle(5, 3.6, 1.5, true))),
   frame("stars", "Yıldızlar", "vintage", cornerStar(), edge(10, star(5, 5, 4.4, 1.9))),
 ];
+
+/** True when the frame has parts that take the accent colour. */
+export function hasAccent(frameId: string): boolean {
+  const frame = ORNAMENTS.find((o) => o.id === frameId);
+  return !!frame && [...frame.corner.d, ...frame.edge.d].some((path) => typeof path !== "string");
+}

@@ -89,3 +89,15 @@ describe("kod öğesi", () => {
   it("bilinmeyen kod türünü reddeder", () => expect(parseProject(withCode({ format: "pdf417" })).ok).toBe(false));
   it("hatalı showText'i reddeder", () => expect(parseProject(withCode({ showText: "evet" })).ok).toBe(false));
 });
+
+describe("çerçeve renkleri", () => {
+  const withFrame = (frameOptions: Record<string, unknown>) => {
+    const project: any = newProject(template);
+    project.designs.d1.frameId = "o-meadow";
+    project.designs.d1.frameOptions = { strokeMm: 0.4, insetMm: 1, color: "#3B6D11", ...frameOptions };
+    return JSON.stringify(project);
+  };
+  it("vurgu ve zemin rengini kabul eder", () => expect(parseProject(withFrame({ accent: "#C0322B", background: "#E2C79C" })).ok).toBe(true));
+  it("metin olmayan vurgu rengini reddeder", () => expect(parseProject(withFrame({ accent: 5 })).ok).toBe(false));
+  it("metin olmayan zemini reddeder", () => expect(parseProject(withFrame({ background: null })).ok).toBe(false));
+});

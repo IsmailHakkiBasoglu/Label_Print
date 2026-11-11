@@ -46,7 +46,8 @@ export type CodeElement = {
 export const CODE_FORMATS: CodeFormat[] = ["qr", "code128", "ean13"];
 
 export type DesignElement = TextElement | SymbolElement | CodeElement;
-export type FrameOptions = { strokeMm: number; insetMm: number; color: string };
+/** `color` is the main colour; `accent` colours the accent parts of a coloured ornament; `background` fills the label inside the inset. */
+export type FrameOptions = { strokeMm: number; insetMm: number; color: string; accent?: string; background?: string };
 export type LabelDesign = { frameId?: string; frameOptions?: FrameOptions; elements: DesignElement[] };
 export type CellSelection = { used: number[] };
 
@@ -88,9 +89,10 @@ function isElement(e: any): boolean {
 function isDesign(d: any): boolean {
   if (!Array.isArray(d?.elements) || !d.elements.every(isElement)) return false;
   const o = d.frameOptions;
-  return (d.frameId === undefined || typeof d.frameId === "string") && (o === undefined || (isNumber(o.strokeMm) && o.strokeMm > 0 && isNumber(o.insetMm) && typeof o.color === "string"));
+  return (d.frameId === undefined || typeof d.frameId === "string") && (o === undefined || (isNumber(o.strokeMm) && o.strokeMm > 0 && isNumber(o.insetMm) && typeof o.color === "string" && optionalText(o.accent) && optionalText(o.background)));
 }
 
+const optionalText = (v: unknown) => v === undefined || typeof v === "string";
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 const isFreeZone = (z: any) => z?.kind === "free" && isBox(z) && isDesign(z.design);
 const isGridBase = (z: any) => z?.kind === "grid" && typeof z.templateId === "string" && Array.isArray(z.cells?.used) && z.cells.used.every(Number.isInteger);

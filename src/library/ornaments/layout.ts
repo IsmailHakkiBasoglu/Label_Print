@@ -4,7 +4,9 @@ import type { PathOp } from "../../render/ops";
 import { compose, scale, transformPath, translate, type Matrix } from "./transform";
 
 /** Part coordinates: y = 0 is the label's outer edge, y = size[1] the inner edge of the band. */
-export type OrnamentPart = { size: [number, number]; d: string[]; stroke?: boolean };
+/** A path in the main colour, or one marked to take the accent colour. */
+export type OrnamentPath = string | { d: string; role: "accent" };
+export type OrnamentPart = { size: [number, number]; d: OrnamentPath[]; stroke?: boolean };
 export type OrnamentFrame = { id: string; name: string; category: string; corner: OrnamentPart; edge: OrnamentPart; bandRatio: number };
 export type OrnamentLabel = { width: number; height: number; shape: Shape };
 export type OrnamentResult = { ops: PathOp[]; bandMm: number; fellBack: boolean };
@@ -17,14 +19,17 @@ const SMALLEST_BAND_MM = 1;
 const ELLIPSE_SAMPLES = 2000;
 
 function place(part: OrnamentPart, matrix: Matrix, opts: FrameOptions): PathOp[] {
-  return part.d.map((d) => ({
-    kind: "path",
-    d: transformPath(d, matrix),
-    x: 0,
-    y: 0,
-    scale: 1,
-    ...(part.stroke ? { stroke: { color: opts.color, widthMm: opts.strokeMm } } : { fill: opts.color }),
-  }));
+  return part.d.map((path) => {
+    const [d, color] = typeof path === "string" ? [path, opts.color] : [path.d, opts.accent ?? opts.color];
+    return {
+      kind: "path",
+      d: transformPath(d, matrix),
+      x: 0,
+      y: 0,
+      scale: 1,
+      ...(part.stroke ? { stroke: { color, widthMm: opts.strokeMm } } : { fill: color }),
+    };
+  });
 }
 
 function repeatCount(length: number, step: number): number {
