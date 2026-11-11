@@ -6,7 +6,8 @@ Hazır etiket kağıtlarına basılacak etiketleri görerek tasarlayıp **ölç�
 - Kendi şablonunu tanımlama, şablonu JSON olarak içe aktarma.
 - Yaprakta yalnızca seçili etiketlere basma, yarım kalmış yaprağa "Buradan başlat", kağıdın bir bölümüne serbest içerik.
 - Her etikete farklı isim ve görsel: listeyi yapıştır, hücreler sırayla dolsun, uygun görsel kendiliğinden gelsin. Excel (.xlsx) veya CSV dosyasından da alınır: her sütun etiketteki bir yazı alanına eşlenir (ör. ad, tarih, fiyat). İstenen hücre ortak tasarımdan ayrılabilir, liste taşarsa yeni sayfa açılır.
-- 6 düz ve 24 süslü çerçeve; motifler gerilmeden her etiket ölçüsüne oturur. Hazır yazı desenleri, otomatik metin sığdırma.
+- Tek tıkla hazır temalar: Doğal bahçe, Kır çiçekleri, Rustik kraft, Sade modern (her biri iki renkte). Tema çerçeveyi, renkleri ve başlık/alt başlık yerleşimini birlikte getirir; yazdıkların korunur.
+- 7 düz çizgi (renk bandı dahil) ve 27 süslü çerçeve; renkli çerçevelerde ana ve vurgu rengi ayrı seçilir, istenirse kraft gibi zemin rengi. Süslü çerçevelerde motifler gerilmeden her etiket ölçüsüne oturur. Hazır yazı desenleri, otomatik metin sığdırma.
 - 228 tek renk sembol ve 351 renkli görsel, Türkçe arama: "Mısır" yazınca mısır koçanı önerilir.
 - Kendi PNG, JPG veya SVG görselini ekleme; kaydedilen proje dosyası görselleri de içinde taşır.
 - QR, Code 128 ve EAN-13 kodları; içerik ortak olabilir ya da listeden/Excel sütunundan her etikete ayrı gelir. Ayrıntı aşağıda.

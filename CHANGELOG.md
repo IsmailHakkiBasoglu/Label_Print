@@ -6,6 +6,7 @@
 - Word hücresi etiketten birkaç mm farklı olan 25 Tanex şablonu artık tek etiket yerine tam ızgarayla geliyor; sayfadan taşan 2 şablon sığdırıldı. Hepsi "Kontrol et" notuyla.
 
 ### Eklendi
+- Hazır temalar (8 tema, 4 tarz) ve Tema sekmesi; çok renkli süs çerçeveleri (meyveli dal, kır çiçekleri, başaklı çift çizgi), renk bandı çerçevesi, vurgu ve zemin rengi.
 - Barkod ve QR: QR, Code 128 ve EAN-13 kodu ekleme; içerik listeden/Excel sütunundan her etikete ayrı gelebilir; EAN-13 kontrol hanesi, küçük kod ve açık renk uyarıları.
 - Excel (.xlsx) ve CSV'den doldurma: sütunlar yazı alanlarına eşlenir, sayfa seçimi, başlık satırı, önizleme; Türkçe Windows kodlu CSV ve Excel tarihleri tanınır.
 - Hücre başına yazı ve görsel, listeden doldurma, hücre ayırma, çok sayfalı belge.

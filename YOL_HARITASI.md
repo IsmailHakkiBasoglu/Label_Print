@@ -8,6 +8,9 @@
 ## Fikirler
 - [x] Excel/CSV'den toplu etiket üretimi (sütun eşleme ile)
 - [x] Barkod ve QR (QR, Code 128, EAN-13)
+- [x] Çok renkli çerçeveler ve hazır temalar
+- [ ] Eğik / el yazısı yazı tipleri (temalar için)
+- [ ] Oval ve daire etiketlerde köşe süsü (başaklı çerçevenin başakları şimdilik yalnız dikdörtgende)
 - [ ] Yüklenen SVG'lerde gradyan ve dönüşüm desteği
 - [ ] Tek tıkla açılan masaüstü paketi
 - [ ] PDF boyutunu küçültmek (yazı tipleri şu an tam gömülüyor; pdf-lib'in alt kümeleme hatası nedeniyle)
