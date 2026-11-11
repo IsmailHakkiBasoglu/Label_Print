@@ -2,15 +2,17 @@ import { useContext, useMemo, useState, type ChangeEvent } from "react";
 import { ingestImage } from "../core/imageStore";
 import { exportCustom, importCustom, saveCustom } from "../core/customTemplates";
 import { browserStorage } from "../core/storage";
+import type { FrameOptions } from "../core/document";
 import type { Template } from "../core/templates";
 import { FRAMES, frameOps } from "../library/frames";
-import { ORNAMENT_CATEGORIES, ORNAMENTS } from "../library/ornaments/frames.data";
+import { hasAccent, ORNAMENT_CATEGORIES, ORNAMENTS } from "../library/ornaments/frames.data";
+import { THEME_STYLES, THEMES, themedDesign } from "../library/themes";
 import { importCustomSymbol } from "../library/symbols/custom";
 import { catalog, searchSymbols, type SymbolEntry } from "../library/symbols/search";
 import { isMultiColor } from "../library/symbols/svg";
 import { PATTERNS } from "../library/textPatterns";
 import type { RenderDeps } from "../render/pdf";
-import { designTouchesBand } from "../render/layout";
+import { designTouchesBand, layoutDesign } from "../render/layout";
 import { ImageUrlContext, OpsView } from "../render/preview";
 import { IconView } from "./IconView";
 import { activeLabel } from "./LabelEditor";
@@ -19,9 +21,11 @@ import { TemplateBuilder } from "./TemplateBuilder";
 import { TemplatePicker } from "./TemplatePicker";
 import { ZonesPanel } from "./ZonesPanel";
 
-const TABS = ["Şablon", "Çerçeve", "Desen", "Sembol", "Bölge"] as const;
-const DEFAULT_FRAME = { strokeMm: 0.4, insetMm: 1, color: "#000000" };
+const TABS = ["Şablon", "Çerçeve", "Desen", "Tema", "Sembol", "Bölge"] as const;
+const DEFAULT_FRAME: FrameOptions = { strokeMm: 0.4, insetMm: 1, color: "#000000" };
 const LINE_FRAMES = "__lines";
+/** Kraft paper tone offered when a background is switched on. */
+const DEFAULT_BACKGROUND = "#F5EBD7";
 const LOCKED_HINT = 'Bu etiket ortak tasarımı kullanıyor. Yalnız bunu değiştirmek için sağdan "Bu hücreyi ayır"ı seçin, hepsini değiştirmek için "Tüm hücreler"e dönün.';
 const NO_PICTURE_HINT = 'Bu etikette görsel yeri yok. Önce "Tüm hücreler" modunda ortak tasarıma görsel ekleyin veya hücreyi ayırın.';
 
@@ -55,6 +59,12 @@ export function LibraryPanel({ store, deps, templates, customSymbols, onLibraryC
     if (loss === 0 || window.confirm(`Bu desende yeri olmayan ${loss} hücre içeriği silinecek. Devam edilsin mi?`)) store.applyPattern(patternId, label);
   }
 
+  function applyTheme(themeId: string) {
+    const label = activeLabel(store, deps);
+    const loss = store.themeLoss(themeId, label);
+    if (loss === 0 || window.confirm(`Bu temada yeri olmayan ${loss} hücre içeriği silinecek. Devam edilsin mi?`)) store.applyTheme(themeId, label);
+  }
+
   return (
     <aside className="panel library">
       <nav className="tabs">
@@ -77,6 +87,7 @@ export function LibraryPanel({ store, deps, templates, customSymbols, onLibraryC
           <p className="hint">Desen yerleşimi yeniden kurar. Yeni düzende yeri olmayan içerik silinir; hücre içeriği silinecekse önce sorulur.</p>
         </div>
       )}
+      {tab === "Tema" && <ThemesTab store={store} deps={deps} onPick={applyTheme} />}
       {tab === "Sembol" && <SymbolsTab store={store} deps={deps} customSymbols={customSymbols} onLibraryChanged={onLibraryChanged} />}
       {tab === "Bölge" && <ZonesPanel store={store} />}
     </aside>
@@ -197,10 +208,53 @@ function FramesTab({ store, deps }: { store: Store; deps: RenderDeps }) {
           <input type="number" step="0.5" min="0" value={options.insetMm} onChange={(e) => Number(e.target.value) >= 0 && change({ insetMm: Number(e.target.value) })} />
         </label>
         <label>
-          Renk
+          Ana renk
           <input type="color" value={options.color} onChange={(e) => change({ color: e.target.value })} />
         </label>
+        {(design.frameId === "band" || (design.frameId && hasAccent(design.frameId))) && (
+          <label>
+            Vurgu rengi
+            <input type="color" value={options.accent ?? options.color} onChange={(e) => change({ accent: e.target.value })} />
+          </label>
+        )}
+        <label className="inline">
+          <input type="checkbox" checked={!!options.background} onChange={(e) => change({ background: e.target.checked ? DEFAULT_BACKGROUND : undefined })} /> Zemin
+        </label>
+        {options.background && (
+          <label>
+            Zemin rengi
+            <input type="color" value={options.background} onChange={(e) => change({ background: e.target.value })} />
+          </label>
+        )}
       </div>
+    </div>
+  );
+}
+
+function ThemesTab({ store, deps, onPick }: { store: Store; deps: RenderDeps; onPick: (themeId: string) => void }) {
+  const state = useAppState(store);
+  const design = activeDesign(state);
+  const label = activeLabel(store, deps);
+  const locked = isCellLocked(state);
+  return (
+    <div className="list">
+      {locked && <p className="notice">{LOCKED_HINT}</p>}
+      {THEME_STYLES.map((style) => (
+        <section key={style.id}>
+          <h3>{style.name}</h3>
+          <div className="frame-grid">
+            {THEMES.filter((t) => t.style === style.id).map((theme) => (
+              <button key={theme.id} className="frame-card theme-card" disabled={locked} onClick={() => onPick(theme.id)}>
+                <svg viewBox={`0 0 ${label.width} ${label.height}`} aria-hidden="true">
+                  <OpsView ops={layoutDesign(themedDesign(theme, design, label), label, deps, state.project.images)} />
+                </svg>
+                {theme.name}
+              </button>
+            ))}
+          </div>
+        </section>
+      ))}
+      <p className="hint">Tema çerçeveyi, renkleri ve başlık yerleşimini birlikte değiştirir; yazdıklarınız korunur. "Geri" ile önceki hale dönülür.</p>
     </div>
   );
 }

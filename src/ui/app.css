@@ -115,3 +115,4 @@ main { flex: 1; min-height: 0; display: grid; grid-template-columns: 300px minma
 .list-fill .fill-preview { border-collapse: collapse; font-size: 12px; width: 100%; table-layout: fixed; }
 .list-fill .fill-preview td { border: 1px solid var(--line); padding: 2px 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .list-fill .fill-preview td.shared { color: var(--muted, #888); font-style: italic; }
+.list section h3 { font-size: 12px; font-weight: 600; margin: 8px 0 4px; }
