@@ -3,6 +3,7 @@ import type { TextElement } from "../../src/core/document";
 import { FRAMES } from "../../src/library/frames";
 import { ORNAMENTS } from "../../src/library/ornaments/frames.data";
 import { applyPattern } from "../../src/library/textPatterns";
+import { frameMargin } from "../../src/render/layout";
 import { THEME_STYLES, THEMES, themedDesign } from "../../src/library/themes";
 
 const LABEL = { width: 63.5, height: 38.1, shape: "rect" as const };
@@ -61,4 +62,19 @@ describe("themedDesign", () => {
     const design = themedDesign(THEMES[0], { elements: [] }, LABEL);
     for (const t of design.elements) expect(t.x).toBeGreaterThan(3);
   });
+});
+
+describe("yuvarlak etiketlerde tema", () => {
+  for (const label of [{ width: 40, height: 40, shape: "circle" as const }, { width: 60, height: 40, shape: "oval" as const }]) {
+    it(`${label.shape}: süslü temalarda yazı kutuları süsün içindeki elipste kalır`, () => {
+      for (const theme of THEMES.filter((t) => t.patternId === "title-sub")) {
+        const design = themedDesign(theme, { elements: [] }, label);
+        const margin = frameMargin(design, label);
+        const [a, b] = [label.width / 2 - margin, label.height / 2 - margin];
+        for (const e of design.elements)
+          for (const [x, y] of [[e.x, e.y], [e.x + e.width, e.y], [e.x, e.y + e.height], [e.x + e.width, e.y + e.height]])
+            expect(((x - label.width / 2) / a) ** 2 + ((y - label.height / 2) / b) ** 2, `${theme.id}`).toBeLessThanOrEqual(1.0001);
+      }
+    });
+  }
 });

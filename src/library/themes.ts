@@ -54,6 +54,12 @@ export const THEMES: Theme[] = [
   { id: "modern-bordo", name: "Modern · bordo", style: "modern", frameId: "band", frameOptions: { color: "#7A1F2B", accent: "#D9A441" }, patternId: "band-title", texts: banded("#4A1218", "#5F5E5A"), samples: ["Kırmızı biber", "pul · 250 g", "BAHARAT"] },
 ];
 
+function inscribed(patternId: Theme["patternId"], label: FrameLabel, texts: string[], symbolId: string | undefined, inset: number): DesignElement[] {
+  const [left, top] = [label.width / 2 - (label.width / 2 - inset) / Math.SQRT2, label.height / 2 - (label.height / 2 - inset) / Math.SQRT2];
+  const inner = { width: label.width - 2 * left, height: label.height - 2 * top };
+  return applyPattern(patternId, inner, texts, symbolId).map((e) => ({ ...e, x: Number((e.x + left).toFixed(4)), y: Number((e.y + top).toFixed(4)) }));
+}
+
 /**
  * The design with the theme applied: its frame and colours, its layout filled with the label's texts in order
  * (or the theme's samples when there are none), each text styled, and codes kept as they are.
@@ -64,7 +70,15 @@ export function themedDesign(theme: Theme, design: LabelDesign, label: FrameLabe
   const margin = frameMargin(framed, label);
   const own = design.elements.filter((e): e is TextElement => e.kind === "text").map((e) => e.text);
   const symbol = design.elements.find((e) => e.kind === "symbol");
-  const laid = applyPattern(theme.patternId, label, own.length ? own : theme.samples, symbol?.kind === "symbol" ? symbol.symbolId : undefined, margin > 0 ? margin + MARGIN_SLACK_MM : 0);
+  const texts = own.length ? own : theme.samples;
+  const symbolId = symbol?.kind === "symbol" ? symbol.symbolId : undefined;
+  const inset = margin > 0 ? margin + MARGIN_SLACK_MM : 0;
+  const round = label.shape === "circle" || label.shape === "oval";
+  // On a round label the ornament follows the ellipse: lay the texts out in the rectangle inscribed in its inner edge.
+  const laid =
+    round && theme.patternId === "title-sub"
+      ? inscribed(theme.patternId, label, texts, symbolId, inset)
+      : applyPattern(theme.patternId, label, texts, symbolId, inset);
   let index = 0;
   const styled = laid.map((e): DesignElement => (e.kind === "text" ? { ...e, ...theme.texts[index++] } : e));
   return { ...framed, elements: [...styled, ...design.elements.filter((e) => e.kind === "code")] };
